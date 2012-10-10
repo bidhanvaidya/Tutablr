@@ -18,12 +18,21 @@
 6. Clone this repository 
 
 
+*********************************************
+**                      IMPORTANT DETAILS                     **
+*********************************************
+
+- MAKE SURE THAT YOU CONVERT TABS TO SPACES. EACH TAB = 4 SPACES.
+
 **************************************
 **             Setting Up the Database         **
 **************************************
 
 Understand that we are not using manage.py syncdb to do the model syncing.
 We are using South. 
+
+    - Initial Setup: Once we set up Postgres, the first command should be "python manage.py syncdb". This is the only time we will use sync db. THIS IS ALREADY DONE ON THIS REPO.
+    - Ongoing syncs: 
 
 
 *********************************************
