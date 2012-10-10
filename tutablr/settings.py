@@ -82,11 +82,13 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'e607@c@*98c0n!^n6rnzzf2)dlsswrp%hdz!h5xo-se2(haa8)'
 
+DAJAXICE_MEDIA_PREFIX="dajaxice"
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -123,6 +125,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'south',
+    'dajaxice',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

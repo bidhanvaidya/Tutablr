@@ -73,7 +73,7 @@ Origin = the server (bitbucket) copy of the files
 *********************************************
 **                        Useful Tutorial Links                   **
 *********************************************
-        - Dajaxice: 
+        - Dajaxice: http://django-dajaxice.readthedocs.org/en/latest/
         - Ajax in Django:  http://www.pythondiary.com/tutorials/django-and-ajax-dajaxice.html
         - Django Registration: 
         - South (Database Management):
