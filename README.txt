@@ -16,6 +16,7 @@
         - install South (easy_install South)
         - install django-registration (pip install django-registration)
 6. Clone this repository 
+7. Everything should now run.
 
 
 *********************************************
