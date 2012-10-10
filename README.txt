@@ -1,3 +1,8 @@
+
+************************************************************************************
+******                                                  TUTABLR DOCUMENTATION                                         ******
+************************************************************************************
+
 **************************************
 **             Installation of Packages          **
 **************************************
@@ -11,3 +16,30 @@
         - install South (easy_install South)
         - install django-registration (pip install django-registration)
 6. Clone this repository 
+
+
+**************************************
+**             Setting Up the Database         **
+**************************************
+
+Understand that we are not using manage.py syncdb to do the model syncing.
+We are using South. 
+
+
+*********************************************
+**             How to use GIT with this Project         **
+*********************************************
+
+1. Everyone needs their own BRANCH of this project.
+        - git branch <your_name>_<branch_details>_branch
+        - git checkout <branch-name>
+
+*********************************************
+**                  Folder Structure of Tutablr              **
+*********************************************
+
+<Your Folder>
+|____<Virtualenv Environment Folder>
+|____tutablr
+           |____tutablr <--- this is where settings.py etc. is stored
+           |____tutablr_app <--- this is the main application
