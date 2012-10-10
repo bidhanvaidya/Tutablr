@@ -1,10 +1,10 @@
 
 ************************************************************************************
-******                                                    TUTABLR DOCUMENTATION                                        ******
+******                              TUTABLR DOCUMENTATION                                        ******
 ************************************************************************************
 
 **************************************
-**              Installation of Packages         **
+**     Installation of Packages         **
 **************************************
 
 1. Create a folder. 
@@ -20,13 +20,13 @@
 
 
 *********************************************
-**                      IMPORTANT DETAILS                     **
+**           MPORTANT DETAILS                     **
 *********************************************
 
 - MAKE SURE THAT YOU CONVERT TABS TO SPACES. EACH TAB = 4 SPACES.
 
 **************************************
-**             Setting Up the Database         **
+**    Setting Up the Database         **
 **************************************
 
 Understand that we are not using manage.py syncdb to do the model syncing.
@@ -60,7 +60,7 @@ Origin = the server (bitbucket) copy of the files
 
 
 *********************************************
-**                  Folder Structure of Tutablr              **
+**      Folder Structure of Tutablr              **
 *********************************************
 
 <Your Folder>
@@ -71,7 +71,7 @@ Origin = the server (bitbucket) copy of the files
 
 
 *********************************************
-**                        Useful Tutorial Links                   **
+**             Useful Tutorial Links                   **
 *********************************************
         - Dajaxice: http://django-dajaxice.readthedocs.org/en/latest/
         - Ajax in Django:  http://www.pythondiary.com/tutorials/django-and-ajax-dajaxice.html
