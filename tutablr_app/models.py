@@ -17,7 +17,7 @@ class UserProfile(models.Model):
 
 class Location(models.Model): # all location details
     preferred_postcode = models.IntegerField(max_length=4)
-    preferred_suburb = models.CharField()
+    preferred_suburb = models.CharField(max_length=50)
     longitude = models.FloatField()
     latitude = models.FloatField()
     user_id = models.ForeignKey(User)
@@ -32,7 +32,7 @@ class Enrolled(models.Model):  # student details regarding all classes taken
     unit_id = models.ForeignKey(UOS)
     user_id = models.ForeignKey(User)
     is_complete = models.BooleanField()
-    grade = IntegerRangeField(min_value=0,max_value=100,blank = True)
+    grade = models.IntegerField(blank = True)
 
 class UnitDetails(models.Model): # has all the information regarding what subjects a user will and wants to tutor + price
     user_id = models.ForeignKey(User)
@@ -57,8 +57,8 @@ class SessionTime(models.Model): # Tutoring Session Time
     description = models.CharField(max_length = 56)
     start_time = models.DateTimeField(null = False)
     finish_time = models.DateTimeField(null = False)
-    tutor_id = models.ForeignKey(User, related_name='tutor_id')
-    student_id = models.ForeignKey(User, related_name='student_id')
+    tutor_id = models.ForeignKey(User, related_name='tutor_id+')
+    student_id = models.ForeignKey(User, related_name='student_id+')
 
 class Review(models.Model): # review table
     RATING_CHOICES = (
@@ -68,8 +68,8 @@ class Review(models.Model): # review table
                       (4,"4"),
                       (5,"5")
                       )
-    student_id = models.ForeignKey(User, related_name = 'student_id')
-    tutor_id = models.ForeignKey(User,related_name='tutor_id')
+    student_id = models.ForeignKey(User, related_name = 'student_id+')
+    tutor_id = models.ForeignKey(User,related_name='tutor_id+')
     comment = models.CharField(max_length=256)
     rating = models.IntegerField(choices = RATING_CHOICES,default = 3)
 
@@ -77,7 +77,7 @@ class Booking(models.Model):
     unit_id = models.ForeignKey(UOS)
     start_time = models.DateTimeField(null = False)
     finish_time = models.DateTimeField(null = False)
-    tutor_id = models.ForeignKey(User, related_name='tutor_id')
-    student_id = models.ForeignKey(User, related_name='student_id')
+    tutor_id = models.ForeignKey(User, related_name='tutor_id+')
+    student_id = models.ForeignKey(User, related_name='student_id+')
     is_rejected = models.BooleanField(default=False)
     is_confirmed = models.BooleanField(default=False)    
