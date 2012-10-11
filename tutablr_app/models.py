@@ -28,6 +28,9 @@ class UOS(models.Model): # unit of study information
     unit_id = models.CharField(max_length=8)    
     unit_description = models.TextField(max_length=200)
 
+    def __str__(self):  
+          return self.unit_id
+
 class Enrolled(models.Model):  # student details regarding all classes taken
     unit_id = models.ForeignKey(UOS)
     user_id = models.ForeignKey(User)
@@ -54,6 +57,7 @@ class UnavailableTime(models.Model): # Times whree the tutor is unavailable
     user_id = models.ForeignKey(User)
 
 class SessionTime(models.Model): # Tutoring Session Time
+    unit_id = models.ForeignKey(UOS,null=True)
     description = models.CharField(max_length = 56)
     start_time = models.DateTimeField(null = False)
     finish_time = models.DateTimeField(null = False)
