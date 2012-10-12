@@ -66,6 +66,7 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
+    os.path.join(DIRNAME,'../static'),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -108,6 +109,9 @@ WSGI_APPLICATION = 'tutablr.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(DIRNAME,'../templates'),
+    os.path.join(DIRNAME,'../registration/templates'),
+    os.path.join(DIRNAME,'../dajaxice/templates'),
+    os.path.join(DIRNAME,'../tutablr_app/templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -129,6 +133,14 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+ACCOUNT_ACTIVATION_DAYS = 7 # one-week activation window
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tutablr3609@gmail.com'
+EMAIL_HOST_PASSWORD = 'tutablr3609'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
