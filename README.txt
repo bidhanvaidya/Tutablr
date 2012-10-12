@@ -35,6 +35,12 @@ We are using South.
     - Initial Setup: Once we set up Postgres, the first command should be "python manage.py syncdb". This is the only time we will use sync db. THIS IS ALREADY DONE ON THIS REPO.
     - Ongoing syncs: 
 
+**************************************
+**    Using Templates and Statics        **
+**************************************
+
+Place all templates files in a folder called templates (either in the root directory or within each app).
+Place all static files inside static folder in the root directory. You can use subfolders within. e.g. /templates/bootstrap
 
 *********************************************
 **             How to use GIT with this Project         **
