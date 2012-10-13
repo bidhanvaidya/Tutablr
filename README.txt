@@ -40,7 +40,7 @@ We are using South.
 **************************************
 
 Place all templates files in a folder called templates (either in the root directory or within each app).
-Place all static files inside static folder in the root directory. You can use subfolders within. e.g. /templates/bootstrap
+Place all static files inside static folder in each app directory directory. You can use subfolders within. e.g. /tutablr_app/static/bootstrap
 
 *********************************************
 **             How to use GIT with this Project         **
