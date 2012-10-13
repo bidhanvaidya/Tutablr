@@ -14,7 +14,7 @@
 5. Inside the environment:
         - install django 1.4.1 (pip install django)
         - install South (easy_install South)
-        - install django-registration (pip install django-registration)
+        - install django-profiles (pip install django-profiles)
 6. Clone this repository 
 7. Everything should now run.
 

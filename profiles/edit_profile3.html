@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+2	
+3	{% load i18n %}
+4	
+5	{% block content %}
+6	<h3>{% trans "User profile for" %} {{ user.first_name }} {{ user.last_name }} </h3>
+7	    {% if form.errors %}
+8	    <p class="errorlist">{% trans "Sorry there are corrections needed in your form below:" %} {{ form.non_field_errors }}</p>
+9	    {% endif %}
+10	    {% if form.is_multipart %}
+11	    <form enctype="multipart/form-data" method="post" action=".">{% csrf_token %}
+12	    {% else %}
+13	    <form method="post" action=".">{% csrf_token %}
+14	   {% endif %}
+15	  {{ form.as_p }}
+19	        <input type="submit" value="Post" />
+20	   </form>
+21	{% endblock %}
