@@ -4,7 +4,7 @@ from tutablr.custom_fields import IntegerRangeField
 from django.db.models import signals
 from tutablr_app.signals import create_profile
 from datetime import datetime
-signals.post_save.connect(create_profile, sender=User)
+#signals.post_save.connect(create_profile, sender=User)
 
 # Model to extend the contrib.auth user model
 class UserProfile(models.Model):

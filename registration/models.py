@@ -75,7 +75,7 @@ class RegistrationManager(models.Manager):
 		new_user.last_name = last_name
 		new_user.is_active = True
 		new_user.save()
-		UserProfile(user = new_user, extra_details = extra_details).save()
+		UserProfile.objects.get_or_create(user = new_user, extra_details = extra_details);
 		registration_profile = self.create_profile(new_user)
 		
 		if send_email:
