@@ -134,6 +134,8 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'dajaxice',
+    'postman',
+    'pagination',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -146,6 +148,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'tutablr3609@gmail.com'
 EMAIL_HOST_PASSWORD = 'tutablr3609'
 
+
+# for messaging
+#TEMPLATE_CONTEXT_PROCESSORS = "postman.context_processors.inbox"
+POSTMAN_DISALLOW_ANONYMOUS = True
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.

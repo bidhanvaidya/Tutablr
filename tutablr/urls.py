@@ -29,6 +29,8 @@ urlpatterns = patterns('',
 	 url(r'^admin/', include(admin.site.urls)),
 	 url(r'^$', direct_to_template, {'template': 'index.html'}, 'index'),
 	 url(r'^index/$',  direct_to_template, {'template': 'index.html'}, 'index'),
+	 	
+	 url(r'^messages/', include('postman.urls')),
 	 #url(r'^accounts/register/$', register,
 	#	{'backend': 'registration.backends.default.DefaultBackend', 'form_class' : YourRegistrationForm},
 	#	name='registration_register'),
