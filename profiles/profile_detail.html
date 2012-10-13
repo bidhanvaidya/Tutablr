@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+	
+	{% load i18n %}
+	
+	{% block content %}
+	<h3>{% trans "User profile for" %} {{ user.first_name }} {{ user.last_name }} </h3>
+	<table >
+	        <tr>
+	       <th align="left">{% trans "Username" %}</th>
+	      <td>{{profile.user}} </td>
+	    </tr>
+	
+	        <tr>
+	        <th align="left">{% trans "First Name" %}</th>
+	      <td>{{profile.user.first_name}} </td>
+	    </tr>
+		<tr>
+	        <th align="left">{% trans "Last Name" %}</th>
+	      <td>{{profile.user.last_name}} </td>
+	    </tr>
+	
+	        <tr>
+	        <th align="left">{% trans "Email" %}</th>
+	      <td>{{profile.user.email}} </td>
+	   </tr>
+	       
+	    <tr>
+	        <th align="left">{% trans "Mobile Phone Number" %}</th>
+	     <td>{{profile.mobile_phone}} </td>
+	    </tr>
+	     <th align="left">{% trans "Home Phone Number" %}</th>
+	      <td>{{profile.home_phone}} </td>
+	    </tr>
+		<tr>
+	        <th align="left">{% trans "About Me" %}</th>
+	      <td>{{profile.about_me}} </td>
+	    </tr>
+		<tr>
+	        <th align="left">{% trans "Extra Details" %}</th>
+	      <td>{{profile.extra_details}} </td>
+	    </tr>
+	    </table>
+	<br>
+	<p>{% trans "Edit you user profile " %}<a href="/profiles/create/">{% trans "here" %}</a></p>
+	<p>{% trans "Reset your password " %}<a href="/accounts/password/reset/">{% trans "here" %}</a></p>
+	{% endblock %}

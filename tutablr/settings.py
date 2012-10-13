@@ -79,7 +79,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
-
+AUTH_PROFILE_MODULE = 'tutablr_app.UserProfile'
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'e607@c@*98c0n!^n6rnzzf2)dlsswrp%hdz!h5xo-se2(haa8)'
 
@@ -109,6 +109,7 @@ WSGI_APPLICATION = 'tutablr.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(DIRNAME,'../templates'),
+	os.path.join(DIRNAME,'..'),
     os.path.join(DIRNAME,'../registration/templates'),
     os.path.join(DIRNAME,'../dajaxice/templates'),
     os.path.join(DIRNAME,'../tutablr_app/templates'),
@@ -126,6 +127,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tutablr_app', # this is our main app
     'registration',
+	'profiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'south',
