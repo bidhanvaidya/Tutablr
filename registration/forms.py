@@ -49,6 +49,10 @@ class RegistrationForm(forms.Form):
 	
 	last_name = forms.CharField(widget = forms.TextInput(attrs=dict(attrs_dict, max_length=75)), label=_("Last name"))
 	
+	extra_details = forms.CharField(widget=forms.TextInput(attrs=dict(attrs_dict,
+															   maxlength=200)),
+																label=_("Extra Details"))
+	
 	def clean_username(self):
 		"""
 		Validate that the username is alphanumeric and is not already
