@@ -8,8 +8,22 @@
 }
 #login-btn {
 	position:relative;
-	left:145px;
-	top:-10px;
+	left:165px;
+	top:13px;
+}
+#logged-in-text {
+	position:relative;
+	top:20px;
+	left:20px;
+}
+#logged-out-nav{
+	position:relative;
+	top:5px;
+}
+#reset-btn {
+	position: relative;
+	left: -45px;
+	top: 15px;
 }
 #login-check {
 	position:relative;
@@ -29,6 +43,7 @@
 	border-radius: 4px;
 	border: 1px solid;
 	border-color:#DDD;
+	height:90px;
 }
 
 #logo {
@@ -61,10 +76,6 @@ h3.home-caption {
 	text-align:center;
 }
 
-#home-middle-area {
-
-
-}
 
 p {
 	text-align:justify;

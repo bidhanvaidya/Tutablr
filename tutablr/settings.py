@@ -1,7 +1,7 @@
 # Django settings for tutablr project.
 import os
 DIRNAME = os.path.dirname(__file__)
-
+LOGIN_REDIRECT_URL = '/test'
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 

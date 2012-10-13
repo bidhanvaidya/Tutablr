@@ -1,4 +1,3 @@
-from django.conf.urls import patterns, include, url
 from dajaxice.core import dajaxice_autodiscover
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
@@ -7,7 +6,9 @@ from tutablr_app.forms import YourRegistrationForm
 from registration.views import activate
 from registration.views import register
 from registration.backends.default import DefaultBackend
+from django.conf.urls.defaults import *
 
+from django.contrib.auth import views as auth_views
 
 dajaxice_autodiscover()
 
@@ -27,7 +28,8 @@ urlpatterns = patterns('',
 	('^profiles/edit', 'profiles.views.edit_profile', {'form_class': ProfileForm,}),
 	(r'^profiles/', include('profiles.urls')),
 	 url(r'^admin/', include(admin.site.urls)),
-	 url(r'^$', direct_to_template, {'template': 'index.html'}, 'index'),
+	 url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'),
+	# url(r'^$', direct_to_template, {'template': 'index.html'}, 'index'),
 	 url(r'^index/$',  direct_to_template, {'template': 'index.html'}, 'index'),
 	 #url(r'^accounts/register/$', register,
 	#	{'backend': 'registration.backends.default.DefaultBackend', 'form_class' : YourRegistrationForm},

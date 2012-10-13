@@ -56,14 +56,22 @@
 {% endblock %}
 
 {% block top-form %}
-                <a href="{% url index %}">{% trans "Home" %}</a> | 
 
-                {% if user.is_authenticated %}
+    <form id="login-form"  class="form span3 offset6" method="post" action="/test">{% csrf_token %}
+        {% if user.is_authenticated %}
+            <div id="logged-in-text">
                 {% trans "Logged in" %}: {{ user.username }} 
-                (<a href="{% url auth_logout %}">{% trans "Log out" %}</a> | 
-                <a href="{% url auth_password_change %}">{% trans "Change password" %}</a>)
-                {% else %}
-                <a href="{% url auth_login %}">{% trans "Log in" %}</a>
-                {% endif %}
-                <hr />
+                (<a href="{% url auth_logout %}">{% trans "Log out" %}</a> )
+            </div>
+        {% else %}
+            <div id="login-input">
+                   {{ form.username }}
+                   {{ form.password }}
+            </div>
+          <input id="login-btn" type="submit" value="{% trans 'Log in' %}" />
+          <input type="hidden" name="next" value="{{ next }}" />
+            <a id="reset-btn" href="{% url auth_password_reset %}">{% trans "Reset Password" %}</a>
+        {% endif %}
+    </form>
+
 {% endblock %}
