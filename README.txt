@@ -34,6 +34,9 @@ We are using South.
 
     - Initial Setup: Once we set up Postgres, the first command should be "python manage.py syncdb". This is the only time we will use sync db. THIS IS ALREADY DONE ON THIS REPO.
     - Ongoing syncs: 
+        1. python manage.py schemamigration tutablr_app --auto
+        2. (follow on screen isntructions if they appear)
+        3. python manage.py migrate tutablr_app
 
 **************************************
 **    Using Templates and Statics        **
