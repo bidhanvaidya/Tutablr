@@ -11,6 +11,7 @@ class UserProfile(models.Model):
     mobile_phone = models.IntegerField(max_length=11)
     about_me = models.TextField(max_length=400)
     extra_details = models.TextField(max_length=400)
+    is_approved = models.BooleanField(default=False)
 
     def __str__(self):  
           return "%s's profile" % self.user  
