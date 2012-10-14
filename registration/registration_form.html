@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_logged_out.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -6,7 +6,7 @@
 <p>Already got an account!</p>
 {% else %}
 <form method="post" action=".">{% csrf_token %}
-  {{ form.as_p }}
+  {{ reg_form.as_p }}
 
   <input type="submit" value="{% trans 'Submit' %}" />
 </form>

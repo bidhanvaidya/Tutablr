@@ -11,6 +11,9 @@
             </div>
         {% else %}
             <div id="login-input">
+  {% for field in form %}
+  <li>{{ field.errors|striptags }}</li>
+  {% endfor %}
                     {{ form.username|append_attr:"class:input-small"|append_attr:"placeholder:Username" }}
                     {{ form.password|append_attr:"class:input-small"|append_attr:"placeholder:Password" }}
             </div>

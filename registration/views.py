@@ -199,6 +199,7 @@ def register(request, backend, success_url=None, form_class=None,
     for key, value in extra_context.items():
         context[key] = callable(value) and value() or value
 
+    login_form = AuthenticationForm()
     return render_to_response(template_name,
-                              { 'form': form },
+                              { 'reg_form': form,'form':login_form },
                               context_instance=context)
