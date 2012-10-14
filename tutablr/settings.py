@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'south',
     'dajaxice',
+    'widget_tweaks',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
