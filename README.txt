@@ -15,6 +15,7 @@
         - install django 1.4.1 (pip install django)
         - install South (easy_install South)
         - install django-profiles (pip install django-profiles)
+        - install django widget tweaks (pip install django-widget-tweaks)
 6. Clone this repository 
 7. Everything should now run.
 
