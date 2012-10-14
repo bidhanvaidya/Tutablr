@@ -2,9 +2,15 @@
 {% load i18n %}
 
 {% block content %}
+{% if user.is_authenticated  %}
+<p>Already got an account!</p>
+{% else %}
 <form method="post" action=".">{% csrf_token %}
   {{ form.as_p }}
 
   <input type="submit" value="{% trans 'Submit' %}" />
 </form>
+
+{% endif %}
+
 {% endblock %}

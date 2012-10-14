@@ -7,17 +7,17 @@ from registration.views import activate
 from registration.views import register
 from registration.backends.default import DefaultBackend
 from django.conf.urls.defaults import *
-
 from django.contrib.auth import views as auth_views
-
-dajaxice_autodiscover()
-
-# Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+
 admin.autodiscover()
+dajaxice_autodiscover()
 
 urlpatterns = patterns('',
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
+	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
+	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
+
 	# Examples:
 	# url(r'^$', 'django_test_project.views.home', name='home'),
 	# url(r'^django_test_project/', include('django_test_project.foo.urls')),
@@ -29,8 +29,7 @@ urlpatterns = patterns('',
 	(r'^profiles/', include('profiles.urls')),
 	 url(r'^admin/', include(admin.site.urls)),
 	 url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'),
-	# url(r'^$', direct_to_template, {'template': 'index.html'}, 'index'),
-	 url(r'^index/$',  direct_to_template, {'template': 'index.html'}, 'index'),
+	 url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'),
 	 #url(r'^accounts/register/$', register,
 	#	{'backend': 'registration.backends.default.DefaultBackend', 'form_class' : YourRegistrationForm},
 	#	name='registration_register'),

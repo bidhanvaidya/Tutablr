@@ -1,0 +1,23 @@
+{% extends "base.html" %}{# This template is used to show the login box on the pages #}
+{% load i18n %}
+
+{% block top-form %}
+    {% load widget_tweaks %}
+    <form id="login-form"  class="form span3 offset6" method="post" action="/">{% csrf_token %}
+        {% if user.is_authenticated %}
+            <div id="logged-in-text">
+                {% trans "Logged in" %}: {{ user.username }} 
+                (<a href="{% url auth_logout %}">{% trans "Log out" %}</a> )
+            </div>
+        {% else %}
+            <div id="login-input">
+                    {{ form.username|append_attr:"class:input-small"|append_attr:"placeholder:Username" }}
+                    {{ form.password|append_attr:"class:input-small"|append_attr:"placeholder:Password" }}
+            </div>
+          <input id="login-btn" type="submit" value="{% trans 'Log in' %}" />
+          <input type="hidden" name="next" value="{{ next }}" />
+            <a id="reset-btn" href="{% url auth_password_reset %}">{% trans "Reset Password" %}</a>
+        {% endif %}
+    </form>
+
+{% endblock %}

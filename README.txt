@@ -85,5 +85,6 @@ Origin = the server (bitbucket) copy of the files
 *********************************************
         - Dajaxice: http://django-dajaxice.readthedocs.org/en/latest/
         - Ajax in Django:  http://www.pythondiary.com/tutorials/django-and-ajax-dajaxice.html
-        - Django Registration: 
-        - South (Database Management):
+        - Django Registration:  http://docs.b-list.org/django-registration/0.8/
+        - South (Database Management): http://south.readthedocs.org/en/0.7.6/tutorial/part1.html
+        - Django Widget Tweaks: http://pypi.python.org/pypi/django-widget-tweaks

@@ -4,8 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
     <head>
+        <link rel="icon" href="{{STATIC_URL}}tutablr/img/favicon.ico">
         <link rel="stylesheet" href="{{STATIC_URL}}bootstrap/css/bootstrap.css" />
         <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/general.css" />
+        {% block extra_head %} {% endblock %}
         <title>{% block title %}Tutablr{% endblock %}</title>
     </head>
 
@@ -43,13 +45,14 @@
         <footer class="footer">
             <div class="container">
                 {% block footer %}
-                <p id="footer-text">Copyright Lolcatz IT</p>
+                <p id="footer-text">&copy; Lolcatz IT</p>
                 {% endblock %}
             </div>
         </footer>
 
         <script src="{{STATIC_URL}}tutablr/js/jquery-1.8.2.js"></script>
         <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+        {% block extra_scripts %} {% endblock %}
     </body>
 
 </html>

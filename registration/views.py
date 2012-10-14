@@ -7,7 +7,7 @@ Views which allow users to create and activate accounts.
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-
+from django.contrib.auth.forms import AuthenticationForm
 from registration.backends import get_backend
 
 
