@@ -57,7 +57,7 @@
 
 {% block top-form %}
     {% load widget_tweaks %}
-    <form id="login-form"  class="form span3 offset6" method="post" action="/test">{% csrf_token %}
+    <form id="login-form"  class="form span3 offset6" method="post" action=".">{% csrf_token %}
         {% if user.is_authenticated %}
             <div id="logged-in-text">
                 {% trans "Logged in" %}: {{ user.username }} 
