@@ -15,6 +15,10 @@
 
 	{% if user.is_authenticated %}
 	{% trans "Logged in" %}: {{ user.username }} 
+	<a href="{% url postman_inbox %}">{% trans "Inbox" %}</a>
+	<a href="{% url postman_sent %}">{% trans "Sent" %}</a>
+	<a href="{% url postman_archives %}">{% trans "Archive" %}</a>
+	<a href="{% url postman_trash %}">{% trans "Trash" %}</a>
 	(<a href="{% url auth_logout %}">{% trans "Log out" %}</a> | 
 	<a href="{% url auth_password_change %}">{% trans "Change password" %}</a>)
 	{% else %}
