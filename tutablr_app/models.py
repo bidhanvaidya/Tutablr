@@ -44,6 +44,8 @@ class Enrolled(models.Model):  # student details regarding all classes taken
 	user_id = models.ForeignKey(User)
 	is_complete = models.BooleanField()
 	grade = models.IntegerField(blank = True)
+	def __str__(self):  
+		  return ' ' + self.unit_id.unit_name + ' (' + self.user_id.username + ')'
 
 class UnitDetails(models.Model): # has all the information regarding what subjects a user will and wants to tutor + price
 	user_id = models.ForeignKey(User)
