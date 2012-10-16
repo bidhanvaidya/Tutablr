@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+	<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
+    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
+	<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+	
+    <script type='text/javascript'>
+//<![CDATA[
+
+    $(document).ready(function() {
+		//alert(window.location.search.replace( "?", "" ))
+		var last_url = location.pathname.match(/\/user\/(.*)/)[1]
+		var user_id = '';
+		if(last_url[last_url.length-1] == '/'){
+			user_id = last_url.substring(0, last_url.length-1);
+		}else{
+			user_id = last_url;
+		}
+
+        $('#calendar').fullCalendar({
+                header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                },
+                selectable: true,
+                selectHelper: true,
+                select: function(start, end, allDay) {
+                        var title = prompt('Event Title:');
+                        if (title) {
+                                calendar.fullCalendar('renderEvent',
+                                {
+                                        title: title,
+                                        start: start,
+                                        end: end,
+                                        allDay: allDay
+                                },
+                                true // make the event "stick"
+                        );
+                        //put in the database
+                }
+                calendar.fullCalendar('unselect');
+                },
+                eventClick: function(event){
+                        var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm");
+                        var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm");
+                        var id = event.id;
+                        var title = event.title;
+                        $("#edit_start").val(start);   //this just populates the value into my dialog form
+                        $("#edit_end").val(end);
+                        $("#edit_title").val(title);
+                        $("#edit_event_id").val(id);
+                        $("#edit_class" ).dialog( "open" );
+						//$("<div>hello!</div>").dialog();
+
+                        //open the dialog
+                },
+                editable: true,
+                events: '../user_events.json/' + user_id
+        });
+        // jQuery UI Dialog
+        $('#edit_class').dialog({
+                autoOpen: false,
+                width: 400,
+				height: 300,
+                modal: true,
+                resizable: true,
+                buttons: {
+                        "Yes": function() {
+                                $(this).dialog("close");
+                                $(location).attr('href',$(this).dialog('option', 'anchor'));
+                                return true;
+                        },
+                        "No": function() {
+                                $(this).dialog("close");
+                                return false;
+                        }
+                }
+        });
+    });
+    //]]>
+    </script>
+    <style type='text/css'>
+/*<![CDATA[*/
+
+    body {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 14px;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
+
+    #calendar {
+    width: 900px;
+    margin: 0 auto;
+    }
+
+    /*]]>*/
+    </style>
+    <title></title>
+  </head>
+  <body>
+    <div id="edit_class" title="Edit Event">
+      <form action="">
+        <fieldset>
+          <label for="edit_start">Start</label> <input type="text" name=
+          "edit_start" id="edit_start" class=
+          "text ui-widget-content ui-corner-all" /> <br>
+		  <label for="edit_end">End</label> <input type="text" name="edit_end" id=
+          "edit_end" class="text ui-widget-content ui-corner-all" /><br>
+          <label for="title">Event Description</label> <input type="text" name=
+          "edit_title" id="edit_title" class=
+          "text ui-widget-content ui-corner-all" /> <input type="hidden" name=
+          "edit_event_id" id="edit_event_id" class=
+          "text ui-widget-content ui-corner-all" />
+        </fieldset>
+      </form>
+    </div>
+    <div id='calendar'></div>
+  </body>
+</html>

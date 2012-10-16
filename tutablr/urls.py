@@ -15,9 +15,10 @@ dajaxice_autodiscover()
 
 urlpatterns = patterns('',
 	 #url(r'^calendar/$', 'tutablr_app.views.calendar'),
-	 url(r'^calendar2', direct_to_template, {'template': 'calendar2.html'}, 'calendar2'),
-     url ( r'^calendar/$' , TemplateView . as_view ( template_name = "calendar.html" ), name = 'calendar' ),
-     url ( r'^events.json$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
+	 url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
+	 url ( r'^calendar/user_events.json/(?P<id>\d+)/$' , 'tutablr_app.views.user_calendar' , name = 'user_events.json' ),
+	 url ( r'^calendar/$' , TemplateView . as_view ( template_name = "calendar.html" ), name = 'calendar' ),
+     url ( r'^calendar/events.json$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
