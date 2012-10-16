@@ -25,13 +25,13 @@ def calendar(request):
 			'allDay' : False,
 			'backgroundColor' :  'blue',
 			'borderColor' : 'red',
+			'selectable' : True,
 			'editable' : True,
 			'type' : 'tutor_booking'
 			})
 		for booking in student_bookings:
 			booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
 			booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
-
 			calendar_list.append({
 			'id'  :  booking.id,
 			'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -41,6 +41,7 @@ def calendar(request):
 			'textColor' : 'black',
 			'backgroundColor' :  'yellow',
 			'borderColor' : 'red',
+			'selectable' : True,
 			'editable' : True,
 			'type' : 'student_booking'
 			})
@@ -48,7 +49,6 @@ def calendar(request):
 		for ut in unavailable_times:
 			session_start = ut.start_time.astimezone(timezone.get_default_timezone())
 			session_finish = ut.finish_time.astimezone(timezone.get_default_timezone())
-
 			calendar_list.append({
 			'id'  :  ut.id,
 			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -56,6 +56,7 @@ def calendar(request):
 			'title' : ut.description,
 			'allDay' : False,
 			'backgroundColor' :  'purple',
+			'selectable' : True,
 			'editable' : True,
 			'type' : 'unavailable'
 			})
@@ -63,7 +64,6 @@ def calendar(request):
 		for session in tutor_sessions:
 			session_start = session.start_time.astimezone(timezone.get_default_timezone())
 			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-
 			calendar_list.append({
 			'id'  :  session.id,
 			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -71,6 +71,7 @@ def calendar(request):
 			'title' : session.description,
 			'allDay' : False,
 			'backgroundColor' :  'blue',
+			'selectable' : True,
 			'editable' : True,
 			'type:' : 'tutor_session'
 			})
@@ -79,7 +80,6 @@ def calendar(request):
 		for session in student_sessions:
 			session_start = session.start_time.astimezone(timezone.get_default_timezone())
 			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-
 			calendar_list.append({
 			'id'  :  session.id,
 			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -88,6 +88,7 @@ def calendar(request):
 			'allDay' : False,
 			'textColor' : 'black',
 			'backgroundColor' :  'yellow',
+			'selectable' : True,
 			'editable' : True,
 			'type' : 'student_session'
 			})
@@ -115,6 +116,7 @@ def calendar(request):
 			return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
 			
 def user_calendar(request, id):
+		user_id = request.user.id
 		enrolls = Enrolled.objects.filter (user_id=id) # get all the enrolled class for the student
 		tutor_sessions = SessionTime.objects.filter (tutor_id=id) # get all the session time for the tutor
 		student_sessions = SessionTime.objects.filter (student_id=id) # get all the session time for the tutee/student
@@ -124,82 +126,141 @@ def user_calendar(request, id):
 		calendar_list = [] # list for calender inputs
 		#pending bookings-------------------------------------------------------------------
 		for booking in tutor_bookings:
-			booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-			booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
-			calendar_list.append({
-			'id'  :  booking.id,
-			'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-			'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-			'title' : booking.description,
-			'allDay' : False,
-			'backgroundColor' :  'blue',
-			'borderColor' : 'red',
-			'editable' : True,
-			'type' : 'tutor_booking'
-			})
+			if booking.student_id.id == user_id:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : booking.description,
+				'allDay' : False,
+				'backgroundColor' :  'blue',
+				'borderColor' : 'red',
+				'editable' : True,
+				'type' : 'tutor_booking'
+				})
+			else:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  'red',
+				'borderColor' : 'red',
+				'editable' : False,
+				'type' : 'tutor_booking'
+				})
 		for booking in student_bookings:
-			booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-			booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+			if booking.tutor_id.id == user_id:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
 
-			calendar_list.append({
-			'id'  :  booking.id,
-			'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-			'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-			'title' : booking.description,
-			'allDay' : False,
-			'textColor' : 'black',
-			'backgroundColor' :  'yellow',
-			'borderColor' : 'red',
-			'editable' : True,
-			'type' : 'student_booking'
-			})
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : booking.description,
+				'allDay' : False,
+				'textColor' : 'black',
+				'backgroundColor' :  'yellow',
+				'borderColor' : 'red',
+				'editable' : True,
+				'type' : 'student_booking'
+				})
+			else:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  'red',
+				'borderColor' : 'red',
+				'editable' : False,
+				'type' : 'tutor_booking'
+				})
 		# unavailable times---------------------------------------------------------------
 		for ut in unavailable_times:
 			session_start = ut.start_time.astimezone(timezone.get_default_timezone())
 			session_finish = ut.finish_time.astimezone(timezone.get_default_timezone())
-
 			calendar_list.append({
 			'id'  :  ut.id,
 			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
 			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-			'title' : ut.description,
+			'title' : 'Unavailable',
 			'allDay' : False,
-			'backgroundColor' :  'purple',
-			'editable' : True,
+			'backgroundColor' :  'red',
+			'borderColor' : 'red',
+			'editable' : False,
 			'type' : 'unavailable'
 			})
 		# for tutor sessions---------------------------------------------------------------
 		for session in tutor_sessions:
-			session_start = session.start_time.astimezone(timezone.get_default_timezone())
-			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-
-			calendar_list.append({
-			'id'  :  session.id,
-			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-			'title' : session.description,
-			'allDay' : False,
-			'backgroundColor' :  'blue',
-			'editable' : True,
-			'type:' : 'tutor_session'
-			})
+			if session.student_id.id == user_id:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : session.description,
+				'allDay' : False,
+				'backgroundColor' :  'blue',
+				'editable' : True,
+				'type:' : 'tutor_session'
+				})
+			else:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  'red',
+				'borderColor' : 'red',
+				'editable' : False,
+				'type' : 'student_session'
+				})
 		# end of tutor sessions---------------------------------------------------------------	
 		# for student sessions---------------------------------------------------------------
 		for session in student_sessions:
-			session_start = session.start_time.astimezone(timezone.get_default_timezone())
-			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+			if session.student_id.id == user_id:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : session.description,
+				'allDay' : False,
+				'textColor' : 'black',
+				'backgroundColor' :  'yellow',
+				'editable' : True,
+				'type' : 'student_session'
+				})
+			else:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
 
-			calendar_list.append({
-			'id'  :  session.id,
-			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-			'title' : session.description,
-			'allDay' : False,
-			'textColor' : 'black',
-			'backgroundColor' :  'yellow',
-			'editable' : True,
-			'type' : 'student_session'
-			})
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  'red',
+				'borderColor' : 'red',
+				'editable' : False,
+				'type' : 'student_session'
+				})
 		# # end of student sessions---------------------------------------------------------------	
 		# # for class times-----------------------------------------------------------------------
 		for enrolled in enrolls:
@@ -211,9 +272,9 @@ def user_calendar(request, id):
 				'id'  :  classtime.id,
 				'start'  :  classtime_start.strftime('%Y-%m-%d %H:%M:%S'),
 				'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
-				'title' : classtime.description, #Enrolled.objects.get(id = enrolled.id).unit_id ,
+				'title' : 'Unavailable',
 				'allDay' : False,
-				'backgroundColor' :  'green',
+				'backgroundColor' :  'red',
 				'editable' : False,
 				'type' : 'class'
 				})

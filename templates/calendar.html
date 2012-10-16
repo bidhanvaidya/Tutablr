@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
@@ -13,68 +13,81 @@
     <script type='text/javascript'>
 //<![CDATA[
 
-    $(document).ready(function() {
-        $('#calendar').fullCalendar({
-                header: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'month,agendaWeek,agendaDay'
-                },
-                selectable: true,
-                selectHelper: true,
-                select: function(start, end, allDay) {
-                        var title = prompt('Event Title:');
-                        if (title) {
-                                calendar.fullCalendar('renderEvent',
-                                {
-                                        title: title,
-                                        start: start,
-                                        end: end,
-                                        allDay: allDay
-                                },
-                                true // make the event "stick"
-                        );
-                        //put in the database
-                }
-                calendar.fullCalendar('unselect');
-                },
-                eventClick: function(event){
-                        var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm");
-                        var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm");
-                        var id = event.id;
-                        var title = event.title;
-                        $("#edit_start").val(start);   //this just populates the value into my dialog form
-                        $("#edit_end").val(end);
-                        $("#edit_title").val(title);
-                        $("#edit_event_id").val(id);
-                        $("#edit_class" ).dialog( "open" );
-						//$("<div>hello!</div>").dialog();
-
-                        //open the dialog
-                },
-                editable: true,
-                events: 'events.json'
-        });
-        // jQuery UI Dialog
-        $('#edit_class').dialog({
-                autoOpen: false,
-                width: 400,
-				height: 300,
-                modal: true,
-                resizable: true,
-                buttons: {
-                        "Yes": function() {
-                                $(this).dialog("close");
-                                $(location).attr('href',$(this).dialog('option', 'anchor'));
-                                return true;
-                        },
-                        "No": function() {
-                                $(this).dialog("close");
-                                return false;
-                        }
-                }
-        });
-    });
+$(document).ready(function() {
+	$('#calendar').fullCalendar({
+		header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+		},
+		defaultView: 'agendaWeek',
+		selectable: true,
+		selectHelper: true,
+		editable: true,
+		disableResizing: true,
+		select: function(start, end, allDay) {
+			if(selectable){
+				var start = $.fullCalendar.formatDate(start, "yyyy-MM-dd HH:mm");
+				var end = $.fullCalendar.formatDate(end, "yyyy-MM-dd HH:mm");
+				$("#add_start").val(start);   //this just populates the value into my dialog form
+				$("#add_end").val(end);
+				$("#add_event" ).dialog( "open" );
+				calendar.fullCalendar('unselect');
+			}
+		},
+		eventClick: function(event, jsEvent, view){
+				if(event.editable){
+					var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm");
+					var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm");
+					var id = event.id;
+					var title = event.title;
+					$("#edit_start").val(start);
+					$("#edit_end").val(end);
+					$("#edit_title").val(title);
+					$("#edit_event_id").val(id);
+					$("#edit_event" ).dialog( "open" );
+				}
+		},
+		events: 'events.json'
+	});
+	// jQuery UI Dialog
+	$('#edit_event').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 300,
+			modal: true,
+			resizable: true,
+			buttons: {
+					"Yes": function() {
+							$(this).dialog("close");
+							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							return true;
+					},
+					"No": function() {
+							$(this).dialog("close");
+							return false;
+					}
+			}
+	});
+	$('#add_event').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 300,
+			modal: true,
+			resizable: true,
+			buttons: {
+					"Yes": function() {
+							$(this).dialog("close");
+							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							return true;
+					},
+					"No": function() {
+							$(this).dialog("close");
+							return false;
+					}
+			}
+	});
+});
     //]]>
     </script>
     <style type='text/css'>
@@ -97,7 +110,7 @@
     <title></title>
   </head>
   <body>
-    <div id="edit_class" title="Edit Event">
+    <div id="edit_event" title="Edit Event">
       <form action="">
         <fieldset>
           <label for="edit_start">Start</label> <input type="text" name=
@@ -110,6 +123,17 @@
           "text ui-widget-content ui-corner-all" /> <input type="hidden" name=
           "edit_event_id" id="edit_event_id" class=
           "text ui-widget-content ui-corner-all" />
+        </fieldset>
+      </form>
+    </div>
+	<div id="add_event" title="Add Event">
+      <form action="">
+        <fieldset>
+		  <label for="event type">Event Type</label> <input type="text" name="add_type" id="add_type" class="text ui-widget-content ui-corner-all" /><br>
+          <label for="edit_start">Start</label> <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" /> <br>
+		  <label for="add_end">End</label> <input type="text" name="add_end" id="add_end" class="text ui-widget-content ui-corner-all" /><br>
+          <label for="add_title">Event Description</label> <input type="text" name="add_title" id="add_title" class="text ui-widget-content ui-corner-all" /> 
+		  <input type="hidden" name="addevent_id" id="add_event_id" class="text ui-widget-content ui-corner-all" />
         </fieldset>
       </form>
     </div>
