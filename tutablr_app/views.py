@@ -99,7 +99,7 @@ def calendar(request):
 				classtime_start = classtime.start_time.astimezone(timezone.get_default_timezone())
 				classtime_finish = classtime.finish_time.astimezone(timezone.get_default_timezone())
 				calendar_list.append({
-				'id'  :  classtime.id + 1000,
+				'id'  :  classtime.id,
 				'start'  :  classtime_start.strftime('%Y-%m-%d %H:%M:%S'),
 				'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
 				'title' : classtime.description, #Enrolled.objects.get(id = enrolled.id).unit_id ,
@@ -179,6 +179,7 @@ def update(request, id):
 				raise http.Http404
 	else:
 		raise http.Http404
+		
 def add(request):
 	if request.method == 'POST': 
 		user_id = request.user.id
