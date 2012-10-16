@@ -94,4 +94,6 @@ class Booking(models.Model):
 	tutor_id = models.ForeignKey(User, related_name='tutor_id+')
 	student_id = models.ForeignKey(User, related_name='student_id+')
 	is_rejected = models.BooleanField(default=False)
-	is_confirmed = models.BooleanField(default=False)    
+	is_confirmed = models.BooleanField(default=False)
+	description = models.CharField(max_length = 56, default = '')
+    
