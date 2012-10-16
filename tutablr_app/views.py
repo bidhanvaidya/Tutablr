@@ -166,9 +166,11 @@ def update(request):
 					unit_id = booking.unit_id,
 					)
 					session.save()
-					booking.save()
-				else:
 					booking.delete()
+				elif booking.is_rejected:
+					booking.delete()
+				else:
+					booking.save()
 				return http.HttpResponse('updated')
 			else:
 				raise http.Http404
