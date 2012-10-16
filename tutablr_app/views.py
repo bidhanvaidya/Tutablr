@@ -114,9 +114,11 @@ def calendar(request):
 		else:
 			return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
 			
-	
-def delete(request, id):
+
+#POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
+def delete(request):
 	if request.method == 'POST': 
+		id = request.POST.get('id')
 		user_id = request.user.id
 		if request.POST.get('type', None) == 'tutor_booking' or request.POST.get('type', None) == 'student_booking':
 			booking = Booking.objects.filter(pk=id)
@@ -141,9 +143,11 @@ def delete(request, id):
 				raise http.Http404
 	else:
 		raise http.Http404
-		
-def update(request, id):
+
+#POST requests here must also have a description, start_time, and finish_time
+def update(request):
 	if request.method == 'POST': 
+		id = request.POST.get('id')
 		user_id = request.user.id			
 		if request.POST.get('type') == 'tutor_booking' or request.POST.get('type') == 'student_booking':
 			booking = Booking.objects.filter(pk=id)
@@ -179,7 +183,8 @@ def update(request, id):
 				raise http.Http404
 	else:
 		raise http.Http404
-		
+
+#POST requests here must also have a description, start_time, and finish_time		
 def add(request):
 	if request.method == 'POST': 
 		user_id = request.user.id
