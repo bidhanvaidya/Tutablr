@@ -149,14 +149,35 @@ def update(request):
 	if request.method == 'POST': 
 		id = request.POST.get('id')
 		user_id = request.user.id			
-		if request.POST.get('type') == 'tutor_booking' or request.POST.get('type') == 'student_booking':
+		if request.POST.get('type') == 'tutor_booking':
 			booking = Booking.objects.filter(pk=id)
-			if booking.tutor_id == user_id or booking.student_id == user_id:
+			if booking.tutor_id == user_id:
 				booking.description = request.POST.get('description')
 				booking.start_time = request.POST.get('start_time')
 				booking.finish_time = request.POST.get('finish_time')
 				booking.is_rejected = request.POST.get('is_rejected')
 				booking.is_confirmed = request.POST.get('is_confirmed')
+				if booking.is_confirmed:
+					session = SessionTime(tutor_id = booking.tutor_id, 
+					student_id = booking.user_id, 
+					description = booking.description,
+					start_time = booking.start_time,
+					finish_time = booking.finish_time,
+					unit_id = booking.unit_id,
+					)
+					session.save()
+					booking.save()
+				else:
+					booking.delete()
+				return http.HttpResponse('updated')
+			else:
+				raise http.Http404
+		if request.POST.get('type') == 'student_booking':
+			booking = Booking.objects.filter(pk=id)
+			if booking.student_id == user_id:
+				booking.description = request.POST.get('description')
+				booking.start_time = request.POST.get('start_time')
+				booking.finish_time = request.POST.get('finish_time')
 				booking.save()
 				return http.HttpResponse('updated')
 			else:
@@ -188,19 +209,19 @@ def update(request):
 def add(request):
 	if request.method == 'POST': 
 		user_id = request.user.id
-		if request.POST.get('type') == 'tutor_booking':
-			booking = Booking(tutor_id = user_id, 
-				student_id = request.POST.get('student_id'), 
-				description = request.POST.get('description'),
-				start_time = request.POST.get('start_time'),
-				finish_time = request.POST.get('finish_time'),
-				unit_id = request.POST.get('unit_id'),
-				is_rejected = False,
-				is_confirmed = False
-				)
-			booking.save()
-			return http.HttpResponse('added')
-		elif request.POST.get('type') == 'student_booking':
+		# if request.POST.get('type') == 'tutor_booking':
+			# booking = Booking(tutor_id = user_id, 
+				# student_id = request.POST.get('student_id'), 
+				# description = request.POST.get('description'),
+				# start_time = request.POST.get('start_time'),
+				# finish_time = request.POST.get('finish_time'),
+				# unit_id = request.POST.get('unit_id'),
+				# is_rejected = False,
+				# is_confirmed = False
+				# )
+			# booking.save()
+			# return http.HttpResponse('added')
+		if request.POST.get('type') == 'student_booking':
 			booking = Booking(tutor_id = request.POST.get('tutor_id'), 
 				student_id = user_id, 
 				description = request.POST.get('description'),
