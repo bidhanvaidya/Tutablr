@@ -24,11 +24,16 @@ $.ajaxSetup({
 
 
 
-$('#test-btn').click(function(){
-   alert("working");
+$('#login-btn').click(function(){
+   console.log("working");
     var username = $('#id_username').val();
     var password = $('#id_password').val();
-    alert(username);
+    if (username == "" || password == "") {
+        $("#login-input").addClass("control-group error")
+        alert("Please enter a valid username and password.");
+    }
+    console.log(username);
+    
     $.ajax({
       url: '/login',
       type: 'POST',
@@ -36,14 +41,14 @@ $('#test-btn').click(function(){
       data: {
         username:username,
         password:password
-        },
+    },
 
         success: function(data) {
             if (data==1) {
-                alert("log in works");
+                console.log("log in works");
             }
             else if(data==0){
-                alert("log in failed");
+                console.log(data);
             }
         }
     });

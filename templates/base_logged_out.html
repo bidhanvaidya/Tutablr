@@ -3,22 +3,27 @@
 
 {% block top-form %}
     {% load widget_tweaks %}
-    <form id="login-form"  class="form span3 offset6" method="post" action="/">{% csrf_token %}
+    <form id="login-form"  class="form span3 offset6" method="post" action="/login">{% csrf_token %}
         {% if user.is_authenticated %}
+            <img id="usyd-logo_id"src="{{STATIC_URL}}tutablr/img/usyd-logo.jpg" alt="usyd-logo" width="70" height="60">
             <div id="logged-in-text">
-                {% trans "Logged in" %}: {{ user.username }} 
-                (<a href="{% url auth_logout %}">{% trans "Log out" %}</a> )
+                <p id="welcome_id">Welcome {{ user.username }} </p>
+                <div id="login-links">
+                    <a href="{% url auth_logout %}">{% trans "Logout" %}</a>  |
+                    <a href="#">{% trans "My Timetable" %}</a>                     
+                </div>
+
             </div>
         {% else %}
             <div id="login-input">
-                    {{ form.username|append_attr:"class:input-small"|append_attr:"placeholder:Username" }}
+                     {{ form.username|append_attr:"class:input-small"|append_attr:"placeholder:Username" }}
                     {{ form.password|append_attr:"class:input-small"|append_attr:"placeholder:Password" }}
+                    <button id="login-btn"type="button">Log In</button>
+                     <a id="reset-btn" href="{% url auth_password_reset %}">{% trans "Reset Password" %}</a>
             </div>
-                                {{form.errors}}
-          <input id="login-btn" type="submit" value="{% trans 'Log in' %}" />
+                                {{form.errors}}          
           <input type="hidden" name="next" value="{{ next }}" />
-            <a id="reset-btn" href="{% url auth_password_reset %}">{% trans "Reset Password" %}</a>
+
         {% endif %}
     </form>
-    <button id="test-btn"type="button">Submit</button>
 {% endblock %}

@@ -8,8 +8,8 @@
 }
 #login-btn {
 	position:relative;
-	left:165px;
-	top:13px;
+	left:155px;
+	top:-2px;
 }
 #logged-in-text {
 	position:relative;
@@ -22,8 +22,8 @@
 }
 #reset-btn {
 	position: relative;
-	left: -45px;
-	top: 15px;
+	left: -50px;
+	top: 0px;
 }
 #login-check {
 	position:relative;
@@ -84,4 +84,27 @@ h3.home-caption {
 
 p {
 	text-align:justify;
+}
+.error-input {
+     border:2px solid #dadada;
+    border-radius:7px;
+    font-size:20px;
+    padding:5px; 
+}
+
+#usyd-logo_id {
+    position: relative;
+    top: 17px;
+    left:5px;
+}
+
+#welcome_id {
+    position: relative;
+    top: -55px;
+    left: 60px;  
+}
+#login-links {
+    position: relative;
+    top: -63px;
+    left: 60px;  
 }
