@@ -31,9 +31,7 @@ $('#login-btn').click(function(){
     if (username == "" || password == "") {
         $("#login-input").addClass("control-group error")
         alert("Please enter a valid username and password.");
-    }
-    console.log(username);
-    
+    }    
     $.ajax({
       url: '/login',
       type: 'POST',
@@ -45,13 +43,16 @@ $('#login-btn').click(function(){
 
         success: function(data) {
             if (data==1) {
-                console.log("log in works");
+                var pathname = window.location.pathname;
+                window.location.replace(pathname);
             }
             else if(data==0){
-                console.log(data);
+                alert("Username and Password do not match!");
             }
         }
     });
 
 });
+
+
 
