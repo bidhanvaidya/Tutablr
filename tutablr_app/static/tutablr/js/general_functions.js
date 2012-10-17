@@ -1,3 +1,5 @@
+var baseURL = "http://127.0.0.1:8000/";
+
 $.ajaxSetup({ 
      beforeSend: function(xhr, settings) {
          function getCookie(name) {
@@ -49,6 +51,17 @@ $('#login-btn').click(function(){
             else if(data==0){
                 alert("Username and Password do not match!");
             }
+        }
+    });
+
+});
+
+$('#logout-btn').click(function(){
+    $.ajax({
+      url: '/accounts/logout',
+      type: 'GET',
+        success: function(data) {
+             window.location.replace(baseURL);
         }
     });
 
