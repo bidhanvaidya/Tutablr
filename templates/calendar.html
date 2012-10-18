@@ -162,27 +162,23 @@ function showText(num)
         </fieldset>
       </form>
     </div>
-	<div id="add_event" title="Add Event">
-      <form action="/../../add_unavailable" name="addForm" method="post">{% csrf_token %}
+    <div id="add_event" title="Add Event">
+    <form action="/../../add_unavailable" name="addForm" method="post">{% csrf_token %}
         <fieldset>
-		<label for = "add_date_start"> Start Date </label> <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" /> <br>
-		<label for = "add_date_end"> End Date </label> <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" /> <br>
-          <label for="edit_start">Start</label> <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
-		  <label for="add_end">End</label> <input type="timeField" name="add_end" id="add_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
-          <label for="add_title">Event Description</label> <input type="text" name="add_title" id="add_title" class="text ui-widget-content ui-corner-all" /> <br>
-		  <div id="add_uos_div">
-		  <label for="add_uos">UoS</label> <input type="text" name="add_uos" id="add_uos" class="text ui-widget-content ui-corner-all" /> </div>
-            <select name="uos_id">
-            
-            {% for entry in uos %}
-           
-                <option value="{{ entry.unit_id }}">{{ entry.unit_name }}</option>
-            {% endfor %}
-</select>
+            <label for = "add_date_start"> Start Date </label>
+                <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" /> <br>
+            <label for = "add_date_end"> End Date </label> 
+                <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" /> <br>
+            <label for="edit_start">Start</label> 
+                <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
+            <label for="add_end">End</label> 
+                <input type="timeField" name="add_end" id="add_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
+            <label for="add_title">Event Description</label> 
+                <input type="text" name="add_title" id="add_title" class="text ui-widget-content ui-corner-all" /> <br>
         </fieldset>
-        <input type="submit" value="Yes"> 
-         <button type="button" id = "a">No</button>
-      </form>
+    <input type="submit" value="Yes"> 
+    <button type="button" id = "a">No</button>
+    </form>
     </div>
     <div id='calendar'></div>
   </body>
