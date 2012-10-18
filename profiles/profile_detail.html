@@ -41,6 +41,8 @@
 	    </tr>
 	    </table>
 	<br>
+	
+<a href="{% url postman_write profile.user %}"> write to {{ profile.user.first_name }} </a>
 	<p>{% trans "Edit you user profile " %}<a href="/profiles/create/">{% trans "here" %}</a></p>
 	<p>{% trans "Reset your password " %}<a href="/accounts/password/reset/">{% trans "here" %}</a></p>
 	{% endblock %}

@@ -1,0 +1,75 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+    <head>
+        <link rel="icon" href="{{STATIC_URL}}tutablr/img/favicon.ico">
+        <link rel="stylesheet" href="{{STATIC_URL}}bootstrap/css/bootstrap.css" />
+        <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/general.css" />
+        {% block extra_head %} {% endblock %}
+        <title>{% block title %}Tutablr{% endblock %}</title>
+    </head>
+
+    <body class="well">
+         <div id="main-container" class="container-fluid">
+                    <div class="row-fluid">
+                        <div id="logo" class="span3">
+                            <img src="{{STATIC_URL}}tutablr/img/logo.gif" alt="Logo" width="110" height="90" />
+                            <h1 id="logo-text">TuTablr</h1>
+                        </div>
+                        <div id="login-div">
+                                        {%block top-form %}{% endblock %}  {# This is the area for the login box or login information if the user is logged in #}
+                        </div>
+                        
+                    </div>       
+                    <div id="logged-out-nav" class="navbar"> 
+                        <div class="navbar-inner">
+                        {% block navigation-bar %} {# Navigation Bar #}
+                            <ul class="nav">
+                                <li><a href="/">Home</a></li>
+                                <li><a href="/accounts/register">Register As Tutor</a></li>
+                                <li><a href="#">How TuTablr Works</a></li>
+                            </ul>
+                        {% endblock %}
+                        </div>
+                    </div>  
+
+
+	{% if user.is_authenticated %}
+	{% trans "Logged in" %}: {{ user.username }} 
+	<a href="{% url postman_inbox %}">{% trans "Inbox" %}</a>
+	<a href="{% url postman_sent %}">{% trans "Sent" %}</a>
+	<a href="{% url postman_archives %}">{% trans "Archive" %}</a>
+	<a href="{% url postman_trash %}">{% trans "Trash" %}</a>
+	(<a href="{% url auth_logout %}">{% trans "Log out" %}</a> | 
+	<a href="{% url auth_password_change %}">{% trans "Change password" %}</a>)
+	{% else %}
+	<a href="{% url auth_login %}">{% trans "Log in" %}</a>
+	{% endif %}
+	<hr />
+        {% endblock %}
+    </div>
+
+
+                    <div id="main-area" class="row-fluid">
+                        {% block content %}
+                            <p>MAIN AREA</p>
+                        {% endblock %}
+                    </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                {% block footer %}
+                <p id="footer-text">&copy; Lolcatz IT</p>
+                {% endblock %}
+            </div>
+        </footer>
+
+        <script src="{{STATIC_URL}}tutablr/js/jquery-1.8.2.js"></script>
+        <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+        <script src="{{STATIC_URL}}tutablr/js/general_functions.js"></script>
+        {% block extra_scripts %} {% endblock %}
+    </body>
+
+</html>
