@@ -325,66 +325,36 @@ def delete(request):
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
 def update(request):
-    if request.method == 'POST': 
-        id = request.POST.get('id')
-        user_id = request.user.id           
-        if request.POST.get('type') == 'tutor_booking':
-            booking = Booking.objects.filter(pk=id)
-            if booking.tutor_id == user_id:
-                booking.description = request.POST.get('description')
-                booking.start_time = request.POST.get('start_time')
-                booking.finish_time = request.POST.get('finish_time')
-                booking.is_rejected = request.POST.get('is_rejected')
-                booking.is_confirmed = request.POST.get('is_confirmed')
-                if booking.is_confirmed:
-                    session = SessionTime(tutor_id = booking.tutor_id, 
-                    student_id = booking.user_id, 
-                    description = booking.description,
-                    start_time = booking.start_time,
-                    finish_time = booking.finish_time,
-                    unit_id = booking.unit_id,
-                    )
-                    session.save()
-                    booking.delete()
-                elif booking.is_rejected:
-                    booking.delete()
-                else:
-                    booking.save()
-                return http.HttpResponse('updated')
-            else:
-                raise http.Http404
-        if request.POST.get('type') == 'student_booking':
-            booking = Booking.objects.filter(pk=id)
-            if booking.student_id == user_id:
-                booking.description = request.POST.get('description')
-                booking.start_time = request.POST.get('start_time')
-                booking.finish_time = request.POST.get('finish_time')
-                booking.save()
-                return http.HttpResponse('updated')
-            else:
-                raise http.Http404
-        elif request.POST.get('type') == 'unavailable':
-            unavailable = UnavailableTime.objects.filter(pk=id)
-            if unavailable.user_id==user_id:
-                description = request.POST.get('description')
-                booking.start_time = request.POST.get('start_time')
-                booking.finish_time = request.POST.get('finish_time')
-                unavailable.save()
-                return http.HttpResponse('updated')
-            else:
-                raise http.Http404
-        elif request.POST.get('type') == 'student_session' or request.POST.get('type') == 'tutor_session':
-            session = SessionTime.objects.filter(pk=id)
-            if session.tutor_id == user_id or session.student_id == user_id:
-                description = request.POST.get('description')
-                start_time = request.POST.get('start_time')
-                finish_time = request.POST.get('finish_time')
-                session.save()
-                return http.HttpResponse('updated')
-            else:
-                raise http.Http404
-    else:
-        raise http.Http404
+		
+		if request.method == 'POST':
+			
+			id = request.POST.get('edit_event_id')
+			 
+
+
+
+			unavailable = UnavailableTime.objects.get(pk=id)
+			user = unavailable.user_id
+			print "hello"
+			print user.id
+			if user.id== request.user.id:
+				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
+				start= time.strptime(start, "%d:%m:%Y %H:%M")
+				start_datetime= datetime.datetime(*start[:6])
+				end=  request.POST.get('edit_end_date') + " "+ request.POST.get('edit_end')
+				end= time.strptime(end, "%d:%m:%Y %H:%M")
+				end_datetime= datetime.datetime(*end[:6])
+				unavailable.description = request.POST.get('edit_title')
+				unavailable.start_time = start_datetime
+				unavailable.finish_time = end_datetime
+				print "hello"
+				unavailable.save()
+				return redirect('/calendar')
+			else:
+				raise http.Http404
+
+		else:
+			return redirect('/calendaKKr')
 
 #POST requests here must also have a description, start_time, and finish_time
 ##type, tutor_id, student_id, description, start_time, finish_time, unit_id 
