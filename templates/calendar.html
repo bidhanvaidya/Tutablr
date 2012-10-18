@@ -163,7 +163,7 @@ function showText(num)
       </form>
     </div>
 	<div id="add_event" title="Add Event">
-      <form action="/../../add" name="addForm" method="post">{% csrf_token %}
+      <form action="/../../add_unavailable" name="addForm" method="post">{% csrf_token %}
         <fieldset>
 		<label for = "add_date_start"> Start Date </label> <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" /> <br>
 		<label for = "add_date_end"> End Date </label> <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" /> <br>
