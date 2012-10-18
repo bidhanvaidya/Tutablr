@@ -32,7 +32,13 @@ $.ajaxSetup({
 
 
 $("#login-form").submit(function(){
-    var redirectURL = baseURL + getUrlVar("next");
+    var redirectURL;
+    if (getUrlVar("next")== "") {
+        redirectURL = baseURL + "/dashboard";
+    }
+    else {
+        redirectURL = baseURL + getUrlVar("next");
+    }
     var username = $('#id_username').val();
     var password = $('#id_password').val();
     if (username == "" || password == "") {

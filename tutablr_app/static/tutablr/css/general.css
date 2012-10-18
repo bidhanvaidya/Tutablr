@@ -1,5 +1,5 @@
 #main-container {
-                    min-height:  500px;
+                    min-height:  650px;
 	margin:0 auto;
 	float: none;
 	width:980px;
@@ -45,6 +45,7 @@
 	border: 1px solid;
 	border-color:#DDD;
 	height:90px;
+	width:250px;
 }
 
 #logo {
