@@ -29,7 +29,7 @@ urlpatterns = patterns('',
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
-	(r'^delete/$','tutablr_app.views.delete'),
+	(r'^delete$','tutablr_app.views.delete'),
 	(r'^update$','tutablr_app.views.update'),
 	(r'^add_unavailable$','tutablr_app.views.add_unavailable'),
 

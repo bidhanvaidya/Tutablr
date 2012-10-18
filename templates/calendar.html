@@ -161,10 +161,8 @@ function showText(num)
     <div id="edit_event" title="Edit Event">
       <form action="/../../update" name="editForm" method="post">{% csrf_token %}
         <fieldset>
-		    <label for="Delete">Delete</label>
-		        <input type="radio" id="type" name="radio" onclick="showText(1)" value = "1" />
-		    <label for="Edit">Edit</label>
-		        <input type="radio" id="type" name="radio" onclick="showText(0)" value= "0" checked /><br>
+		   
+		   
 		    <div id="edit_div">
         		
 			    <label for = "edit_date_end"> End Date </label> 
@@ -182,6 +180,7 @@ function showText(num)
         </fieldset>
          <input type="submit" value="Yes"> 
          <button type="button" id = "">No</button>
+         <button  type= "submit" formaction= "/../delete"  >Delete</button>
       </form>
     </div>
     <div id="add_event" title="Add Event">

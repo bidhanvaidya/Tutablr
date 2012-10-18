@@ -295,29 +295,16 @@ def user_calendar(request, id):
 ##id, type
 def delete(request):
     if request.method == 'POST': 
-        id = request.POST.get('id')
-        user_id = request.user.id
-        if request.POST.get('type', None) == 'tutor_booking' or request.POST.get('type', None) == 'student_booking':
-            booking = Booking.objects.filter(pk=id)
-            if booking.tutor_id == user_id or booking.student_id == user_id:
-                booking.delete()
-                return http.HttpResponse('deleted')
-            else:
-                raise http.Http404
-        elif request.POST.get('type') == 'unavailable':
-            unavailable = UnavailableTime.objects.filter(pk=id)
-            if unavailable.user_id==user_id:
-                unavailable.delete()
-                return http.HttpResponse('deleted')
-            else:
-                raise http.Http404
-        elif request.POST.get('type') == 'student_session' or request.POST.get('type') == 'tutor_session':
-            session = SessionTime.objects.filter(pk=id)
-            if session.tutor_id == user_id or session.student_id == user_id:
-                session.delete()
-                return http.HttpResponse('deleted')
-            else:
-                raise http.Http404
+				id = request.POST.get('edit_event_id')
+				user_id = request.user.id
+				unavailable = UnavailableTime.objects.get(pk=id)
+				user = unavailable.user_id
+				if user.id== request.user.id:
+					unavailable.delete()
+					return redirect('/calendar')
+				else:
+					raise http.Http404
+        
     else:
         raise http.Http404
 
