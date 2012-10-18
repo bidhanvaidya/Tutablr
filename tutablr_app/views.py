@@ -290,6 +290,7 @@ def user_calendar(request, id):
             return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
             
 #POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
+##id, type
 def delete(request):
     if request.method == 'POST': 
         id = request.POST.get('id')
@@ -318,7 +319,9 @@ def delete(request):
     else:
         raise http.Http404
 
+
 #POST requests here must also have a description, start_time, and finish_time
+##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
 def update(request):
     if request.method == 'POST': 
         id = request.POST.get('id')
@@ -381,64 +384,87 @@ def update(request):
     else:
         raise http.Http404
 
-#POST requests here must also have a description, start_time, and finish_time       
-def add(request):
+#POST requests here must also have a description, start_time, and finish_time
+##type, tutor_id, student_id, description, start_time, finish_time, unit_id 
+#http://api.jquery.com/jQuery.post/
+
+# <script>
+  # /* attach a submit handler to the form */
+  # $("#searchForm").submit(function(event) {
+
+    # /* stop form from submitting normally */
+    # event.preventDefault(); 
+        
+    # /* get some values from elements on the page: */
+    # var $form = $( this ),
+        # start_date = $form.find( 'input[name="add_start_date"]' ).val(),
+        # end_date = $form.find( 'input[name="add_end_date"]' ).val(),
+        # type = $form.find( 'input[name="radio"]' ).val(),
+        # start_time = $form.find( 'input[name="add_start"]' ).val(),
+        # end_time = $form.find( 'input[name="add_end"]' ).val(),
+        # description = $form.find( 'input[name=name="add_title"]' ).val(),
+        # unit_id = $form.find( 'input[name=name="name="add_uos""]' ).val(),
+        # url = $form.attr( 'action' );
+
+    # /* Send the data using post and put the results in a div */
+    # $.post( url, { 'start_time': start_date + ' ' + start_time, 'end_time': end_date + ' ' + end_time, 'type' : type, 'description' : description, 'unit_id' : unit_id},
+      # function( data ) {
+          # var content = $( data ).find( '#content' );
+          # $( "#result" ).empty().append( content );
+      # }
+    # );
+  # });
+# </script>
+    
+
+def add_unavailable(request):
+    
     if request.method == 'POST': 
-        user_id = request.user.id
+        
         # if request.POST.get('type') == 'tutor_booking':
-            # booking = Booking(tutor_id = user_id, 
-                # student_id = request.POST.get('student_id'), 
-                # description = request.POST.get('description'),
-                # start_time = request.POST.get('start_time'),
-                # finish_time = request.POST.get('finish_time'),
-                # unit_id = request.POST.get('unit_id'),
-                # is_rejected = False,
-                # is_confirmed = False
-                # )
-            # booking.save()
-            # return http.HttpResponse('added')
-        if request.POST.get('type') == 'student_booking':
-            booking = Booking(tutor_id = request.POST.get('tutor_id'), 
-                student_id = user_id, 
-                description = request.POST.get('description'),
-                start_time = request.POST.get('start_time'),
-                finish_time = request.POST.get('finish_time'),
-                unit_id = request.POST.get('unit_id'),
-                is_rejected = False,
-                is_confirmed = False
-                )
-            booking.save()
-            return http.HttpResponse('added')
-        elif request.POST.get('type') == 'unavailable':
-            unavailable = UnavailableTime(user_id = user_id, 
-                description = request.POST.get('description'),
-                start_time = request.POST.get('start_time'),
-                finish_time = request.POST.get('finish_time'),
-                )
+        # booking = Booking(tutor_id = user_id, 
+        # student_id = request.POST.get('student_id'), 
+        # description = request.POST.get('description'),
+        # start_time = request.POST.get('start_time'),
+        # finish_time = request.POST.get('finish_time'),
+        # unit_id = request.POST.get('unit_id'),
+        # is_rejected = False,
+        # is_confirmed = False
+        # )
+        # booking.save()
+        # return http.HttpResponse('added')
+            start=  request.POST.get('add_start_date') + " " + request.POST.get('add_start')
+            start= time.strptime(start, "%d:%m:%Y %H:%M")
+            start_datetime= datetime.datetime(*start[:6])
+            end=  request.POST.get('add_end_date') + " "+ request.POST.get('add_end')
+            end= time.strptime(end, "%d:%m:%Y %H:%M")
+            end_datetime= datetime.datetime(*end[:6])
+    
+            unavailable = UnavailableTime(user_id = request.user, 
+                description = request.POST.get('add_title'),
+                start_time = start_datetime,
+                finish_time = end_datetime)
+            print "test"
             unavailable.save()
-            return http.HttpResponse('added')
-        elif request.POST.get('type') == 'student_session':
-            session = SessionTime(tutor_id = request.POST.get('tutor_id'), 
-                student_id = user_id, 
-                description = request.POST.get('description'),
-                start_time = request.POST.get('start_time'),
-                finish_time = request.POST.get('finish_time'),
-                unit_id = request.POST.get('unit_id'),
-                )
-            session.save()
-            return http.HttpResponse('added')
-        elif request.POST.get('type') == 'tutor_session':
-            session = SessionTime(tutor_id = user_id, 
-                student_id = request.POST.get('student_id'), 
-                description = request.POST.get('description'),
-                start_time = request.POST.get('start_time'),
-                finish_time = request.POST.get('finish_time'),
-                unit_id = request.POST.get('unit_id'),
-                )
-            session.save()
-            return http.HttpResponse('added')
-    else:
-        raise http.Http404
+            return redirect('/calendar')
+
+def add_booking(request):
+    if request.method == 'POST':
+        start=  request.POST.get('edit_start_date') + " " + request.POST.get('add_start')
+        start= time.strptime(start, "%d:%m:%Y %H:%M")
+        start_datetime= datetime.datetime(*start[:6])
+
+        end=  request.POST.get('edit_start_date') + " " + request.POST.get('add_end')
+        end= time.strptime(end, "%d:%m:%Y %H:%M")
+        end_datetime= datetime.datetime(*end[:6])
+
+        unavailable = UnavailableTime(user_id = request.user, 
+        description = request.POST.get('add_title'),
+        start_time = start_datetime,
+        finish_time = end_datetime)
+        print "test"
+        unavailable.save()
+        return redirect('/calendar')
 
 def loginAjax(request):
     if request.method == "POST":

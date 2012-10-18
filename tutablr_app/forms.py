@@ -47,3 +47,12 @@ class YourRegistrationForm(RegistrationForm):
 		new_profile = Profile(user=new_user)
 		new_profile.save()
 		return new_user
+
+class addBookingForm(ModelForm):
+	class Meta:
+        	model = Booking
+    	def __init__(self, *args, **kwargs):
+        	super(BookingForm, self).__init__(*args, **kwargs)
+        	self.fields['date'].widget = widgets.AdminDateWidget()
+        	self.fields['mytime'].widget = widgets.AdminTimeWidget()
+        	self.fields['mydatetime'].widget = widgets.AdminSplitDateTime()

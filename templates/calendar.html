@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -26,68 +27,102 @@ $(document).ready(function() {
 		editable: true,
 		disableResizing: true,
 		select: function(start, end, allDay) {
-			if(selectable){
-				var start = $.fullCalendar.formatDate(start, "yyyy-MM-dd HH:mm");
-				var end = $.fullCalendar.formatDate(end, "yyyy-MM-dd HH:mm");
-				$("#add_start").val(start);   //this just populates the value into my dialog form
-				$("#add_end").val(end);
-				$("#add_event" ).dialog( "open" );
-				calendar.fullCalendar('unselect');
-			}
+			var start_time = $.fullCalendar.formatDate(start, "HH:mm");
+			alert(start);
+			var end_time = $.fullCalendar.formatDate(end, "HH:mm");
+			var start_date = $.fullCalendar.formatDate(start, "dd:MM:yyyy");
+			var end_date = $.fullCalendar.formatDate(end, "dd:MM:yyyy");
+			$("#add_start").val(start_time);
+			$("#add_end").val(end_time);
+			$("#add_event" ).dialog( "open" );
+			$('#datePicker_start_add').attr("disabled", false);
+			$('#datePicker_end_add').attr("disabled", false);
+			$('#datePicker_start_add').val(start_date);
+			$('#datePicker_end_add').val(end_date);
+			calendar.fullCalendar('unselect');
 		},
 		eventClick: function(event, jsEvent, view){
-				if(event.editable){
-					var start = $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm");
-					var end = $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm");
-					var id = event.id;
-					var title = event.title;
-					$("#edit_start").val(start);
-					$("#edit_end").val(end);
-					$("#edit_title").val(title);
-					$("#edit_event_id").val(id);
-					$("#edit_event" ).dialog( "open" );
-				}
+			if(event.editable){
+				var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+				var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+				var start_date = $.fullCalendar.formatDate(event.start, "MM/dd/yyyy");
+				var end_date = $.fullCalendar.formatDate(event.end, "MM/dd/yyyy");
+				var id = event.id;
+				var title = event.title;
+				$("#edit_start").val(start_time);
+				$("#edit_end").val(end_time);
+				$("#edit_title").val(title);
+				$("#edit_event_id").val(id);
+				$('#datePicker_start_edit').attr("disabled", false);
+				$('#datePicker_end_edit').attr("disabled", false);
+				$('#datePicker_start_edit').val(start_date);
+				$('#datePicker_end_edit').val(end_date);
+				$("#edit_event" ).dialog( "open" );
+			}
 		},
 		events: 'events.json'
 	});
 	// jQuery UI Dialog
 	$('#edit_event').dialog({
-			autoOpen: false,
-			width: 400,
-			height: 300,
-			modal: true,
-			resizable: true,
-			buttons: {
-					"Yes": function() {
-							$(this).dialog("close");
-							$(location).attr('href',$(this).dialog('option', 'anchor'));
-							return true;
-					},
-					"No": function() {
-							$(this).dialog("close");
-							return false;
-					}
-			}
+		autoOpen: false,
+		width: 400,
+		height: 300,
+		modal: true,
+		resizable: true,
+		open: function() {
+			$('#datePicker_start_edit').removeAttr("disabled");
+			$('#datePicker_end_edit').removeAttr("disabled");
+		},
+		close: function () {
+			$('#datePicker_start_edit').datepicker('hide');
+			$('#datePicker_end_edit').datepicker('hide');
+		},
+		buttons: {
+				"Yes": function() {
+						$(this).dialog("close");
+						$(location).attr('href',$(this).dialog('option', 'anchor'));
+						return true;
+				},
+				"No": function() {
+						$(this).dialog("close");
+						return false;
+				}
+		}
 	});
 	$('#add_event').dialog({
-			autoOpen: false,
-			width: 400,
-			height: 300,
-			modal: true,
-			resizable: true,
-			buttons: {
-					"Yes": function() {
-							$(this).dialog("close");
-							$(location).attr('href',$(this).dialog('option', 'anchor'));
-							return true;
-					},
-					"No": function() {
-							$(this).dialog("close");
-							return false;
-					}
-			}
+		autoOpen: false,
+		width: 400,
+		height: 300,
+		modal: true,
+		resizable: true,
+		open: function() {
+			$('#datePicker_start_add').removeAttr("disabled");
+			$('#datePicker_end_add').removeAttr("disabled");
+		},
+		close: function () {
+			$('#datePicker_start_add').datepicker('hide');
+			$('#datePicker_end_add').datepicker('hide');
+		},
+		
 	});
+	$("#datePicker_end_edit").datepicker({ dateFormat: 'dd:mm:yy' });
+	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd:mm:yy' });
+	$("#datePicker_end_add").datepicker({ dateFormat: 'dd:mm:yy' });
+	$("#datePicker_start_add").datepicker({ dateFormat: 'dd:mm:yy' });
+	
+	$('#a').click(function() {
+        $('#add_event').dialog('close');
 });
+	
+});
+function showText(num)
+	{
+		if(num==0)
+			document.getElementById('edit_div').style.display='block';
+		else
+			document.getElementById('edit_div').style.display='none';
+		return;
+	}
     //]]>
     </script>
     <style type='text/css'>
@@ -110,31 +145,43 @@ $(document).ready(function() {
     <title></title>
   </head>
   <body>
+  {{ uos }}
     <div id="edit_event" title="Edit Event">
-      <form action="">
+      <form action="" name="editForm">
         <fieldset>
-          <label for="edit_start">Start</label> <input type="text" name=
-          "edit_start" id="edit_start" class=
-          "text ui-widget-content ui-corner-all" /> <br>
-		  <label for="edit_end">End</label> <input type="text" name="edit_end" id=
-          "edit_end" class="text ui-widget-content ui-corner-all" /><br>
-          <label for="title">Event Description</label> <input type="text" name=
-          "edit_title" id="edit_title" class=
-          "text ui-widget-content ui-corner-all" /> <input type="hidden" name=
-          "edit_event_id" id="edit_event_id" class=
-          "text ui-widget-content ui-corner-all" />
+		<label for="Delete">Delete</label><input type="radio" id="type" name="radio" onclick="showText(1)" value = "1" />
+		<label for="Edit">Edit</label><input type="radio" id="type" name="radio" onclick="showText(0)" value= "0" checked /><br>
+		<div id="edit_div">
+        		<label for = "edit_date_start"> Start Date </label> <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" /> <br>
+			<label for = "edit_date_end"> End Date </label> <input type="text" name = "edit_end_date" id="datePicker_end_edit" required="required" /> <br>
+          		<label for="edit_start">Start</label> <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
+		  	<label for="edit_end">End</label> <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
+          		<label for="title">Event Description</label> <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" required="required" /> 
+		</div>
+		<input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
         </fieldset>
       </form>
     </div>
 	<div id="add_event" title="Add Event">
-      <form action="">
+      <form action="/../../add" name="addForm" method="post">{% csrf_token %}
         <fieldset>
-		  <label for="event type">Event Type</label> <input type="text" name="add_type" id="add_type" class="text ui-widget-content ui-corner-all" /><br>
-          <label for="edit_start">Start</label> <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" /> <br>
-		  <label for="add_end">End</label> <input type="text" name="add_end" id="add_end" class="text ui-widget-content ui-corner-all" /><br>
-          <label for="add_title">Event Description</label> <input type="text" name="add_title" id="add_title" class="text ui-widget-content ui-corner-all" /> 
-		  <input type="hidden" name="addevent_id" id="add_event_id" class="text ui-widget-content ui-corner-all" />
+		<label for = "add_date_start"> Start Date </label> <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" /> <br>
+		<label for = "add_date_end"> End Date </label> <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" /> <br>
+          <label for="edit_start">Start</label> <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
+		  <label for="add_end">End</label> <input type="timeField" name="add_end" id="add_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
+          <label for="add_title">Event Description</label> <input type="text" name="add_title" id="add_title" class="text ui-widget-content ui-corner-all" /> <br>
+		  <div id="add_uos_div">
+		  <label for="add_uos">UoS</label> <input type="text" name="add_uos" id="add_uos" class="text ui-widget-content ui-corner-all" /> </div>
+            <select name="uos_id">
+            
+            {% for entry in uos %}
+           
+                <option value="{{ entry.unit_id }}">{{ entry.unit_name }}</option>
+            {% endfor %}
+</select>
         </fieldset>
+        <input type="submit" value="Yes"> 
+         <button type="button" id = "a">No</button>
       </form>
     </div>
     <div id='calendar'></div>
