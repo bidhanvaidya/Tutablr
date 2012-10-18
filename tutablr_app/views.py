@@ -7,6 +7,9 @@ from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def calendar(request):
         enrolls = Enrolled.objects.filter (user_id=request.user.id) # get all the enrolled class for the student
         tutor_sessions = SessionTime.objects.filter (tutor_id=request.user.id) # get all the session time for the tutor

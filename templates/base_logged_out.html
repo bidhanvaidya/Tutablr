@@ -3,7 +3,7 @@
 
 {% block top-form %}
     {% load widget_tweaks %}
-    <form id="login-form"  class="form span3 offset6" method="post" action="#">{% csrf_token %}
+    <form id="login-form"  class="form span3 offset6" method="post"  action="/login">{% csrf_token %}
         {% if user.is_authenticated %}
             <img id="usyd-logo_id"src="{{STATIC_URL}}tutablr/img/usyd-logo.jpg" alt="usyd-logo" width="70" height="60">
             <div id="logged-in-text">

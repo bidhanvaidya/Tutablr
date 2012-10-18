@@ -11,6 +11,7 @@ from django.contrib.auth import views as auth_views
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.views.generic.simple import direct_to_template
+from django.contrib.auth.decorators import login_required
 admin.autodiscover()
 dajaxice_autodiscover()
 
@@ -19,10 +20,11 @@ urlpatterns = patterns('',
 	# (r'^banana/$', direct_to_template, {
         	#	'template': 'index.html'
     	#}),
+	#(r'^test$', login_required(direct_to_template), {'template': 'test.html'}),
 	 url(r'^login$','tutablr_app.views.loginAjax'),
 	 url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
 	 url ( r'^calendar/user_events.json/(?P<id>\d+)/$' , 'tutablr_app.views.user_calendar' , name = 'user_events.json' ),
-	 url ( r'^calendar/$' , TemplateView . as_view ( template_name = "calendar.html" ), name = 'calendar' ),
+	 url ( r'^calendar/$' , login_required(TemplateView . as_view ( template_name = "calendar.html" )), name = 'calendar' ),
      	url ( r'^calendar/events.json$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page

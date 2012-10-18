@@ -2,6 +2,7 @@
 import os
 DIRNAME = os.path.dirname(__file__)
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL='/'
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 

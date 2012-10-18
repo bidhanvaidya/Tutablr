@@ -1,4 +1,10 @@
-var baseURL = "http://127.0.0.1:8000/";
+var baseURL = "http://127.0.0.1:8000";
+
+function getUrlVar(key){
+var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search); 
+return result && result[1] || ""; 
+}
+
 
 $.ajaxSetup({ 
      beforeSend: function(xhr, settings) {
@@ -25,9 +31,8 @@ $.ajaxSetup({
 });
 
 
-
-$('#login-btn').click(function(){
-   console.log("working");
+$("#login-form").submit(function(){
+    var redirectURL = baseURL + getUrlVar("next");
     var username = $('#id_username').val();
     var password = $('#id_password').val();
     if (username == "" || password == "") {
@@ -46,14 +51,15 @@ $('#login-btn').click(function(){
         success: function(data) {
             if (data==1) {
                 var pathname = window.location.pathname;
-                window.location.replace(pathname);
+                //$("#login-div").load("{{TEMPLATE_DIRS}}base_logged_out.html");
+                window.location.replace(redirectURL);
             }
             else if(data==0){
                 alert("Username and Password do not match!");
             }
         }
-    });
-
+    });  
+    return false;
 });
 
 $('#logout-btn').click(function(){
