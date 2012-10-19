@@ -65,5 +65,5 @@ class addBookingForm(forms.Form):
 		tutor_id = kwargs.pop('tutor_id',0)
 		super(addBookingForm, self).__init__(*args, **kwargs)
 		choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in UnitDetails.objects.filter(user_id = tutor_id, is_tutorable = True)]
-		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), choices=choices, required=True)
+		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
 		
