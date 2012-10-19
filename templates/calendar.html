@@ -16,6 +16,14 @@
 
 $(document).ready(function() {
 	$('#calendar').fullCalendar({
+	
+	
+
+	
+ 
+
+
+  
 	    eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {			
 			
 		
@@ -45,7 +53,16 @@ $(document).ready(function() {
 		selectHelper: true,
 		editable: true,
 		disableResizing: true,
+		
 		select: function(start, end, allDay) {
+			var date = new Date();
+		  if(start < date )
+              {
+                // Do whatever you want here.
+                alert('Cannot select past dates.');
+                return;
+                
+              };
 			var start_time = $.fullCalendar.formatDate(start, "HH:mm");
 			alert(start);
 			var end_time = $.fullCalendar.formatDate(end, "HH:mm");
@@ -116,10 +133,10 @@ $(document).ready(function() {
 		},
 		
 	});
-	$("#datePicker_end_edit").datepicker({ dateFormat: 'dd:mm:yy' });
-	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd:mm:yy' });
-	$("#datePicker_end_add").datepicker({ dateFormat: 'dd:mm:yy' });
-	$("#datePicker_start_add").datepicker({ dateFormat: 'dd:mm:yy' });
+	$("#datePicker_end_edit").datepicker({ dateFormat: 'dd:mm:yy', minDate: 0  });
+	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd:mm:yy', minDate: 0  });
+	$("#datePicker_end_add").datepicker({ dateFormat: 'dd:mm:yy', minDate: 0  });
+	$("#datePicker_start_add").datepicker({ dateFormat: 'dd:mm:yy', minDate: 0  });
 	
 	$('#a').click(function() {
         $('#add_event').dialog('close');
@@ -164,11 +181,11 @@ function showText(num)
 		   
 		   
 		    <div id="edit_div">
-        		
+        		<label for = "edit_date_start"> Start Date </label> 
+        		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" readonly="readonly" /> <br>
 			    <label for = "edit_date_end"> End Date </label> 
-			        <input type="text" name = "edit_end_date" id="datePicker_end_edit" required="required" /> <br>
-              	<label for = "edit_date_start"> Start Date </label> 
-        		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" /> <br>
+			        <input type="text" name = "edit_end_date" id="datePicker_end_edit" readonly="readonly" required="required" /> <br>
+              	
               	<label for="edit_start">Start</label> 
               	    <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
 		      	<label for="edit_end">End</label> 
@@ -187,9 +204,9 @@ function showText(num)
     <form action="/../../add_unavailable" name="addForm" method="post">{% csrf_token %}
         <fieldset>
             <label for = "add_date_start"> Start Date </label>
-                <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" /> <br>
+                <input type="text" name = "add_start_date" id="datePicker_start_add" required="required" readonly="readonly" /> <br>
             <label for = "add_date_end"> End Date </label> 
-                <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" /> <br>
+                <input type="text" name = "add_end_date" id="datePicker_end_add" required="required" readonly="readonly" /> <br>
             <label for="edit_start">Start</label> 
                 <input type="text" name="add_start" id="add_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
             <label for="add_end">End</label> 
