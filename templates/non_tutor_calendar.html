@@ -42,7 +42,7 @@ $(document).ready(function() {
 				right: 'month,agendaWeek,agendaDay'
 		},
 		defaultView: 'agendaWeek',
-		selectable: true,
+		selectable: false,
 		selectHelper: true,
 		editable: true,
 		disableResizing: true,
@@ -65,19 +65,6 @@ $(document).ready(function() {
 				$("#edit_event" ).dialog( "open" );
 			}
 		},
-		select: function(start, end, allDay) {
-				var start_time = $.fullCalendar.formatDate(start, "HH:mm");
-				alert(start);
-				var end_time = $.fullCalendar.formatDate(end, "HH:mm");
-				var start_date = $.fullCalendar.formatDate(start, "dd/MM/yyyy");
-				var end_date = $.fullCalendar.formatDate(end, "dd/MM/yyyy");
-				$("#id_start_time").val(start_time);
-				$("#id_finish_time").val(end_time);
-				$("#add_event" ).dialog( "open" );
-				$('#id_date').attr("disabled", false);
-				$('#id_date').val(start_date);
-				calendar.fullCalendar('unselect');
-		   },
 		   eventClick: function(event, jsEvent, view){
 				if(event.editable){
 					var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
@@ -117,38 +104,12 @@ $(document).ready(function() {
 					},
 			}
 	});
-	$('#add_event').dialog({
-                autoOpen: false,
-                width: 400,
-				height: 300,
-                modal: true,
-                resizable: true,
-                buttons: {
-                        "Yes": function() {
-                                $(this).dialog("close");
-                                $(location).attr('href',$(this).dialog('option', 'anchor'));
-								url = '/../../add_booking/' + user_id + '/';
-								document.addForm.action=url;
-								$("[id*=SubmitAdd]").click();
-								//$.post(url, $("#addForm").serialize(), function () {
-								//	$('#add_event').dialog('close');
-								//});
-                                return true;
-                        },
-                        "No": function() {
-                                $(this).dialog("close");
-                                return false;
-                        }
-                }
-        });  
+  
 
 	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd/mm/yy' });
 	$("#id_date").datepicker({ dateFormat: 'dd/mm/yy' });
 	
-	$('#a').click(function() {
-        $('#add_event').dialog('close');
-    
-	});
+
 
 });
     //]]>
@@ -192,13 +153,6 @@ $(document).ready(function() {
          <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
          <input  type= "submit" formaction= "/../delete" id ="SubmitDelete" style="display:none">
       </form>
-    </div>
- <div id="add_event" title="Add Event">
-    <form name="addForm" action="/../../add_booking/10/" method="post">{% csrf_token %}
-        {{form.as_p}}
-		<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
-		<input type="submit" value="Yes" id="SubmitAdd" style="display:none"> 
-    </form>
     </div>
     <div id='calendar'></div>
   </body>

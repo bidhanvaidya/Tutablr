@@ -1,7 +1,8 @@
 # Create your views here.
 from django import http
 from django.utils import simplejson as json
-from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking
+from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails
+from tutablr_app.forms import addBookingForm
 from django.shortcuts import render_to_response
 from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
@@ -9,7 +10,24 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 import time, datetime
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
+from django.contrib.auth.models import User
+
+@login_required
+def calendar_view(request, id):
+	u = UnitDetails.objects.filter(user_id = id, is_tutorable = True)
+	if len(u) == 0:
+		return render(request, "non_tutor_calendar.html")
+	else:
+		if request.method == 'POST':
+			form = addBookingForm(request.POST, tutor_id=id)
+			if form.is_valid():
+				print "valid!"
+		else:
+			form = addBookingForm(tutor_id=id)
+		return render(request, "user_calendar.html", { 'form': form })
+	#return render(request, "user_calendar.html")
+
 
 @login_required
 def calendar(request):
@@ -312,24 +330,18 @@ def delete(request):
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
 def update(request):
-		
 		if request.method == 'POST':
-			
 			id = request.POST.get('edit_event_id')
-			 
-
-
-
 			unavailable = UnavailableTime.objects.get(pk=id)
 			user = unavailable.user_id
 			print "hello"
 			print user.id
 			if user.id== request.user.id:
 				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
-				start= time.strptime(start, "%d:%m:%Y %H:%M")
+				start= time.strptime(start, "%d/%m/%Y %H:%M")
 				start_datetime= datetime.datetime(*start[:6])
-				end=  request.POST.get('edit_end_date') + " "+ request.POST.get('edit_end')
-				end= time.strptime(end, "%d:%m:%Y %H:%M")
+				end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
+				end= time.strptime(end, "%d/%m/%Y %H:%M")
 				end_datetime= datetime.datetime(*end[:6])
 				unavailable.description = request.POST.get('edit_title')
 				unavailable.start_time = start_datetime
@@ -337,6 +349,32 @@ def update(request):
 				print "hello"
 				unavailable.save()
 				return redirect('/calendar')
+			else:
+				raise http.Http404
+
+		else:
+			return redirect('/calendaKKr')
+			
+#POST requests here must also have a description, start_time, and finish_time
+##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
+def update_booking(request, id):
+		if request.method == 'POST':
+			id = request.POST.get('edit_event_id')
+			booking = Booking.objects.get(pk=id)
+			student = booking.student_id
+			tutor = booking.tutor_id
+			if student.id== request.user.id or tutor.id== request.user.id:
+				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
+				start= time.strptime(start, "%d/%m/%Y %H:%M")
+				start_datetime= datetime.datetime(*start[:6])
+				end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
+				end= time.strptime(end, "%d/%m/%Y %H:%M")
+				end_datetime= datetime.datetime(*end[:6])
+				booking.description = request.POST.get('edit_title')
+				booking.start_time = start_datetime
+				booking.finish_time = end_datetime
+				booking.save()
+				return redirect('/calendar/user/' + id + '/')
 			else:
 				raise http.Http404
 
@@ -393,10 +431,10 @@ def add_unavailable(request):
         # booking.save()
         # return http.HttpResponse('added')
             start=  request.POST.get('add_start_date') + " " + request.POST.get('add_start')
-            start= time.strptime(start, "%d:%m:%Y %H:%M")
+            start= time.strptime(start, "%d/%m/%Y %H:%M")
             start_datetime= datetime.datetime(*start[:6])
-            end=  request.POST.get('add_end_date') + " "+ request.POST.get('add_end')
-            end= time.strptime(end, "%d:%m:%Y %H:%M")
+            end=  request.POST.get('add_start_date') + " "+ request.POST.get('add_end')
+            end= time.strptime(end, "%d/%m/%Y %H:%M")
             end_datetime= datetime.datetime(*end[:6])
     
             unavailable = UnavailableTime(user_id = request.user, 
@@ -407,23 +445,29 @@ def add_unavailable(request):
             unavailable.save()
             return redirect('/calendar')
 
-def add_booking(request):
-    if request.method == 'POST':
-        start=  request.POST.get('edit_start_date') + " " + request.POST.get('add_start')
-        start= time.strptime(start, "%d:%m:%Y %H:%M")
-        start_datetime= datetime.datetime(*start[:6])
-
-        end=  request.POST.get('edit_start_date') + " " + request.POST.get('add_end')
-        end= time.strptime(end, "%d:%m:%Y %H:%M")
-        end_datetime= datetime.datetime(*end[:6])
-
-        unavailable = UnavailableTime(user_id = request.user, 
-        description = request.POST.get('add_title'),
-        start_time = start_datetime,
-        finish_time = end_datetime)
-        print "test"
-        unavailable.save()
-        return redirect('/calendar')
+def add_booking(request, id):
+	print("HITHERE")
+	if request.method == 'POST':
+		start=  request.POST.get('date') + " " + request.POST.get('start_time')
+		start= time.strptime(start, "%d/%m/%Y %H:%M")
+		start_datetime= datetime.datetime(*start[:6])
+		end=  request.POST.get('date') + " " + request.POST.get('finish_time')
+		end= time.strptime(end, "%d/%m/%Y %H:%M")
+		end_datetime= datetime.datetime(*end[:6])
+		unit_id = UOS.objects.filter(unit_id = request.POST.get('UoS'))[0]
+		tutor_id = User.objects.filter(id=id)[0]
+		booking = Booking(unit_id = unit_id,
+			start_time = start_datetime,
+			finish_time = end_datetime,
+			tutor_id = tutor_id,
+			student_id = request.user,
+			description = request.POST.get('description')
+		)
+		booking.save()
+		#return HttpResponse("1")
+		return redirect('/calendar/user/' + id + '/')
+	else:
+		return redirect('/calendar/user/' + id + '/')
 
 def loginAjax(request):
     if request.method == "POST":

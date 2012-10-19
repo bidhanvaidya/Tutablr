@@ -22,17 +22,19 @@ urlpatterns = patterns('',
     	#}),
 	#(r'^test$', login_required(direct_to_template), {'template': 'test.html'}),
 	 url(r'^login$','tutablr_app.views.loginAjax'),
-	 url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
+	 #url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
+	 url( r'^calendar/user/(?P<id>\d+)/$', 'tutablr_app.views.calendar_view', name='user_calendar'),
 	 url ( r'^calendar/user_events.json/(?P<id>\d+)/$' , 'tutablr_app.views.user_calendar' , name = 'user_events.json' ),
 	 url ( r'^calendar/$' , login_required(TemplateView . as_view ( template_name = "calendar.html" )), name = 'calendar' ),
-     	url ( r'^calendar/events.json$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
+     url ( r'^calendar/events.json$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	(r'^delete$','tutablr_app.views.delete'),
 	(r'^update$','tutablr_app.views.update'),
+	(r'^update_booking/(?P<id>\d+)/$','tutablr_app.views.update_booking'),
 	(r'^add_unavailable$','tutablr_app.views.add_unavailable'),
-
+	(r'^add_booking/(?P<id>\d+)/$','tutablr_app.views.add_booking'),
 	# Examples:
 	# url(r'^$', 'django_test_project.views.home', name='home'),
 	# url(r'^django_test_project/', include('django_test_project.foo.urls')),
