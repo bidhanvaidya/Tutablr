@@ -56,5 +56,5 @@ urlpatterns = patterns('',
 	 #url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name' : 'registration/logout/html'}),
 	 #url(r'^accounts/profile/$', 'tutablr.views.index'),
 
-	 (r'^dashboard$', login_required(direct_to_template), {'template': 'home.html'}),
+	 (r'^dashboard$', login_required(direct_to_template), {'template': 'dashboard.html'}),
 )

@@ -1,3 +1,5 @@
+from django.views.generic.simple import direct_to_template
+from django.conf.urls.defaults import *
 """
 If the default usage of the views suits you, simply use a line like
 this one in your root URLconf to set up the default URLs::
@@ -95,7 +97,8 @@ from django.views.generic.simple import redirect_to
 OPTION_MESSAGES = 'm'
 OPTIONS = OPTION_MESSAGES
 
-urlpatterns = patterns('postman.views',
+urlpatterns = patterns(
+    'postman.views',
     url(r'^inbox/(?:(?P<option>'+OPTIONS+')/)?$', 'inbox', name='postman_inbox'),
     url(r'^sent/(?:(?P<option>'+OPTIONS+')/)?$', 'sent', name='postman_sent'),
     url(r'^archives/(?:(?P<option>'+OPTIONS+')/)?$', 'archives', name='postman_archives'),
@@ -107,5 +110,6 @@ urlpatterns = patterns('postman.views',
     url(r'^archive/$', 'archive', name='postman_archive'),
     url(r'^delete/$', 'delete', name='postman_delete'),
     url(r'^undelete/$', 'undelete', name='postman_undelete'),
-    (r'^$', redirect_to, {'url': 'inbox/'}),
+    (r'^$',             direct_to_template, {'template': 'messaging.html'}),
+   # (r'^$', direct_to_template,{'template':"messaging.html"} ),
 )

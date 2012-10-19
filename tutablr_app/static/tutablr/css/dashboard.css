@@ -1,0 +1,24 @@
+#messages{
+    position: relative;
+    left: -20px;
+    top: 50px;
+}
+#timetable-content {
+    position: relative;
+    top: -40px;
+}
+#upcoming{
+    position: relative;
+    left: -20px;
+    top:-100px;
+}
+
+#timetable{
+    position: relative;
+    left: 20px;
+    top: 65px;
+}
+
+#main-container {
+    max-height:  800px;
+}

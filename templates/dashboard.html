@@ -1,0 +1,45 @@
+{% extends "base_logged_out.html" %}
+{% load i18n %}
+
+{% block extra_head %}
+        <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/dashboard.css" />
+{% endblock %}
+{% block content %}
+    <h3>My Timetable</h3>
+    <div id="timetable-content" class="row-fluid">
+                <div id="timetable" class="span9">
+                    <img src="http://www.placehold.it/800x450" alt="Video Placeholder" />
+                </div>
+                <div id="messages" class="span3">
+                      <div class="caption">
+                        <h3 class="home-caption">Messages</h3>
+                        <p> Add Messages Here Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
+                      </div>
+                </div>
+          
+
+            </div>
+    </div>
+    <div id="upcoming" class="row-fluid">
+                        <div  class="span3 offset9">
+                      <div class="caption">
+                        <h3 class="home-caption">Upcoming Events</h3>
+                        <p> Add Messages Here Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
+                      </div>
+                </div>
+    </div>
+{% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+    <ul class="nav">
+        <li><a href="/dashboard">My Dashboard</a></li>
+        <li><a href="/calendar">My Timetable</a></li>
+        <li><a href="/messages">My Messages</a></li>
+        <li><a href="/">My Profile</a></li>
+        <li><a href="/">Find a Tutor</a></li>
+    </ul>
+{% endblock %}
+
+
