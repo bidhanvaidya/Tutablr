@@ -61,6 +61,7 @@ $("#login-form").submit(function(){
                 window.location.replace(redirectURL);
             }
             else if(data==0){
+                  $("#login-input").addClass("control-group error")
                 alert("Username and Password do not match!");
             }
         }

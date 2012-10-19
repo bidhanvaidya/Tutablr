@@ -85,7 +85,10 @@ h3.home-caption {
 	
 }
 
-
+#homeimage {
+    height: 250px;
+    width: 400px;
+}
 p {
 	text-align:justify;
 }
