@@ -326,6 +326,21 @@ def delete(request):
     else:
         raise http.Http404
 
+		#POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
+##id, type
+def delete_booking(request, tutor_id):
+	print("HEERHRHERHEHRERHRHE")
+	if request.method == 'POST': 
+		id = request.POST.get('edit_event_id')
+		user_id = request.user.id
+		booking = Booking.objects.get(pk=id)
+		if booking.student_id == request.user.id:
+			booking.delete()
+			return redirect('/calendar/user/' + id + '/')
+		else:
+			raise http.Http404
+	else:
+		raise http.Http404
 
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
@@ -357,7 +372,7 @@ def update(request):
 			
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
-def update_booking(request, id):
+def update_booking(request, other_id):
 		if request.method == 'POST':
 			id = request.POST.get('edit_event_id')
 			booking = Booking.objects.get(pk=id)
@@ -374,7 +389,7 @@ def update_booking(request, id):
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
 				booking.save()
-				return redirect('/calendar/user/' + id + '/')
+				return redirect('/calendar/user/' + other_id + '/')
 			else:
 				raise http.Http404
 

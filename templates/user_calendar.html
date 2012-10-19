@@ -105,16 +105,26 @@ $(document).ready(function() {
 			modal: true,
 			resizable: true,
 			buttons: {
-					"Yes": function() {
+					"Submit": function() {
 							$(this).dialog("close");
 							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							url = '/../../update_booking/' + user_id + '/';
+							document.editForm.action=url;
 							$("[id*=SubmitEdit]").click();
 							return true;
 					},
-					"No": function() {
+					"Cancel": function() {
 							$(this).dialog("close");
 							return false;
 					},
+					"Delete": function() {
+                            $(this).dialog("close");
+							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							url = '/../../delete_booking/' + user_id + '/';
+							document.editForm.action=url;
+							$("[id*=SubmitEdit]").click();
+                            return true;
+                       }
 			}
 	});
 	$('#add_event').dialog({
@@ -124,21 +134,19 @@ $(document).ready(function() {
                 modal: true,
                 resizable: true,
                 buttons: {
-                        "Yes": function() {
+                        "Submit": function() {
                                 $(this).dialog("close");
                                 $(location).attr('href',$(this).dialog('option', 'anchor'));
 								url = '/../../add_booking/' + user_id + '/';
 								document.addForm.action=url;
 								$("[id*=SubmitAdd]").click();
-								//$.post(url, $("#addForm").serialize(), function () {
-								//	$('#add_event').dialog('close');
-								//});
                                 return true;
                         },
-                        "No": function() {
+                        "Cancel": function() {
                                 $(this).dialog("close");
                                 return false;
                         }
+						
                 }
         });  
 
@@ -175,7 +183,7 @@ $(document).ready(function() {
   <body>
     {{ uos }}
     <div id="edit_event" title="Edit Event">
-      <form action="/../../update_booking/" name="editForm" method="post">{% csrf_token %}
+      <form name="editForm" action="/../../update_booking/"  method="post">{% csrf_token %}
         <fieldset>
 		    <div id="edit_div">
               	<label for = "edit_date_start"> Date </label> 
@@ -185,16 +193,15 @@ $(document).ready(function() {
 		      	<label for="edit_end">End Time</label> 
 		      	    <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
               	<label for="title">Event Description</label> 
-              	    <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" required="required" /> 
+              	    <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" /> 
 		    </div>
 		    <input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
         </fieldset>
          <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
-         <input  type= "submit" formaction= "/../delete" id ="SubmitDelete" style="display:none">
       </form>
     </div>
  <div id="add_event" title="Add Event">
-    <form name="addForm" action="/../../add_booking/10/" method="post">{% csrf_token %}
+    <form name="addForm" action="/../../add_booking/" method="post">{% csrf_token %}
         {{form.as_p}}
 		<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
 		<input type="submit" value="Yes" id="SubmitAdd" style="display:none"> 

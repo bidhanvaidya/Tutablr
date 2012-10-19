@@ -32,9 +32,10 @@ urlpatterns = patterns('',
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	(r'^delete$','tutablr_app.views.delete'),
 	(r'^update$','tutablr_app.views.update'),
-	(r'^update_booking/(?P<id>\d+)/$','tutablr_app.views.update_booking'),
+	(r'^update_booking/(?P<other_id>\d+)/$','tutablr_app.views.update_booking'),
 	(r'^add_unavailable$','tutablr_app.views.add_unavailable'),
 	(r'^add_booking/(?P<id>\d+)/$','tutablr_app.views.add_booking'),
+	(r'^delete_booking/(?P<tutor_id>\d+)/$','tutablr_app.views.delete_booking'),
 	# Examples:
 	# url(r'^$', 'django_test_project.views.home', name='home'),
 	# url(r'^django_test_project/', include('django_test_project.foo.urls')),

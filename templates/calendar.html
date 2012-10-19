@@ -102,13 +102,13 @@ $(document).ready(function() {
 			$('#datePicker_end_edit').datepicker('hide');
 		},
 		buttons: {
-                        "Yes": function() {
+                        "Submit": function() {
                                 $(this).dialog("close");
                                 $(location).attr('href',$(this).dialog('option', 'anchor'));
 								$("[id*=SubmitEdit]").click();
                                 return true;
                         },
-                        "No": function() {
+                        "Cancel": function() {
                                 $(this).dialog("close");
                                 return false;
                         },
@@ -136,13 +136,13 @@ $(document).ready(function() {
 			$('#datePicker_end_add').datepicker('hide');
 		},
 		buttons: {
-                        "Yes": function() {
+                        "Submit": function() {
                                 $(this).dialog("close");
                                 $(location).attr('href',$(this).dialog('option', 'anchor'));
 								$("[id*=SubmitAdd]").click();
                                 return true;
                         },
-                        "No": function() {
+                        "Cancel": function() {
                                 $(this).dialog("close");
                                 return false;
                         }

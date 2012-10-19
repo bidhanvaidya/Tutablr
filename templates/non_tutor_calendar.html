@@ -92,13 +92,13 @@ $(document).ready(function() {
 			modal: true,
 			resizable: true,
 			buttons: {
-					"Yes": function() {
+					"Submit": function() {
 							$(this).dialog("close");
 							$(location).attr('href',$(this).dialog('option', 'anchor'));
 							$("[id*=SubmitEdit]").click();
 							return true;
 					},
-					"No": function() {
+					"Cancel": function() {
 							$(this).dialog("close");
 							return false;
 					},
