@@ -334,9 +334,9 @@ def delete_booking(request, tutor_id):
 		id = request.POST.get('edit_event_id')
 		user_id = request.user.id
 		booking = Booking.objects.get(pk=id)
-		if booking.student_id == request.user.id:
+		if booking.student_id.id == request.user.id:
 			booking.delete()
-			return redirect('/calendar/user/' + id + '/')
+			return redirect('/calendar/user/' + tutor_id + '/')
 		else:
 			raise http.Http404
 	else:
