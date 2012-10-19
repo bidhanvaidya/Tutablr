@@ -15,7 +15,8 @@
         - install django 1.4.1 (pip install django)
         - install South (easy_install South)
         - install django-profiles (pip install django-profiles)
-        - install django widget tweaks (pip install django-widget-tweaks) (NEW INSTALL INSTRUCTION)
+        - install django widget tweaks (pip install django-widget-tweaks) 
+        - install django pagination (pip install django-pagination) (NEW INSTALL INSTRUCTION)
 6. Clone this repository 
 7. Everything should now run.
 
@@ -78,6 +79,12 @@ Origin = the server (bitbucket) copy of the files
 |____tutablr
            |____tutablr <--- this is where settings.py etc. is stored
            |____tutablr_app <--- this is the main application
+           |____dajaxice
+           |____postman 
+           |____profiles 
+           |____registration
+           |____templates
+
 
 
 *********************************************
