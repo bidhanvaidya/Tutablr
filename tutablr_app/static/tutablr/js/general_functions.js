@@ -80,5 +80,24 @@ $('#logout-btn').click(function(){
 
 });
 
+$("#id_extra_details").hover(function(){
+    options = {
+        html:false,
+        trigger:'click',
+        content:"Please give details regarding your experience in various fields, what subjects you can tutor and any references. These details will be used to assignn you tutorable subjects.",
+        title: "What do I put in here?",
+        placement:'right'
+    }
+    $('#id_extra_details').popover(options);
+});
+
+$("#terms_checkbox").click(function(){
+    if ($("#terms_checkbox").attr('checked')) {
+        $("#reg_submit_btn").removeAttr("disabled");
+    }
+    else {
+        $("#reg_submit_btn").attr("disabled","disabled");
+    }
+});
 
 

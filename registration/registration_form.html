@@ -1,15 +1,76 @@
 {% extends "base_logged_out.html" %}
-{% load i18n %}
 
+{% load i18n %}
+{% load widget_tweaks %}
+ {% block extra_head %} 
+ <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/registration.css" />
+  <link rel="stylesheet" href="{{STATIC_URL}}tutablr/js/general_functions.js" />
+ {% endblock %}
 {% block content %}
 {% if user.is_authenticated  %}
 <p>Already got an account!</p>
 {% else %}
-<form method="post" action=".">{% csrf_token %}
-  {{ reg_form.as_p }}
-
-  <input type="submit" value="{% trans 'Submit' %}" />
-</form>
+<div id="registration-form" class="span4 ">
+    <form  class="form-horizontal" method="post" action=".">{% csrf_token %}
+        <legend>Registration Form</legend>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Username</label>
+                <div class="controls">
+                              {{reg_form.errors}}
+                    {{ reg_form.username}}
+                </div>
+        </div>
+         <div class="control-group">
+                <label  for="id_username" class = "control-label" >First Name</label>
+                <div class="controls">
+                    {{ reg_form.first_name}}
+                </div>
+        </div>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Last Name</label>
+                <div class="controls">
+                    {{ reg_form.last_name}}
+                </div>
+        </div>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Email</label>
+                <div class="controls">
+                    {{ reg_form.email}}
+                </div>
+        </div>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Email  Confirmation</label>
+                <div class="controls">
+                    {{ reg_form.email2}}
+                </div>
+        </div>
+         <div class="control-group">
+                <label  for="id_username" class = "control-label" >Password</label>
+                <div class="controls">
+                    {{ reg_form.password1}}
+                </div>
+        </div>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Password Confirmation</label>
+                <div class="controls">
+                    {{ reg_form.password2}}
+                </div>
+        </div>
+        <div class="control-group">
+                <label  for="id_username" class = "control-label" >Credentials</label>
+                <div class="controls">
+                    {{ reg_form.extra_details}}
+                </div>
+        </div>
+        <div id="buttons_check_id">
+               <button class="btn btn-inverse" type="button" >Clear Form</button>
+              <button id="reg_submit_btn"class="btn btn-primary" type="submit" disabled="disabled" >Register</button>
+                 <label id="terms_id"class="checkbox">
+                    <input id="terms_checkbox" type="checkbox"> Agree to Terms and Conditions? </input>
+                </label>           
+        </div>
+    </form>
+</div>
 
 {% endif %}
 
