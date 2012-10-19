@@ -100,4 +100,10 @@ $("#terms_checkbox").click(function(){
     }
 });
 
+$("#reset-reg-btn").click(function(){
+        $("#reg_submit_btn").attr("disabled","disabled");
+});
+
+
+
 

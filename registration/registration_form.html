@@ -11,7 +11,7 @@
 <p>Already got an account!</p>
 {% else %}
 <div id="registration-form" class="span4 ">
-    <form  class="form-horizontal" method="post" action=".">{% csrf_token %}
+    <form  class="form-horizontal well " method="post" action=".">{% csrf_token %}
         <legend>Registration Form</legend>
         <div class="control-group">
                 <label  for="id_username" class = "control-label" >Username</label>
@@ -63,8 +63,10 @@
                 </div>
         </div>
         <div id="buttons_check_id">
-               <button class="btn btn-inverse" type="button" >Clear Form</button>
+            <div id="buttons_div">
+               <button  id="reset-reg-btn"  class="btn btn-inverse" type="reset" >Clear Form</button>
               <button id="reg_submit_btn"class="btn btn-primary" type="submit" disabled="disabled" >Register</button>
+            </div>
                  <label id="terms_id"class="checkbox">
                     <input id="terms_checkbox" type="checkbox"> Agree to Terms and Conditions? </input>
                 </label>           
