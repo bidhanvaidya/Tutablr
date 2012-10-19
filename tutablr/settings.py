@@ -130,15 +130,13 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tutablr_app', # this is our main app
     'registration',
-	'profiles',
-    # Uncomment the next line to enable the admin:
+    'profiles',
     'django.contrib.admin',
     'south',
     'dajaxice',
     'widget_tweaks',
     'postman',
     'pagination',
-    # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
 
