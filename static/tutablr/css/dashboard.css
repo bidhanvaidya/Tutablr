@@ -28,24 +28,10 @@
     left: 320px;
 }
 
-#events-title {
-    position: relative;
-    top: -80px;
-}
-
 #messages {
     border:  1px  solid black;
-    min-height: 150px;
 }
 
 #upcoming-events{
-    position: relative;
-    top:-86px;
     border:  1px  solid black;
-        min-height: 150px;
-}
-
-#messages-title {
-    position: relative;
-    top:60px;
 }

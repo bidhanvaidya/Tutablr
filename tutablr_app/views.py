@@ -10,7 +10,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 import time, datetime
 from django.shortcuts import redirect
-
+from postman.models import Message
+import tutablr
+from django.template import RequestContext
 @login_required
 def calendar(request):
         enrolls = Enrolled.objects.filter (user_id=request.user.id) # get all the enrolled class for the student
@@ -436,9 +438,15 @@ def loginAjax(request):
             else:
                 redirect_to = '/'
             return HttpResponse("1")
-            #return HttpResponseRedirect(redirect_to)
         else:
             return HttpResponse("0")
-           # return HttpResponse("Username and password do not match!")
-            #return HttpResponse(form.errors)
+
+def dashboard(request):
+    user_id = request.user.id
+    #print tutablr.settings.STATIC_ROOT +" <------"
+    messages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)[:5]
+    print  messages
+    return render_to_response('dashboard.html',
+                              {"messages":messages,},
+                              context_instance=RequestContext(request))
 
