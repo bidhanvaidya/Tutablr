@@ -48,7 +48,7 @@ def calendar(request):
             'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : booking.description,
             'allDay' : False,
-            'backgroundColor' :  'blue',
+            'backgroundColor' :  'pink',
             'borderColor' : 'red',
             'selectable' : True,
             'editable' : True,
@@ -64,7 +64,7 @@ def calendar(request):
             'title' : booking.description,
             'allDay' : False,
             'textColor' : 'black',
-            'backgroundColor' :  'yellow',
+            'backgroundColor' :  'orange',
             'borderColor' : 'red',
             'selectable' : True,
             'editable' : True,
@@ -345,19 +345,39 @@ def delete_booking(request, tutor_id):
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
 def update(request):
-		if request.method == 'POST':
-			id = request.POST.get('edit_event_id')
+	if request.method == 'POST':
+		id = request.POST.get('edit_event_id')
+		start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
+		start= time.strptime(start, "%d/%m/%Y %H:%M")
+		start_datetime= datetime.datetime(*start[:6])
+		end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
+		end= time.strptime(end, "%d/%m/%Y %H:%M")
+		end_datetime= datetime.datetime(*end[:6])
+		
+		if request.POST.get('type') == 'student_session':
+				tutor_id= SessionTime.objects.get(pk=id).tutor_id
+				unit_id= SessionTime.objects.get(pk=id).unit_id
+				booking = Booking(unit_id = unit_id,
+				start_time = start_datetime,
+				finish_time = end_datetime,
+				tutor_id = tutor_id,
+				student_id = request.user,
+				description = request.POST.get('edit_title')
+				)
+				booking.save()
+				return redirect('/calendar')
+		elif request.POST.get('type') == 'student_booking':
+				booking = Booking.objects.get(pk=id)
+				booking.description = request.POST.get('edit_title')
+				booking.start_time = start_datetime
+				booking.finish_time = end_datetime
+				booking.save()
+				return redirect('/calendar')
+		elif request.POST.get('type') == 'unavailable':
 			unavailable = UnavailableTime.objects.get(pk=id)
 			user = unavailable.user_id
-			print "hello"
-			print user.id
-			if user.id== request.user.id:
-				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
-				start= time.strptime(start, "%d/%m/%Y %H:%M")
-				start_datetime= datetime.datetime(*start[:6])
-				end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
-				end= time.strptime(end, "%d/%m/%Y %H:%M")
-				end_datetime= datetime.datetime(*end[:6])
+			if user.id== request.user.id:	
+				print user.id
 				unavailable.description = request.POST.get('edit_title')
 				unavailable.start_time = start_datetime
 				unavailable.finish_time = end_datetime
@@ -365,10 +385,9 @@ def update(request):
 				unavailable.save()
 				return redirect('/calendar')
 			else:
-				raise http.Http404
-
+				return redirect('/wronguser')
 		else:
-			return redirect('/calendaKKr')
+			return redirect('/notpost')
 			
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
