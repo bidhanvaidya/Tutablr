@@ -30,6 +30,8 @@ urlpatterns = patterns('',
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
+	(r'^search$','tutablr_app.views.tutor_search'),
+	
 	(r'^delete$','tutablr_app.views.delete'),
 	(r'^update$','tutablr_app.views.update'),
 	(r'^update_booking/(?P<other_id>\d+)/$','tutablr_app.views.update_booking'),

@@ -2,7 +2,7 @@
 from django import http
 from django.utils import simplejson as json
 from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails
-from tutablr_app.forms import addBookingForm
+from tutablr_app.forms import *
 from django.shortcuts import render_to_response
 from django.utils import timezone
 from django.contrib.auth.forms import AuthenticationForm
@@ -12,6 +12,35 @@ from django.contrib.auth.decorators import login_required
 import time, datetime
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
+
+
+@login_required
+def tutor_search(request):
+ 	if request.method == 'POST': 
+  		user_id = request.user.id
+  		uos = request.POST.get('UoS')
+  		price_from = request.POST.get('price_from')
+  		price_to = request.POST.get('price_to')
+  		distance_in_kms = request.POST.get('distance')
+  		grade_from = request.POST.get('grade_from')
+  		students_only = request.POST.get('students_only')
+ 		rating_from = request.POST.get('rating_from')
+  		if students_only:
+   			#eligible_tutors = User.objects.filter(userprofile.is_student_until__gr=datetime.now())
+			eligible_tutors = User.objects.all()
+  		else:
+   			eligible_tutors= User.objects.all()
+		form = searchForm()
+		
+	else:
+		form = searchForm()
+
+	return render(request, "search.html", { 'form': form })
+
+		
+
+		
+
 
 @login_required
 def calendar_view(request, id):

@@ -61,7 +61,11 @@ $(document).ready(function() {
 				$("#edit_event_id").val(id);
 				$('#datePicker_start_edit').attr("disabled", false);
 				$('#datePicker_start_edit').val(start_date);
-				$("#edit_event" ).dialog( "open" );
+				if(event.type != "unavailable"){
+					$("#edit_event" ).dialog( "open" );
+				}else{
+					$("[id*=SubmitEdit]").click();
+				}
 			}
 		},
 		select: function(start, end, allDay) {

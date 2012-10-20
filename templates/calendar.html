@@ -16,14 +16,6 @@
 
 $(document).ready(function() {
 	$('#calendar').fullCalendar({
-	
-	
-
-	
- 
-
-
-  
 	    eventDrop: function(event,dayDelta,minuteDelta,allDay,revertFunc) {			
 			if(!event.editable){
 				revertFunc();
@@ -34,15 +26,22 @@ $(document).ready(function() {
 				var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
 				var id = event.id;
 				var title = event.title;
+				var type = event.type;
 				$("#edit_start").val(start_time);
 				$("#edit_end").val(end_time);
 				$("#edit_title").val(title);
 				$("#edit_event_id").val(id);
+				$("#type").val(type);
 				$('#datePicker_start_edit').attr("disabled", false);
 				$('#datePicker_end_edit').attr("disabled", false);
 				$('#datePicker_start_edit').val(start_date);
 				$('#datePicker_end_edit').val(end_date);
-				$("#edit_event" ).dialog( "open" );
+				//$("#edit_event" ).dialog( "open" );
+				if(event.type != "unavailable"){
+					$("#edit_event" ).dialog( "open" );
+				}else{
+					$("[id*=SubmitEdit]").click();
+				}
 			}
 		},
 				
@@ -101,8 +100,6 @@ $(document).ready(function() {
 				$("#edit_event" ).dialog( "open" );
 			}
 		},
-				
-			
 		events: 'events.json'
 	});
 	// jQuery UI Dialog
@@ -124,7 +121,7 @@ $(document).ready(function() {
                         "Submit": function() {
                                 $(this).dialog("close");
                                 $(location).attr('href',$(this).dialog('option', 'anchor'));
-								$("[id*=SubmitEdit]").click();
+				$("[id*=SubmitEdit]").click();
                                 return true;
                         },
                         "Cancel": function() {
@@ -132,10 +129,10 @@ $(document).ready(function() {
                                
                                 return false;
                         },
-						"Delete": function() {
+				"Delete": function() {
                                 $(this).dialog("close");
-								$(location).attr('href',$(this).dialog('option', 'anchor'));
-								$("[id*=SubmitDelete]").click();
+				$(location).attr('href',$(this).dialog('option', 'anchor'));
+				$("[id*=SubmitDelete]").click();
                                 return true;
                         }
                 }
