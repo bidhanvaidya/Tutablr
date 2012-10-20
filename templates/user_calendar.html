@@ -31,22 +31,20 @@ $(document).ready(function() {
 	}else{
 		user_id = last_url;
 	}
-	//var divadd = document.getElementById("add_event");
-	//divadd.getElementsByTagName("addForm").action="/../../add_booking/" + user_id + "/";
-	//alert(divadd.getElementsByTagName("addForm").action)
 	$('#calendar').fullCalendar({
 		header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
+			left: 'prev,next today',
+			center: 'title',
+			right: 'month,agendaWeek,agendaDay'
 		},
 		defaultView: 'agendaWeek',
 		selectable: true,
 		selectHelper: true,
 		editable: true,
 		disableResizing: true,
+		aspectRatio: 1.75,
 		eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
-			if (isOverlapping(event) || !event.editable) {
+			if (!event.editable) {
 				revertFunc();
 			}else{
 				var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
@@ -61,66 +59,68 @@ $(document).ready(function() {
 				$("#edit_event_id").val(id);
 				$('#datePicker_start_edit').attr("disabled", false);
 				$('#datePicker_start_edit').val(start_date);
-				if(event.type != "unavailable"){
-					$("#edit_event" ).dialog( "open" );
-				}else{
-					$("[id*=SubmitEdit]").click();
-				}
-			}
+				$("#edit_booking" ).dialog( "open" );
+			}	
 		},
 		select: function(start, end, allDay) {
 				var start_time = $.fullCalendar.formatDate(start, "HH:mm");
-				alert(start);
 				var end_time = $.fullCalendar.formatDate(end, "HH:mm");
 				var start_date = $.fullCalendar.formatDate(start, "dd/MM/yyyy");
 				var end_date = $.fullCalendar.formatDate(end, "dd/MM/yyyy");
+				$('#add_booking').dialog('option', 'title', 'Edit Booking');
 				$("#id_start_time").val(start_time);
 				$("#id_finish_time").val(end_time);
-				$("#add_event" ).dialog( "open" );
+				$("#add_booking" ).dialog( "open" );
 				$('#id_date').attr("disabled", false);
 				$('#id_date').val(start_date);
 				calendar.fullCalendar('unselect');
 		   },
 		   eventClick: function(event, jsEvent, view){
 				if(event.editable){
-					if(event.type == "tutor_session" || event.type == "tutor_booking"){
-						var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
-						var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
-						var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
-						var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
-						var id = event.id;
-						var title = event.title;
+					var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+					var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+					var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
+					var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
+					var id = event.id;
+					var title = event.title;
+					if(event.type == "tutor_session" || event.type == "student_session"){
+						$("#edit_session_start").val(start_time);
+						$("#edit_session_end").val(end_time);
+						$("#edit_session_title").val(title);
+						$("#edit_session_event_id").val(id);
+						$('#datePicker_session_start_edit').attr("disabled", false);
+						$('#datePicker_session_start_edit').val(start_date);
+						if(event.type == "tutor_session"){
+							$('#edit_session').dialog('option', 'title', 'Edit Tutor Session');
+							$("#btnSessionDelete").button("enable");
+						}else{
+							$('#edit_session').dialog('option', 'title', 'Edit Student Session');
+							$("#btnSessionDelete").button("disable");
+						}
+						$("#edit_session" ).dialog( "open" );
+					}else if(event.type == "tutor_booking" || event.type == "student_booking"){
 						$("#edit_start").val(start_time);
 						$("#edit_end").val(end_time);
 						$("#edit_title").val(title);
 						$("#edit_event_id").val(id);
 						$('#datePicker_start_edit').attr("disabled", false);
 						$('#datePicker_start_edit').val(start_date);
-						$("#edit_event" ).dialog( "open" );
-						$("#btnDelete").button("enable");
-						
-					}else{
-						var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
-						var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
-						var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
-						var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
-						var id = event.id;
-						var title = event.title;
-						$("#edit_start").val(start_time);
-						$("#edit_end").val(end_time);
-						$("#edit_title").val(title);
-						$("#edit_event_id").val(id);
-						$('#datePicker_start_edit').attr("disabled", false);
-						$('#datePicker_start_edit').val(start_date);
-						$("#edit_event" ).dialog( "open" );
-						$("#btnDelete").button("disable");
+						if(event.type == "tutor_booking"){
+							$('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking');
+							$("#btnDelete").button("enable");
+						}else{
+							$('#edit_booking').dialog('option', 'title', 'Edit Student Booking');
+							$("#btnDelete").button("disable");
+						}
+						$("#edit_booking" ).dialog( "open" );
+
 					}
 				}
 		   },
 		events: '/calendar/user_events.json/' + user_id
 	});
 	// jQuery UI Dialog
-	$('#edit_event').dialog({
+	$('#edit_booking').dialog({
 			autoOpen: false,
 			width: 400,
 			height: 300,
@@ -133,7 +133,7 @@ $(document).ready(function() {
 								$(this).dialog("close");
 								$(location).attr('href',$(this).dialog('option', 'anchor'));
 								url = '/../../update_booking/' + user_id + '/';
-								document.editForm.action=url;
+								document.editBookingForm.action=url;
 								$("[id*=SubmitEdit]").click();
 								return true;
 						},
@@ -147,42 +147,87 @@ $(document).ready(function() {
 						},
 					},
 					{
+						text: "Reject",
+						"id": "btnConfirm",
+						click: function() {
+								$(this).dialog("close");
+								$(location).attr('href',$(this).dialog('option', 'anchor'));
+								url = '/../../reject_booking/' + user_id + '/';
+								document.editBookingForm.action=url;
+								$("[id*=SubmitEdit]").click();
+								return true;
+						},
+					},
+
+					{
+						text: "Confirm",
+						"id": "btnConfirm",
+						click: function() {
+								$(this).dialog("close");
+								$(location).attr('href',$(this).dialog('option', 'anchor'));
+								url = '/../../confirm_booking/' + user_id + '/';
+								document.editBookingForm.action=url;
+								$("[id*=SubmitEdit]").click();
+								return true;
+						},
+					},
+
+					/*{
 						text: "Delete",
 						"id": "btnDelete",
 						click: function() {
 								$(this).dialog("close");
 								$(location).attr('href',$(this).dialog('option', 'anchor'));
 								url = '/../../delete_booking/' + user_id + '/';
-								document.editForm.action=url;
+								document.editBookingForm.action=url;
 								$("[id*=SubmitEdit]").click();
 								return true;
 						   }
-					}
+					}*/
 			]
-	});
-	$('#edit_event2').dialog({
+	});	
+	// jQuery UI Dialog
+	$('#edit_session').dialog({
 			autoOpen: false,
 			width: 400,
 			height: 300,
 			modal: true,
 			resizable: true,
-			buttons: {
-					"Submit": function() {
-							$(this).dialog("close");
-							$(location).attr('href',$(this).dialog('option', 'anchor'));
-							url = '/../../update_booking/' + user_id + '/';
-							document.editForm.action=url;
-							$("[id*=SubmitEdit2]").click();
-							return true;
+			buttons: [{
+						text: "Submit",
+						"id": "btnSessionSubmit",
+						click: function() {
+								$(this).dialog("close");
+								$(location).attr('href',$(this).dialog('option', 'anchor'));
+								url = '/../../update_session/' + user_id + '/';
+								document.editSessionForm.action=url;
+								$("[id*=SubmitEditSession]").click();
+								return true;
+						},
 					},
-					"Cancel": function() {
-							$(this).dialog("close");
-							return false;
+					{
+						text: "Cancel",
+						"id": "btnSessionCancel",
+						click: function() {
+								$(this).dialog("close");
+								return false;
+						},
 					},
-			}
-	});
-	
-	$('#add_event').dialog({
+					{
+						text: "Delete",
+						"id": "btnSessionDelete",
+						click: function() {
+								$(this).dialog("close");
+								$(location).attr('href',$(this).dialog('option', 'anchor'));
+								url = '/../../delete_session' + user_id + '/';
+								document.editSessionForm.action=url;
+								$("[id*=SubmitEditSession]").click();
+								return true;
+						   }
+					}
+			]
+	});	
+	$('#add_booking').dialog({
                 autoOpen: false,
                 width: 400,
 				height: 300,
@@ -192,9 +237,9 @@ $(document).ready(function() {
                         "Submit": function() {
                                 $(this).dialog("close");
                                 $(location).attr('href',$(this).dialog('option', 'anchor'));
-								url = '/../../add_booking/' + user_id + '/';
-								document.addForm.action=url;
-								$("[id*=SubmitAdd]").click();
+				url = '/../../add_booking/' + user_id + '/';
+				document.addBookingForm.action=url;
+				$("[id*=SubmitAdd]").click();
                                 return true;
                         },
                         "Cancel": function() {
@@ -209,8 +254,10 @@ $(document).ready(function() {
 	$("#id_date").datepicker({ dateFormat: 'dd/mm/yy' });
 	
 	$('#a').click(function() {
-        $('#add_event').dialog('close');
-    
+        $('#add_booking').dialog('close');
+    	$('#edit_booking').dialog('close');
+	$('#edit_session').dialog('close');
+
 	});
 function myFunction()
 {
@@ -231,7 +278,7 @@ alert("Hello World!");
     }
 
     #calendar {
-    width: 900px;
+    width: 800px;
     margin: 0 auto;
     }
 
@@ -240,9 +287,8 @@ alert("Hello World!");
     <title></title>
   </head>
   <body>
-    {{ uos }}
-    <div id="edit_event" title="Edit Event">
-      <form name="editForm" action="/../../update_booking/"  method="post">{% csrf_token %}
+    <div id="edit_booking" title="Edit Booking">
+      <form name="editBookingForm" action="/../../update_booking/"  method="post">{% csrf_token %}
         <fieldset>
 		    <div id="edit_div">
               	<label for = "edit_date_start"> Date </label> 
@@ -259,26 +305,27 @@ alert("Hello World!");
          <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
       </form>
     </div>
-	    <div id="edit_event2" title="Edit Event">
-      <form name="editForm2" action="/../../update_booking/"  method="post">{% csrf_token %}
+ 
+    <div id="edit_sesson" title="Edit Session">
+      <form hidden="hidden" name="editSessionForm" action="/../../update_session/"  method="post">{% csrf_token %}
         <fieldset>
-		    <div id="edit_div">
-              	<label for = "edit_date_start"> Date </label> 
-        		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" /> <br>
-              	<label for="edit_start">Start Time</label> 
-              	    <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
-		      	<label for="edit_end">End Time</label> 
-		      	    <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
-              	<label for="title">Event Description</label> 
-              	    <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" /> 
-		    </div>
-		    <input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+	<div id="edit_session_div">
+              	<label for = "edit_session_start_date"> Date </label> 
+       		    <input type="text" name = "edit_session_start_date" id="datePicker_session_start_edit" required="required" /> <br>
+              	<label for="edit_session_start">Start Time</label> 
+             	    <input type="text" name="edit_session_start" id="edit_session_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
+		      	<label for="edit_session_end">End Time</label> 
+		      	    <input type="text" name="edit_session_end" id="edit_session_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
+              	<label for="edit_session_title">Event Description</label> 
+              	    <input type="text" name="edit_session_title" id="edit_session_title" class="text ui-widget-content ui-corner-all" /> 
+	</div>
+		    <input type="hidden" name="edit_session_event_id" id="edit_session_event_id" class="text ui-widget-content ui-corner-all" required="required" />
         </fieldset>
-         <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
-		 
+         <input type="submit" value="Yes" id ="SubmitEditSession" style="display:none"> 
       </form>
     </div>
- <div id="add_event" title="Add Event">
+
+ <div id="add_booking" title="Add Booking">
     <form name="addForm" action="/../../add_booking/" method="post">{% csrf_token %}
         {{form.as_p}}
 		<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />

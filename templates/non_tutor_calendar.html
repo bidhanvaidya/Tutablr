@@ -46,6 +46,7 @@ $(document).ready(function() {
 		selectHelper: true,
 		editable: true,
 		disableResizing: true,
+		aspectRatio: 1.75,
 		eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
 			if (isOverlapping(event) || !event.editable) {
 				revertFunc();

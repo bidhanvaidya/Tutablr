@@ -35,6 +35,16 @@ html .fc,
 
 /* Header
 ------------------------------------------------------------------------*/
+.fc-view-agendaDay .fc-today {
+     color:yellow;
+     background:black;
+  } 
+
+.fc-view-agendaWeek .fc-today {
+     color:black;
+     background:yellow;
+  } 
+
 
 .fc-header td {
 	white-space: nowrap;

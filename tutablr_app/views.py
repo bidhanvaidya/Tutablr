@@ -80,8 +80,9 @@ def calendar(request):
             'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : booking.description,
             'allDay' : False,
-            'backgroundColor' :  'pink',
-            'borderColor' : 'red',
+	    'textColor' : 'black',
+            'backgroundColor' :  '#949eff',
+            'borderColor' : '#ff282a',
             'selectable' : True,
             'editable' : True,
             'type' : 'tutor_booking'
@@ -96,8 +97,8 @@ def calendar(request):
             'title' : booking.description,
             'allDay' : False,
             'textColor' : 'black',
-            'backgroundColor' :  'orange',
-            'borderColor' : 'red',
+            'backgroundColor' :  '#949eff',
+            'borderColor' : '#ff282a',
             'selectable' : True,
             'editable' : True,
             'type' : 'student_booking'
@@ -112,7 +113,8 @@ def calendar(request):
             'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : ut.description,
             'allDay' : False,
-            'backgroundColor' :  'purple',
+	    'textColor' : 'black',
+            'backgroundColor' :  '#a2ff80',
             'selectable' : True,
             'editable' : True,
             'type' : 'unavailable'
@@ -127,7 +129,8 @@ def calendar(request):
             'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : session.description,
             'allDay' : False,
-            'backgroundColor' :  'blue',
+	    'textColor' : 'black',
+            'backgroundColor' :  '#5e7eff',
             'selectable' : True,
             'editable' : True,
             'type:' : 'tutor_session'
@@ -144,7 +147,7 @@ def calendar(request):
             'title' : session.description,
             'allDay' : False,
             'textColor' : 'black',
-            'backgroundColor' :  'yellow',
+            'backgroundColor' :  '#fffd79',
             'selectable' : True,
             'editable' : True,
             'type' : 'student_session'
@@ -162,7 +165,8 @@ def calendar(request):
                 'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
                 'title' : classtime.description, #Enrolled.objects.get(id = enrolled.id).unit_id ,
                 'allDay' : False,
-                'backgroundColor' :  'green',
+		'textColor' : 'black',
+                'backgroundColor' :  '#ffc58a',
                 'editable' : False,
                 'type' : 'class'
                 })
