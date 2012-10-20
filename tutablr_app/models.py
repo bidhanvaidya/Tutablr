@@ -96,4 +96,5 @@ class Booking(models.Model):
 	is_rejected = models.BooleanField(default=False)
 	is_confirmed = models.BooleanField(default=False)
 	description = models.CharField(max_length = 56, default = '')
-    
+   	session_id = models.ForeignKey(SessionTime,blank=True, null=True, on_delete=models.SET_NULL)# ONLY FOR EDITS TO SESSIONS
+	creator_id = models.ForeignKey(User,related_name='creator_id+') # PERSON WHO CREATED/EDITED THE SESSION/BOOKING 
