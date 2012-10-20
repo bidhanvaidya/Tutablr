@@ -28,7 +28,7 @@ class Location(models.Model): # all location details
 	preferred_suburb = models.CharField(max_length=50)
 	longitude = models.FloatField()
 	latitude = models.FloatField()
-	user_id = models.ForeignKey(User)
+	user_id = models.OneToOneField(User)
 	is_tutoring_location = models.BooleanField(default=False) # only applies to tutors
 
 class UOS(models.Model): # unit of study information

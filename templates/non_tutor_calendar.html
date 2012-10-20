@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+	<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
+    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
+	<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+	
+    <script type='text/javascript'>
+//<![CDATA[
+function isOverlapping(event){
+    var array = calendar.fullCalendar('clientEvents');
+    for(i in array){
+        if(array[i].id != event.id){
+            if(!(array[i].start >= event.end || array[i].end <= event.start)){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+$(document).ready(function() {
+	var last_url = location.pathname.match(/\/user\/(.*)/)[1]
+	var user_id = '';
+	if(last_url[last_url.length-1] == '/'){
+		user_id = last_url.substring(0, last_url.length-1);
+	}else{
+		user_id = last_url;
+	}
+	//var divadd = document.getElementById("add_event");
+	//divadd.getElementsByTagName("addForm").action="/../../add_booking/" + user_id + "/";
+	//alert(divadd.getElementsByTagName("addForm").action)
+	
+	$('#calendar').fullCalendar({
+		header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+		},
+		defaultView: 'agendaWeek',
+		selectable: false,
+		selectHelper: true,
+		editable: true,
+		disableResizing: true,
+		eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+			if (isOverlapping(event) || !event.editable) {
+				revertFunc();
+			}else{
+				var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+				var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+				var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
+				var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
+				var id = event.id;
+				var title = event.title;
+				$("#edit_start").val(start_time);
+				$("#edit_end").val(end_time);
+				$("#edit_title").val(title);
+				$("#edit_event_id").val(id);
+				$('#datePicker_start_edit').attr("disabled", false);
+				$('#datePicker_start_edit').val(start_date);
+				$("#edit_event" ).dialog( "open" );
+			}
+		},
+		   eventClick: function(event, jsEvent, view){
+				if(event.editable){
+					var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+					var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+					var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
+					var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
+					var id = event.id;
+					var title = event.title;
+					$("#edit_start").val(start_time);
+					$("#edit_end").val(end_time);
+					$("#edit_title").val(title);
+					$("#edit_event_id").val(id);
+					$('#datePicker_start_edit').attr("disabled", false);
+					$('#datePicker_start_edit').val(start_date);
+					$("#edit_event" ).dialog( "open" );
+				}
+		   },
+		events: '/calendar/user_events.json/' + user_id
+	});
+	// jQuery UI Dialog
+	$('#edit_event').dialog({
+			autoOpen: false,
+			width: 400,
+			height: 300,
+			modal: true,
+			resizable: true,
+			buttons: {
+					"Submit": function() {
+							$(this).dialog("close");
+							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							$("[id*=SubmitEdit]").click();
+							return true;
+					},
+					"Cancel": function() {
+							$(this).dialog("close");
+							return false;
+					},
+			}
+	});
+  
+
+	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd/mm/yy' });
+	$("#id_date").datepicker({ dateFormat: 'dd/mm/yy' });
+	
+
+
+});
+    //]]>
+    </script>
+    <style type='text/css'>
+/*<![CDATA[*/
+
+    body {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 14px;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
+
+    #calendar {
+    width: 900px;
+    margin: 0 auto;
+    }
+
+    /*]]>*/
+    </style>
+    <title></title>
+  </head>
+  <body>
+    {{ uos }}
+    <div id="edit_event" title="Edit Event">
+      <form action="/../../update_booking/" name="editForm" method="post">{% csrf_token %}
+        <fieldset>
+		    <div id="edit_div">
+              	<label for = "edit_date_start"> Date </label> 
+        		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" /> <br>
+              	<label for="edit_start">Start Time</label> 
+              	    <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
+		      	<label for="edit_end">End Time</label> 
+		      	    <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
+              	<label for="title">Event Description</label> 
+              	    <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" required="required" /> 
+		    </div>
+		    <input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+        </fieldset>
+         <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
+         <input  type= "submit" formaction= "/../delete" id ="SubmitDelete" style="display:none">
+      </form>
+    </div>
+    <div id='calendar'></div>
+  </body>
+</html>

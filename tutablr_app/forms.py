@@ -1,9 +1,14 @@
 from django.db import models
 from django import forms
 from django.forms import ModelForm
+from django.contrib.admin import widgets 
 from tutablr_app.models import *
 from registration.forms import RegistrationForm
 from registration.models import RegistrationProfile
+from django.forms.fields import DateField, ChoiceField, MultipleChoiceField
+from django.forms.widgets import RadioSelect, CheckboxSelectMultiple
+from django.forms.extras.widgets import SelectDateWidget
+
 class ProfileForm(ModelForm):
  
 	def __init__(self, *args, **kwargs):
@@ -35,8 +40,6 @@ class ProfileForm(ModelForm):
 		return profile
 
 class YourRegistrationForm(RegistrationForm):
-	
-
 	def save(self, profile_callback=None):
 		new_user = RegistrationProfile.objects.create_inactive_user(username=self.cleaned_data['username'],
 		password=self.cleaned_data['password1'],
@@ -48,11 +51,38 @@ class YourRegistrationForm(RegistrationForm):
 		new_profile.save()
 		return new_user
 
-class addBookingForm(ModelForm):
-	class Meta:
-        	model = Booking
-    	def __init__(self, *args, **kwargs):
-        	super(BookingForm, self).__init__(*args, **kwargs)
-        	self.fields['date'].widget = widgets.AdminDateWidget()
-        	self.fields['mytime'].widget = widgets.AdminTimeWidget()
-        	self.fields['mydatetime'].widget = widgets.AdminSplitDateTime()
+		
+class addBookingForm(forms.Form):
+	
+	date = forms.DateField()
+	date.widget.format = '%d/%m/%Y'
+	date.widget.attrs.update({'class':'datePicker', 'readonly':'true'})
+	start_time = forms.TimeField()
+	finish_time = forms.TimeField()
+	UoS = forms.ChoiceField()
+	description = forms.CharField(max_length=56)
+	def __init__(self, *args, **kwargs):
+		tutor_id = kwargs.pop('tutor_id',0)
+		super(addBookingForm, self).__init__(*args, **kwargs)
+		choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in UnitDetails.objects.filter(user_id = tutor_id, is_tutorable = True)]
+		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
+
+"""
+class searchForm(forms.Form):
+	UoS = forms.ChoiceField()
+	price_from = forms.IntegerField(initial = 0, required=False)
+	price_to = forms.IntegerField(initial=30, required=False)
+	distance_choices = [(5, '5 km'), (10, '10km'), (15, '15km'), (25, '25km'), (1000, 'Any')]
+	distance = forms.ChoiceField(widget=forms.Select(), choices=distance_choices, initial=choices[0][5], required=False)
+	#only if students
+	grade_from_choices = [('HD', 'HD'), ('D', 'D'), ('C', 'C')]
+	grade_from = forms.ChoiceField(widget=forms.Select(), choices=grade_choices, initial=choices[0][0], required=True)
+	students_only = forms.BooleanField(label="StudentsOnly")
+	rating_from_choices = [(5, '5 Stars'), (4, '4 Stars'), (3, '3 Stars'), (2, '2 Stars'), (1, '1 Star'), (0, 'Any')]
+	rating_from = forms.ChoiceField(widget=forms.Select(), choices=rating_from_choices, initial=choices[0][5], required=True)
+ 	def __init__(self, *args, **kwargs):
+  		user_id=kwargs.pop('user_id',0)
+  		super(addBookingForm, self).__init__(*args, **kwargs)
+  		uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in Enrolled.objects.filter(user_id = user_id, is_complete=False)]
+  		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
+"""	
