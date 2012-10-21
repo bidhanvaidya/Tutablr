@@ -84,21 +84,25 @@
 							var title = event.title;
 							//tutor session (booking) is session (booking) with a tutor
 							if (event.type == "tutor_session" || event.type == "student_session") {
-								$("#edit_session_start").val(start_time);
-								$("#edit_session_end").val(end_time);
-								$("#edit_session_title").val(title);
-								$("#edit_session_event_id").val(id);
-								//$('#datePicker_session_start_edit').attr("disabled", false);
-								$('#datePicker_session_start_edit').datepicker("enable");
-								$('#datePicker_session_start_edit').val(start_date);
-								if (event.type == "tutor_session") {
-									$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
-									//delete, reject, confirm based on creator id
-								} else {
-									//delete, reject, confirm based on creator id
-									$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+								if(event.pending){
+									alert('Session already has a pending edit');
+								}else{
+									$("#edit_session_start").val(start_time);
+									$("#edit_session_end").val(end_time);
+									$("#edit_session_title").val(title);
+									$("#edit_session_event_id").val(id);
+									//$('#datePicker_session_start_edit').attr("disabled", false);
+									$('#datePicker_session_start_edit').datepicker("enable");
+									$('#datePicker_session_start_edit').val(start_date);
+									if (event.type == "tutor_session") {
+										$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+										//delete, reject, confirm based on creator id
+									} else {
+										//delete, reject, confirm based on creator id
+										$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+									}
+									$("#edit_session").dialog("open");
 								}
-								$("#edit_session").dialog("open");
 							} else if (event.type == "tutor_booking" || event.type == "student_booking") {
 								$("#edit_start").val(start_time);
 								$("#edit_end").val(end_time);

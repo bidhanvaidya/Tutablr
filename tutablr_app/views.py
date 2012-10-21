@@ -141,39 +141,57 @@ def calendar(request):
             })
         # for tutor sessions---------------------------------------------------------------
         for session in tutor_sessions:
-            session_start = session.start_time.astimezone(timezone.get_default_timezone())
-            session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-            calendar_list.append({
-            'id'  :  session.id,
-            'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-            'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-            'title' : session.description,
-            'allDay' : False,
+			bookings = Booking.objects.filter(session_id=session)
+			pending = False
+			if len(bookings) > 0:
+				for b in bookings:
+					if b.is_rejected == False and b.is_confirmed == False:
+						pending = True
+						break
+			
+						
+			session_start = session.start_time.astimezone(timezone.get_default_timezone())
+			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+			calendar_list.append({
+			'id'  :  session.id,
+			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+			'title' : session.description,
+			'allDay' : False,
 			'textColor' : 'black',
-            'backgroundColor' :  '#5e7eff',
-            'selectable' : True,
+			'backgroundColor' :  '#5e7eff',
+			'selectable' : True,
 			'draggable' : True,
-            'editable' : True,
-            'type' : 'tutor_session'
-            })
+			'editable' : True,
+			'pending' : pending,
+			'type' : 'tutor_session'
+			})
         # end of tutor sessions---------------------------------------------------------------  
         # for student sessions---------------------------------------------------------------
         for session in student_sessions:
-            session_start = session.start_time.astimezone(timezone.get_default_timezone())
-            session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-            calendar_list.append({
-            'id'  :  session.id,
-            'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-            'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-            'title' : session.description,
-            'allDay' : False,
-            'textColor' : 'black',
-            'backgroundColor' :  '#fffd79',
-            'selectable' : True,
+			bookings = Booking.objects.filter(session_id=session)
+			pending = False
+			if len(bookings) > 0:
+				for b in bookings:
+					if b.is_rejected == False and b.is_confirmed == False:
+						pending = True
+						break
+			session_start = session.start_time.astimezone(timezone.get_default_timezone())
+			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+			calendar_list.append({
+			'id'  :  session.id,
+			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+			'title' : session.description,
+			'allDay' : False,
+			'textColor' : 'black',
+			'backgroundColor' :  '#fffd79',
+			'selectable' : True,
 			'draggable' : True,
-            'editable' : True,
-            'type' : 'student_session'
-            })
+			'editable' : True,
+			'pending' : pending,
+			'type' : 'student_session'
+			})
         # # end of student sessions---------------------------------------------------------------  
         # # for class times-----------------------------------------------------------------------
         for enrolled in enrolls:
@@ -313,6 +331,13 @@ def user_calendar(request, cal_id):
 			})
 		# for tutor sessions---------------------------------------------------------------
 		for session in tutor_sessions:
+			bookings = Booking.objects.filter(session_id=session)
+			pending = False
+			if len(bookings) > 0:
+				for b in bookings:
+					if b.is_rejected == False and b.is_confirmed == False:
+						pending = True
+						break
 			if session.student_id.id == user_id or session.tutor_id.id == user_id:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
 				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
@@ -326,6 +351,7 @@ def user_calendar(request, cal_id):
 				'backgroundColor' :  '#5e7eff',
 				'draggable' : True,
 				'editable' : True,
+				'pending' : pending,
 				'type' : 'tutor_session'
 				})
 			else:
@@ -345,6 +371,13 @@ def user_calendar(request, cal_id):
 		# end of tutor sessions---------------------------------------------------------------  
 		# for student sessions---------------------------------------------------------------
 		for session in student_sessions:
+			bookings = Booking.objects.filter(session_id=session)
+			pending = False
+			if len(bookings) > 0:
+				for b in bookings:
+					if b.is_rejected == False and b.is_confirmed == False:
+						pending = True
+						break
 			if session.student_id.id == user_id or session.tutor_id.id == user_id:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
 				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
@@ -358,6 +391,7 @@ def user_calendar(request, cal_id):
 				'backgroundColor' :  '#fffd79',
 				'draggable' : True,
 				'editable' : True,
+				'pending' : pending,
 				'type' : 'student_session'
 				})
 			else:
@@ -475,7 +509,7 @@ def drop_event(request, cal_id):
 			booking = Booking(start_time = session.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
 					finish_time = session.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
 					creator_id = request.user,
-					session_id = session,
+					#session_id = session,
 					description = session.description,
 					tutor_id = session.tutor_id,
 					student_id = session.student_id,
