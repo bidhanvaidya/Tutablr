@@ -1,34 +1,31 @@
-#bottom-boxes {
+#contact-form {
     position: relative;
-    top:30px;
+    left:50px;
+    top:50px;
+    width:500px;
 }
 
-.bottom-boxes {
-    height: 180px;
+#form-input-fields {
+    position: relative;
+    left: -55px;
+}
+
+#message {
+    width: 300px;
+    max-width: 300px;
+    height: 250px;
+}
+
+#buttons_div {
+    position: relative;
+    left: 280px;
 }
 
 #main-area {
-    position:relative;
-    top: 30px;
+    height: 590px;
 }
 
-#homeimage {
-    height: 247px;
-    width: 400px;
+#address-box {
     position: relative;
-    left:62px;
-    top:2px;
-}
-
-#home-maintext {
-    position: relative;
-    left:-115px;
-    height: 250px;
-    width: 420px;
-}
-
-#home-maintext-thumbnail {
-    height:240px;
-    position:relative;
-    left:-20px;
+    left:30px;
 }

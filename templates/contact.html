@@ -2,60 +2,49 @@
 {% load i18n %}
 
 {% block content %}
-            <div id="home-slideshow" class="span6 offset1">
-                <img id="homeimage" src="{{STATIC_URL}}tutablr/img/tutoring.jpg" alt="Tutablr" />
-            </div>
-            <div id="home-maintext" class="span4">
-                <ul class="thumbnails">
-                  <li>
-                    <div id="home-maintext-thumbnail" class="thumbnail ">
-                      
-                      <div class="caption">
-                        <h3 class="home-caption">Welcome to TuTablr!</h3>
-                        <p>TuTablr is the next big thing to help the students of  the University of Sydney achieve the marks they want. </p>
-                        <p>Who better to tutor you in a subject than the students/staff who have taken the subject before? Tutablr brings past and present students and teachers together, to make the search for a tutor easy!</p>
+<div id="address-box" class="span5">
+  <h2>Contact Details</h2>
+    <address>
+      <strong>TuTablr Head Office</strong><br>
+        404 Not Found Rd<br>
+        Sydney, NSW 8080<br>
+        Australia<br>
+      <abbr title="Phone">P:</abbr> (123) 456-7890
+      <abbr title="Fax">F:</abbr>(614)101-1337
+  </address>              
+    <iframe width="560" height="380" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com.au/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=university+of+sydney&amp;aq=&amp;sll=-33.881738,151.049136&amp;sspn=0.070401,0.132093&amp;ie=UTF8&amp;hq=university+of+sydney&amp;t=m&amp;cid=2090089592059987904&amp;hnear=&amp;ll=-33.889085,151.190586&amp;spn=0.012469,0.021458&amp;z=15&amp;iwloc=&amp;output=embed"></iframe>
+  </div>
+<div id="contact-form" class="span6 offset1">
+    <form  class="form-horizontal well " method="post" action="#">{% csrf_token %}
+        <legend>Contact Us</legend>
+        <div id="form-input-fields">
+              <div class="control-group">
+                      <label  for="fullname-" class = "control-label" >Full Name</label>
+                      <div class="controls">
+                          <input id="fullname"class="input-large" id="inputIcon" type="text" placeholder="John Smith">
                       </div>
-                    </div>
-                  </li>
-                </ul>
-            </div>
+              </div>
+               <div class="control-group">
+                      <label  for="email" class = "control-label" >Email Address</label>
+                      <div class="controls">
+                          <input id="email" class="input-large" id="inputIcon" type="text" placeholder="example@example.com">
+                      </div>
+              </div>
+              <div class="control-group">
+                      <label  for="message" class = "control-label" >Message</label>
+                      <div class="controls">
+                         <textarea  id="message" rows="10" placeholder="Enter Message Here ..." ></textarea>
+                      </div>
+              </div>
         </div>
-        </br>
-        </br>
-        <div id="bottom-boxes"class="row-fluid">
-            <ul class="thumbnails">
-              <li class="span4">
-                <div class="thumbnail well">
-                  
-                  <div class="caption bottom-boxes">
-                    <h3 class="home-caption">Pricing</h3>
-                    <p>TuTablr is a free service provided by the University of Sydney. Tutoring prices range anywhere between $20 to $100 per hour, depending on your tutor.</p>
-                    <p>Unfortunately, as this is not a university run course, the HECS system is not valid for costs incurred.</p>
-                  </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail well">
-                  
-                  <div class="caption bottom-boxes">
-                    <h3 class="home-caption">Contact Us</h3>
-                    <p>Want to inquire into your pending tutoring application? Got a bug to report? Or do you want to just congratulate use on how great TuTablr is? </p>
-                    <p>Whatever your question or comment, we would love to hear from you! Please head to our Contacts Page!</p>
-                 </div>
-                </div>
-              </li>
-              <li class="span4">
-                <div class="thumbnail well">
-                 
-                  <div class="caption bottom-boxes">
-                    <h3 class="home-caption">Testimonials</h3>
-                    <p>"TuTablr has helped me pass my math course, which I thought I would fail at the start of the semester!"  - Jodie (Math1001)</p>
-                    <p>"Without TuTablr, I would have failed my Algorithms course. Again!" - Miles (Comp2007)</p>
-                  </div>
-                </div>
-              </li>
-            </ul>
-       </div>
+        <div id="buttons_check_id">
+            <div id="buttons_div">
+               <button  id="reset-reg-btn"  class="btn btn-inverse" type="reset" >Clear Form</button>
+              <button id="reg_submit_btn"class="btn btn-primary" type="submit" disabled="disabled" >Sumbit</button>
+            </div>       
+        </div>
+    </form>
+</div>
 {% endblock %}
 
  {% block extra_head %}

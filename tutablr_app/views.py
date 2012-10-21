@@ -440,7 +440,8 @@ def loginAjax(request):
             return HttpResponse("1")
         else:
             return HttpResponse("0")
-
+            
+@login_required
 def dashboard(request):
     user_id = request.user.id
     #print tutablr.settings.STATIC_ROOT +" <------"

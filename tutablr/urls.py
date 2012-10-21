@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     	#}),
 	#(r'^test$', login_required(direct_to_template), {'template': 'test.html'}),
 	 url(r'^login$','tutablr_app.views.loginAjax'),
+	 url(r'^contact$',auth_views.login,{'template_name':'contact.html'},name='auth_login'), # home page
+	 #url(r'contact', direct_to_template, {'template': 'contact.html'}),
 	 url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
 	 url ( r'^calendar/user_events.json/(?P<id>\d+)/$' , 'tutablr_app.views.user_calendar' , name = 'user_events.json' ),
 	 url ( r'^calendar/$' , login_required(TemplateView . as_view ( template_name = "calendar.html" )), name = 'calendar' ),
