@@ -40,6 +40,9 @@ def tutor_search(request):
 
 	return render(request, "search.html", { 'form': form })
 
+@login_required
+def calendar_user(request):
+	return redirect('/calendar/user/' + str(request.user.id) + '/')
 
 @login_required
 def calendar_view(request, cal_id):
