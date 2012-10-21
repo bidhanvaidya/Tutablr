@@ -105,5 +105,45 @@ $("#reset-reg-btn").click(function(){
 });
 
 
+$("#contactForm").submit(function(){
+   /* var redirectURL;
+    if (getUrlVar("next")== "") {
+        redirectURL = baseURL + "/dashboard";
+    }
+    else {
+        redirectURL = baseURL + getUrlVar("next");
+    }
+    var username = $('#id_username').val();
+    var password = $('#id_password').val();
+    if (username == "" || password == "") {
+        $("#login-input").addClass("control-group error")
+        alert("Please enter a valid username and password.");
+    }    */
+    var fullName = $('#fullname').val();
+    var email = $('#email').val();
+    var message =  $('#message').val();
+    $.ajax({
+      url: '/submitContact',
+      type: 'POST',
+      //dataType: 'xml/html/script/json/jsonp',
+      data: {
+            fullName: fullName,
+            email: email,
+            message:  message
+    },
+
+        success: function(data) {
+           if (data == "1") {
+                $('#form-input-fields').replaceWith('<p>Your message was sent successfully!</p>');
+            }
+            else {
+                $('#form-input-fields').replaceWith('<p>There was an error in sending your message. Please try again later.</p>');
+            }
+            $('#buttons_div').remove();
+        }
+    });  
+    return false;
+});
+
 
 

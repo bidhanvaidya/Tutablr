@@ -15,32 +15,32 @@
     <iframe width="560" height="380" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com.au/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=university+of+sydney&amp;aq=&amp;sll=-33.881738,151.049136&amp;sspn=0.070401,0.132093&amp;ie=UTF8&amp;hq=university+of+sydney&amp;t=m&amp;cid=2090089592059987904&amp;hnear=&amp;ll=-33.889085,151.190586&amp;spn=0.012469,0.021458&amp;z=15&amp;iwloc=&amp;output=embed"></iframe>
   </div>
 <div id="contact-form" class="span6 offset1">
-    <form  class="form-horizontal well " method="post" action="#">{% csrf_token %}
+    <form  id="contactForm" class="form-horizontal well " method="post" action="/submitContact">{% csrf_token %}
         <legend>Contact Us</legend>
         <div id="form-input-fields">
               <div class="control-group">
                       <label  for="fullname-" class = "control-label" >Full Name</label>
                       <div class="controls">
-                          <input id="fullname"class="input-large" id="inputIcon" type="text" placeholder="John Smith">
+                          <input id="fullname"class="input-large"  name="fullName" id="inputIcon" type="text" placeholder="John Smith">
                       </div>
               </div>
                <div class="control-group">
                       <label  for="email" class = "control-label" >Email Address</label>
                       <div class="controls">
-                          <input id="email" class="input-large" id="inputIcon" type="text" placeholder="example@example.com">
+                          <input id="email" class="input-large" id="inputIcon" name="email" type="text" placeholder="example@example.com">
                       </div>
               </div>
               <div class="control-group">
-                      <label  for="message" class = "control-label" >Message</label>
+                      <label  for="message" class = "control-label"  >Message</label>
                       <div class="controls">
-                         <textarea  id="message" rows="10" placeholder="Enter Message Here ..." ></textarea>
+                         <textarea  id="message" rows="10"  name="message" placeholder="Enter Message Here ..." ></textarea>
                       </div>
               </div>
         </div>
         <div id="buttons_check_id">
             <div id="buttons_div">
-               <button  id="reset-reg-btn"  class="btn btn-inverse" type="reset" >Clear Form</button>
-              <button id="reg_submit_btn"class="btn btn-primary" type="submit" disabled="disabled" >Sumbit</button>
+               <button  id="reset-contact-btn"  class="btn btn-inverse" type="reset" >Clear Form</button>
+              <button id="contact_submit_btn"class="btn btn-primary" type="submit"  >Sumbit</button>
             </div>       
         </div>
     </form>
