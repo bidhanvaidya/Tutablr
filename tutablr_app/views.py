@@ -40,13 +40,11 @@ def tutor_search(request):
 
 	return render(request, "search.html", { 'form': form })
 
-		
-
-		
-
 
 @login_required
 def calendar_view(request, id):
+	if str(id) == str(request.user.id):
+		return redirect('/calendar')
 	u = UnitDetails.objects.filter(user_id = id, is_tutorable = True)
 	if len(u) == 0:
 		return render(request, "non_tutor_calendar.html")
@@ -58,8 +56,6 @@ def calendar_view(request, id):
 		else:
 			form = addBookingForm(tutor_id=id)
 		return render(request, "user_calendar.html", { 'form': form })
-	#return render(request, "user_calendar.html")
-
 
 @login_required
 def calendar(request):
@@ -113,7 +109,7 @@ def calendar(request):
             'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : ut.description,
             'allDay' : False,
-	    'textColor' : 'black',
+			'textColor' : 'black',
             'backgroundColor' :  '#a2ff80',
             'selectable' : True,
             'editable' : True,
@@ -129,7 +125,7 @@ def calendar(request):
             'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
             'title' : session.description,
             'allDay' : False,
-	    'textColor' : 'black',
+			'textColor' : 'black',
             'backgroundColor' :  '#5e7eff',
             'selectable' : True,
             'editable' : True,
@@ -177,174 +173,205 @@ def calendar(request):
             return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
             
 def user_calendar(request, id):
-        user_id = request.user.id
-        enrolls = Enrolled.objects.filter (user_id=id) # get all the enrolled class for the student
-        tutor_sessions = SessionTime.objects.filter (tutor_id=id) # get all the session time for the tutor
-        student_sessions = SessionTime.objects.filter (student_id=id) # get all the session time for the tutee/student
-        unavailable_times = UnavailableTime.objects.filter(user_id=id) # get all the unavailable times for the student
-        tutor_bookings = Booking.objects.filter(tutor_id=id, is_rejected=False, is_confirmed=False)
-        student_bookings = Booking.objects.filter(student_id=id, is_rejected=False, is_confirmed = False)
-        calendar_list = [] # list for calender inputs
-        #pending bookings-------------------------------------------------------------------
-        for booking in tutor_bookings:
-            if booking.student_id.id == user_id:
-                booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-                booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  booking.id,
-                'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : booking.description,
-                'allDay' : False,
-                'backgroundColor' :  'blue',
-                'borderColor' : 'red',
-                'editable' : True,
-                'type' : 'tutor_booking'
-                })
-            else:
-                booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-                booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  booking.id,
-                'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : 'Unavailable',
-                'allDay' : False,
-                'backgroundColor' :  'red',
-                'borderColor' : 'red',
-                'editable' : False,
-                'type' : 'tutor_booking'
-                })
-        for booking in student_bookings:
-            if booking.tutor_id.id == user_id:
-                booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-                booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+		user_id = request.user.id
+		enrolls = Enrolled.objects.filter (user_id=id) # get all the enrolled class for the student
+		tutor_sessions = SessionTime.objects.filter (tutor_id=id) # get all the session time for the tutor
+		student_sessions = SessionTime.objects.filter (student_id=id) # get all the session time for the tutee/student
+		unavailable_times = UnavailableTime.objects.filter(user_id=id) # get all the unavailable times for the student
+		tutor_bookings = Booking.objects.filter(tutor_id=id, is_rejected=False, is_confirmed=False)
+		student_bookings = Booking.objects.filter(student_id=id, is_rejected=False, is_confirmed = False)
+		calendar_list = [] # list for calender inputs
+		#pending bookings-------------------------------------------------------------------
+		for booking in tutor_bookings:
+			if booking.session_id is None:
+				session_id = 0;
+			else:
+				session_id=booking.session_id.id
+			if booking.student_id.id == user_id:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				draggable = False
+				if(booking.creator_id == request.user):
+					draggable = True
+				
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : booking.description,
+				'allDay' : False,
+				'backgroundColor' :  '#949eff',
+				'borderColor' : '#ff282a',
+				'editable' : True,
+				'type' : 'tutor_booking',
+				'draggable' : draggable,
+				'session_id' : session_id,
+				'creator_id' : booking.creator_id.id
+				})
+			else:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  '#ff282a',
+				'borderColor' : '#ff282a',
+				'editable' : False,
+				'type' : 'tutor_booking',
+				'session_id' : session_id,
+				'creator_id' : booking.creator_id.id
+				})
+		for booking in student_bookings:
+			if booking.session_id is None:
+				session_id = 0;
+			else:
+				print("here!")
+				session_id=booking.session_id.id
+				print(session_id)
+			if booking.tutor_id.id == user_id:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				draggable = False
+				if(booking.creator_id == request.user):
+					draggable = True
+				
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : booking.description,
+				'allDay' : False,
+				'textColor' : 'black',
+				'backgroundColor' :  '#949eff',
+				'borderColor' : '#ff282a',
+				'editable' : True,
+				'draggable' : draggable,
+				'type' : 'student_booking',
+				'session_id' : session_id,
+				'creator_id' : booking.creator_id.id
+				})
+			else:
+				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
+				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  booking.id,
+				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  '#ff282a',
+				'borderColor' : '#ff282a',
+				'editable' : False,
+				'type' : 'tutor_booking',
+				'session_id' : session_id,
+				'creator_id' : booking.creator_id.id
+				})
+		# unavailable times---------------------------------------------------------------
+		for ut in unavailable_times:
+			session_start = ut.start_time.astimezone(timezone.get_default_timezone())
+			session_finish = ut.finish_time.astimezone(timezone.get_default_timezone())
+			calendar_list.append({
+			'id'  :  ut.id,
+			'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+			'title' : 'Unavailable',
+			'allDay' : False,
+			'backgroundColor' :  '#ff282a',
+			'borderColor' : '#ff282a',
+			'editable' : False,
+			'type' : 'unavailable'
+			})
+		# for tutor sessions---------------------------------------------------------------
+		for session in tutor_sessions:
+			if session.student_id.id == user_id or session.tutor_id.id == user_id:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : session.description,
+				'allDay' : False,
+				'textColor' : 'white',
+				'backgroundColor' :  '#5e7eff',
+				'draggable' : True,
+				'editable' : True,
+				'type' : 'tutor_session'
+				})
+			else:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  '#ff282a',
+				'borderColor' : '#ff282a',
+				'editable' : False,
+				'type' : 'student_session'
+				})
+		# end of tutor sessions---------------------------------------------------------------  
+		# for student sessions---------------------------------------------------------------
+		for session in student_sessions:
+			if session.student_id.id == user_id or session.tutor_id.id == user_id:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : session.description,
+				'allDay' : False,
+				'textColor' : 'black',
+				'backgroundColor' :  '#fffd79',
+				'draggable' : True,
+				'editable' : True,
+				'type' : 'student_session'
+				})
+			else:
+				session_start = session.start_time.astimezone(timezone.get_default_timezone())
+				session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
 
-                calendar_list.append({
-                'id'  :  booking.id,
-                'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : booking.description,
-                'allDay' : False,
-                'textColor' : 'black',
-                'backgroundColor' :  'yellow',
-                'borderColor' : 'red',
-                'editable' : True,
-                'type' : 'student_booking'
-                })
-            else:
-                booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
-                booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  booking.id,
-                'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  booking_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : 'Unavailable',
-                'allDay' : False,
-                'backgroundColor' :  'red',
-                'borderColor' : 'red',
-                'editable' : False,
-                'type' : 'tutor_booking'
-                })
-        # unavailable times---------------------------------------------------------------
-        for ut in unavailable_times:
-            session_start = ut.start_time.astimezone(timezone.get_default_timezone())
-            session_finish = ut.finish_time.astimezone(timezone.get_default_timezone())
-            calendar_list.append({
-            'id'  :  ut.id,
-            'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-            'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-            'title' : 'Unavailable',
-            'allDay' : False,
-            'backgroundColor' :  'red',
-            'borderColor' : 'red',
-            'editable' : False,
-            'type' : 'unavailable'
-            })
-        # for tutor sessions---------------------------------------------------------------
-        for session in tutor_sessions:
-            if session.student_id.id == user_id:
-                session_start = session.start_time.astimezone(timezone.get_default_timezone())
-                session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  session.id,
-                'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : session.description,
-                'allDay' : False,
-                'backgroundColor' :  'blue',
-                'editable' : True,
-                'type:' : 'tutor_session'
-                })
-            else:
-                session_start = session.start_time.astimezone(timezone.get_default_timezone())
-                session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  session.id,
-                'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : 'Unavailable',
-                'allDay' : False,
-                'backgroundColor' :  'red',
-                'borderColor' : 'red',
-                'editable' : False,
-                'type' : 'student_session'
-                })
-        # end of tutor sessions---------------------------------------------------------------  
-        # for student sessions---------------------------------------------------------------
-        for session in student_sessions:
-            if session.student_id.id == user_id:
-                session_start = session.start_time.astimezone(timezone.get_default_timezone())
-                session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  session.id,
-                'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : session.description,
-                'allDay' : False,
-                'textColor' : 'black',
-                'backgroundColor' :  'yellow',
-                'editable' : True,
-                'type' : 'student_session'
-                })
-            else:
-                session_start = session.start_time.astimezone(timezone.get_default_timezone())
-                session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
-
-                calendar_list.append({
-                'id'  :  session.id,
-                'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : 'Unavailable',
-                'allDay' : False,
-                'backgroundColor' :  'red',
-                'borderColor' : 'red',
-                'editable' : False,
-                'type' : 'student_session'
-                })
-        # # end of student sessions---------------------------------------------------------------  
-        # # for class times-----------------------------------------------------------------------
-        for enrolled in enrolls:
-            classes = ClassTime.objects.filter(enrolled_id = enrolled.id)   
-            for classtime in classes:
-                classtime_start = classtime.start_time.astimezone(timezone.get_default_timezone())
-                classtime_finish = classtime.finish_time.astimezone(timezone.get_default_timezone())
-                calendar_list.append({
-                'id'  :  classtime.id,
-                'start'  :  classtime_start.strftime('%Y-%m-%d %H:%M:%S'),
-                'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
-                'title' : 'Unavailable',
-                'allDay' : False,
-                'backgroundColor' :  'red',
-                'editable' : False,
-                'type' : 'class'
-                })
-            # #end of class times---------------------------------------------------------------------
-        if len(calendar_list) == 0:
-            raise http.Http404
-        else:
-            return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
-            
+				calendar_list.append({
+				'id'  :  session.id,
+				'start'  :  session_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  '#ff282a',
+				'borderColor' : '#ff282a',
+				'editable' : False,
+				'type' : 'student_session'
+				})
+		# # end of student sessions---------------------------------------------------------------  
+		# # for class times-----------------------------------------------------------------------
+		for enrolled in enrolls:
+			classes = ClassTime.objects.filter(enrolled_id = enrolled.id)   
+			for classtime in classes:
+				classtime_start = classtime.start_time.astimezone(timezone.get_default_timezone())
+				classtime_finish = classtime.finish_time.astimezone(timezone.get_default_timezone())
+				calendar_list.append({
+				'id'  :  classtime.id,
+				'start'  :  classtime_start.strftime('%Y-%m-%d %H:%M:%S'),
+				'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
+				'title' : 'Unavailable',
+				'allDay' : False,
+				'backgroundColor' :  '#ffc58a',
+				'borderColor' : '#ffc58a',
+				'editable' : False,
+				'type' : 'class'
+				})
+			# #end of class times---------------------------------------------------------------------
+		if len(calendar_list) == 0:
+			raise http.Http404
+		else:
+			return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
+			
 #POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
 ##id, type
 def delete(request):
@@ -362,21 +389,6 @@ def delete(request):
     else:
         raise http.Http404
 
-		#POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
-##id, type
-def delete_booking(request, tutor_id):
-	print("HEERHRHERHEHRERHRHE")
-	if request.method == 'POST': 
-		id = request.POST.get('edit_event_id')
-		user_id = request.user.id
-		booking = Booking.objects.get(pk=id)
-		if booking.student_id.id == request.user.id:
-			booking.delete()
-			return redirect('/calendar/user/' + tutor_id + '/')
-		else:
-			raise http.Http404
-	else:
-		raise http.Http404
 
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
@@ -389,7 +401,6 @@ def update(request):
 		end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
 		end= time.strptime(end, "%d/%m/%Y %H:%M")
 		end_datetime= datetime.datetime(*end[:6])
-		
 		if request.POST.get('type') == 'student_session':
 				tutor_id= SessionTime.objects.get(pk=id).tutor_id
 				unit_id= SessionTime.objects.get(pk=id).unit_id
@@ -424,9 +435,123 @@ def update(request):
 				return redirect('/wronguser')
 		else:
 			return redirect('/notpost')
+
+#-------------------EVENT DROP----------------------------------
+def drop_event(request, id):
+	if request.method == 'POST':
+		dayDelta = request.POST.get('dayDelta')
+		minuteDelta = request.POST.get('minuteDelta')
+		eventType = request.POST.get('eventType')
+		event_id = request.POST.get('drop_event_id')
+		if eventType == 'student_session' or eventType == 'tutor_session':
+			session = SessionTime.objects.filter(pk=event_id)[0]
 			
-#POST requests here must also have a description, start_time, and finish_time
-##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
+			booking = Booking(start_time = session.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
+					finish_time = session.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
+					creator_id = request.user,
+					session_id = session,
+					description = session.description,
+					tutor_id = session.tutor_id,
+					student_id = session.student_id,
+					unit_id = session.unit_id)
+			"""
+			booking = Booking(unit_id = session.unit_id,
+				start_time = session.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
+				finish_time = session.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
+				tutor_id = session.tutor_id,
+				student_id = session.student_id,
+				description = session.description,
+				session_id = session,
+				creator_id = request.user)
+			"""
+			booking.save()
+		elif eventType == 'student_booking' or eventType == 'tutor_booking':
+			booking = Booking.objects.filter(pk=event_id)[0]
+			booking.start_time = booking.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
+			booking.finish_time = booking.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
+			booking.save()
+		return redirect('/calendar/user/' + id + '/')
+			
+#--------------------UNAVAILABLE TIMES--------------------------
+def add_unavailable(request):
+    if request.method == 'POST': 
+		start=  request.POST.get('add_start_date') + " " + request.POST.get('add_start')
+		start= time.strptime(start, "%d/%m/%Y %H:%M")
+		start_datetime= datetime.datetime(*start[:6])
+		end=  request.POST.get('add_start_date') + " "+ request.POST.get('add_end')
+		end= time.strptime(end, "%d/%m/%Y %H:%M")
+		end_datetime= datetime.datetime(*end[:6])
+		unavailable = UnavailableTime(user_id = request.user, 
+			description = request.POST.get('add_title'),
+			start_time = start_datetime,
+			finish_time = end_datetime)
+		print "test"
+		unavailable.save()
+		return redirect('/calendar')
+		
+def update_unavailable(request):
+	if request.method == 'POST':
+		id = request.POST.get('edit_unavailable_event_id')
+		start= request.POST.get('edit_unavailable_start_date') + " " + request.POST.get('edit_unavailable_start')
+		start= time.strptime(start, "%d/%m/%Y %H:%M")
+		start_datetime= datetime.datetime(*start[:6])
+		end=  request.POST.get('edit_unavailable_start_date') + " "+ request.POST.get('edit_unavailable_end')
+		end= time.strptime(end, "%d/%m/%Y %H:%M")
+		end_datetime= datetime.datetime(*end[:6])
+		unavailable = UnavailableTime.objects.get(pk=id)
+		user = unavailable.user_id
+		if user.id== request.user.id:	
+			print user.id
+			unavailable.description = request.POST.get('edit_title')
+			unavailable.start_time = start_datetime
+			unavailable.finish_time = end_datetime
+			print "hello"
+			unavailable.save()
+			return redirect('/calendar')
+		else:
+			return redirect('/wronguser')
+			
+#POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
+##id, type
+def delete_unavailable(request):
+    if request.method == 'POST': 
+		id = request.POST.get('edit_unavailable_event_id')
+		user_id = request.user.id
+		unavailable = UnavailableTime.objects.get(pk=id)
+		user = unavailable.user_id
+		if user.id== request.user.id:
+			unavailable.delete()
+			return redirect('/calendar')
+		else:
+			raise http.Http404
+    else:
+        raise http.Http404
+#----------------END UNAVAILABLE TIMES------------
+#----------------BOOKING--------------------------
+#initial booking (with null session) MUST be made by the student
+def add_booking(request, id):
+	if request.method == 'POST':
+		start=  request.POST.get('date') + " " + request.POST.get('start_time')
+		start= time.strptime(start, "%d/%m/%Y %H:%M")
+		start_datetime= datetime.datetime(*start[:6])
+		end=  request.POST.get('date') + " " + request.POST.get('finish_time')
+		end= time.strptime(end, "%d/%m/%Y %H:%M")
+		end_datetime= datetime.datetime(*end[:6])
+		unit_id = UOS.objects.filter(unit_id = request.POST.get('UoS'))[0]
+		other_id = User.objects.filter(id=id)[0]
+		booking = Booking(unit_id = unit_id,
+			start_time = start_datetime,
+			finish_time = end_datetime,
+			tutor_id = User.objects.filter(id=id)[0],
+			student_id = request.user,
+			description = request.POST.get('description'),
+			creator_id = request.user
+		)
+		booking.save()
+		return redirect('/calendar/user/' + id + '/')
+	else:
+		return redirect('/calendar/user/' + id + '/')
+		
 def update_booking(request, other_id):
 		if request.method == 'POST':
 			id = request.POST.get('edit_event_id')
@@ -443,6 +568,43 @@ def update_booking(request, other_id):
 				booking.description = request.POST.get('edit_title')
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
+				booking.creator_id = request.user
+				booking.save()
+				return redirect('/calendar/user/' + other_id + '/')
+			else:
+				raise http.Http404
+
+		else:
+			return redirect('/calendaKKr')	
+			
+#initial booking MUST be made by the student
+def confirm_booking(request, other_id):
+		if request.method == 'POST':
+			id = request.POST.get('edit_event_id')
+			booking = Booking.objects.get(pk=id)
+			student = booking.student_id
+			tutor = booking.tutor_id
+			if (student.id== request.user.id or tutor.id== request.user.id) and request.user.id != booking.creator_id.id:
+				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
+				start= time.strptime(start, "%d/%m/%Y %H:%M")
+				start_datetime= datetime.datetime(*start[:6])
+				end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
+				end= time.strptime(end, "%d/%m/%Y %H:%M")
+				end_datetime= datetime.datetime(*end[:6])
+				booking.description = request.POST.get('edit_title')
+				booking.start_time = start_datetime
+				booking.finish_time = end_datetime
+				booking.is_confirmed = True
+				if booking.session_id is not None:
+					booking.session_id.delete()
+				session = SessionTime(unit_id = booking.unit_id,
+						description = booking.description,
+						start_time = booking.start_time,
+						finish_time = booking.finish_time,
+						tutor_id = booking.tutor_id,
+						student_id = booking.student_id)
+				session.save()
+				booking.session_id = session
 				booking.save()
 				return redirect('/calendar/user/' + other_id + '/')
 			else:
@@ -451,94 +613,93 @@ def update_booking(request, other_id):
 		else:
 			return redirect('/calendaKKr')
 
-#POST requests here must also have a description, start_time, and finish_time
-##type, tutor_id, student_id, description, start_time, finish_time, unit_id 
-#http://api.jquery.com/jQuery.post/
+#initial booking MUST be made by the student
+def reject_booking(request, other_id):
+		if request.method == 'POST':
+			id = request.POST.get('edit_event_id')
+			booking = Booking.objects.get(pk=id)
+			student = booking.student_id
+			tutor = booking.tutor_id
+			if student.id== request.user.id or tutor.id== request.user.id:
+				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
+				start= time.strptime(start, "%d/%m/%Y %H:%M")
+				start_datetime= datetime.datetime(*start[:6])
+				end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
+				end= time.strptime(end, "%d/%m/%Y %H:%M")
+				end_datetime= datetime.datetime(*end[:6])
+				booking.description = request.POST.get('edit_title')
+				booking.start_time = start_datetime
+				booking.finish_time = end_datetime
+				booking.is_rejected = True
+				booking.save()
+				return redirect('/calendar/user/' + other_id + '/')
+			else:
+				raise http.Http404
 
-# <script>
-  # /* attach a submit handler to the form */
-  # $("#searchForm").submit(function(event) {
-
-    # /* stop form from submitting normally */
-    # event.preventDefault(); 
-        
-    # /* get some values from elements on the page: */
-    # var $form = $( this ),
-        # start_date = $form.find( 'input[name="add_start_date"]' ).val(),
-        # end_date = $form.find( 'input[name="add_end_date"]' ).val(),
-        # type = $form.find( 'input[name="radio"]' ).val(),
-        # start_time = $form.find( 'input[name="add_start"]' ).val(),
-        # end_time = $form.find( 'input[name="add_end"]' ).val(),
-        # description = $form.find( 'input[name=name="add_title"]' ).val(),
-        # unit_id = $form.find( 'input[name=name="name="add_uos""]' ).val(),
-        # url = $form.attr( 'action' );
-
-    # /* Send the data using post and put the results in a div */
-    # $.post( url, { 'start_time': start_date + ' ' + start_time, 'end_time': end_date + ' ' + end_time, 'type' : type, 'description' : description, 'unit_id' : unit_id},
-      # function( data ) {
-          # var content = $( data ).find( '#content' );
-          # $( "#result" ).empty().append( content );
-      # }
-    # );
-  # });
-# </script>
-    
-
-def add_unavailable(request):
-    
-    if request.method == 'POST': 
-        
-        # if request.POST.get('type') == 'tutor_booking':
-        # booking = Booking(tutor_id = user_id, 
-        # student_id = request.POST.get('student_id'), 
-        # description = request.POST.get('description'),
-        # start_time = request.POST.get('start_time'),
-        # finish_time = request.POST.get('finish_time'),
-        # unit_id = request.POST.get('unit_id'),
-        # is_rejected = False,
-        # is_confirmed = False
-        # )
-        # booking.save()
-        # return http.HttpResponse('added')
-            start=  request.POST.get('add_start_date') + " " + request.POST.get('add_start')
-            start= time.strptime(start, "%d/%m/%Y %H:%M")
-            start_datetime= datetime.datetime(*start[:6])
-            end=  request.POST.get('add_start_date') + " "+ request.POST.get('add_end')
-            end= time.strptime(end, "%d/%m/%Y %H:%M")
-            end_datetime= datetime.datetime(*end[:6])
-    
-            unavailable = UnavailableTime(user_id = request.user, 
-                description = request.POST.get('add_title'),
-                start_time = start_datetime,
-                finish_time = end_datetime)
-            print "test"
-            unavailable.save()
-            return redirect('/calendar')
-
-def add_booking(request, id):
-	print("HITHERE")
-	if request.method == 'POST':
-		start=  request.POST.get('date') + " " + request.POST.get('start_time')
-		start= time.strptime(start, "%d/%m/%Y %H:%M")
-		start_datetime= datetime.datetime(*start[:6])
-		end=  request.POST.get('date') + " " + request.POST.get('finish_time')
-		end= time.strptime(end, "%d/%m/%Y %H:%M")
-		end_datetime= datetime.datetime(*end[:6])
-		unit_id = UOS.objects.filter(unit_id = request.POST.get('UoS'))[0]
-		tutor_id = User.objects.filter(id=id)[0]
-		booking = Booking(unit_id = unit_id,
-			start_time = start_datetime,
-			finish_time = end_datetime,
-			tutor_id = tutor_id,
-			student_id = request.user,
-			description = request.POST.get('description')
-		)
-		booking.save()
-		#return HttpResponse("1")
-		return redirect('/calendar/user/' + id + '/')
+		else:
+			return redirect('/calendaKKr')
+			
+def delete_booking(request, tutor_id):
+	if request.method == 'POST': 
+		id = request.POST.get('edit_event_id')
+		user_id = request.user.id
+		booking = Booking.objects.get(pk=id)
+		if booking.creator_id == request.user:
+			booking.delete()
+			return redirect('/calendar/user/' + tutor_id + '/')
+		else:
+			print("herherherherh")
+			raise http.Http404
 	else:
-		return redirect('/calendar/user/' + id + '/')
+		raise http.Http404
+#-------------END BOOKINGS-----------------------
+#-------------SESSIONS---------------------------
+def update_session(request, other_id):
+		if request.method == 'POST':
+			id = request.POST.get('edit_session_event_id')
+			session = SessionTime.objects.get(pk=id)
+			student = session.student_id
+			tutor = session.tutor_id
+			if student.id== request.user.id or tutor.id== request.user.id:
+				start= request.POST.get('edit_session_start_date') + " " + request.POST.get('edit_session_start')
+				start= time.strptime(start, "%d/%m/%Y %H:%M")
+				start_datetime= datetime.datetime(*start[:6])
+				end=  request.POST.get('edit_session_start_date') + " "+ request.POST.get('edit_session_end')
+				end= time.strptime(end, "%d/%m/%Y %H:%M")
+				end_datetime= datetime.datetime(*end[:6])
+				description = request.POST.get('edit_session_title')
+				booking = Booking(start_time = start_datetime, 
+					finish_time = end_datetime,
+					creator_id = request.user,
+					session_id = session,
+					description = description,
+					tutor_id = tutor,
+					student_id = student,
+					unit_id = session.unit_id)
+				booking.save()
+				return redirect('/calendar/user/' + other_id + '/')
+			else:
+				raise http.Http404
 
+		else:
+			return redirect('/calendaKKr')
+			
+def delete_session(request, tutor_id):
+	if request.method == 'POST': 
+		id = request.POST.get('edit_session_event_id')
+		user_id = request.user.id
+		session = SessionTime.objects.get(pk=id)
+		if session.student_id.id == request.user.id or session.tutor_id.id == request.user.id:
+			session.delete()
+			return redirect('/calendar/user/' + tutor_id + '/')
+		else:
+			raise http.Http404
+	else:
+			raise http.Http404
+#-----------------END SESSIONS-----------------------
+			
+			
+	
 def loginAjax(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)

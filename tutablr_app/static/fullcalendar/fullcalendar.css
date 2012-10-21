@@ -36,15 +36,18 @@ html .fc,
 /* Header
 ------------------------------------------------------------------------*/
 .fc-view-agendaDay .fc-today {
-     color:yellow;
-     background:black;
+     color:white;
+     background:#FFDEAD;
   } 
 
 .fc-view-agendaWeek .fc-today {
-     color:black;
-     background:yellow;
+     color:white;
+     background:#FFDEAD;
   } 
-
+.fc-view-month .fc-today {
+     color:white;
+     background:#FFDEAD;
+  } 
 
 .fc-header td {
 	white-space: nowrap;

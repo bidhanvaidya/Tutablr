@@ -211,6 +211,7 @@ function showText(num)
     <div id="edit_event" title="Edit Event">
       <form action="/../../update" name="editForm" method="post">{% csrf_token %}
         <fieldset>
+
 		    <div id="edit_div">
                  <label for = "edit_date_start"> End Date </label> 
         		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" readonly="readonly" /> <br>

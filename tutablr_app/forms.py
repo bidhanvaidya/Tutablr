@@ -53,7 +53,7 @@ class YourRegistrationForm(RegistrationForm):
 
 		
 class addBookingForm(forms.Form):
-	
+	#print('HERHEHRHERHEHRHRRH')
 	date = forms.DateField()
 	date.widget.format = '%d/%m/%Y'
 	date.widget.attrs.update({'class':'datePicker', 'readonly':'true'})
@@ -61,11 +61,14 @@ class addBookingForm(forms.Form):
 	finish_time = forms.TimeField()
 	UoS = forms.ChoiceField()
 	description = forms.CharField(max_length=56)
+	#creator_id = forms.IntegerField()
 	def __init__(self, *args, **kwargs):
 		tutor_id = kwargs.pop('tutor_id',0)
 		super(addBookingForm, self).__init__(*args, **kwargs)
 		choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in UnitDetails.objects.filter(user_id = tutor_id, is_tutorable = True)]
 		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
+		#self.fields['creator_id'].widget = forms.HiddenInput()
+
 
 """
 class searchForm(forms.Form):
