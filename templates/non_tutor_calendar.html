@@ -1,160 +1,337 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
-	<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
-    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
-    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
-	<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-	
-    <script type='text/javascript'>
-//<![CDATA[
-function isOverlapping(event){
-    var array = calendar.fullCalendar('clientEvents');
-    for(i in array){
-        if(array[i].id != event.id){
-            if(!(array[i].start >= event.end || array[i].end <= event.start)){
-                return true;
-            }
-        }
-    }
-    return false;
-}
-$(document).ready(function() {
-	var last_url = location.pathname.match(/\/user\/(.*)/)[1]
-	var user_id = '';
-	if(last_url[last_url.length-1] == '/'){
-		user_id = last_url.substring(0, last_url.length-1);
-	}else{
-		user_id = last_url;
-	}
-	//var divadd = document.getElementById("add_event");
-	//divadd.getElementsByTagName("addForm").action="/../../add_booking/" + user_id + "/";
-	//alert(divadd.getElementsByTagName("addForm").action)
-	
-	$('#calendar').fullCalendar({
-		header: {
-				left: 'prev,next today',
-				center: 'title',
-				right: 'month,agendaWeek,agendaDay'
-		},
-		defaultView: 'agendaWeek',
-		selectable: false,
-		selectHelper: true,
-		editable: true,
-		disableResizing: true,
-		aspectRatio: 1.75,
-		eventDrop: function(event, dayDelta, minuteDelta, allDay, revertFunc) {
-			if (isOverlapping(event) || !event.editable) {
-				revertFunc();
-			}else{
-				var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
-				var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
-				var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
-				var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
-				var id = event.id;
-				var title = event.title;
-				$("#edit_start").val(start_time);
-				$("#edit_end").val(end_time);
-				$("#edit_title").val(title);
-				$("#edit_event_id").val(id);
-				$('#datePicker_start_edit').attr("disabled", false);
-				$('#datePicker_start_edit').val(start_date);
-				$("#edit_event" ).dialog( "open" );
-			}
-		},
-		   eventClick: function(event, jsEvent, view){
-				if(event.editable){
-					var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
-					var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
-					var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
-					var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
-					var id = event.id;
-					var title = event.title;
-					$("#edit_start").val(start_time);
-					$("#edit_end").val(end_time);
-					$("#edit_title").val(title);
-					$("#edit_event_id").val(id);
-					$('#datePicker_start_edit').attr("disabled", false);
-					$('#datePicker_start_edit').val(start_date);
-					$("#edit_event" ).dialog( "open" );
+	<head>
+		<meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
+		<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+
+		<script type='text/javascript'>
+			//<![CDATA[
+			function isOverlapping(event) {
+				var array = calendar.fullCalendar('clientEvents');
+				for (i in array) {
+					if (array[i].id != event.id) {
+						if (!(array[i].start >= event.end || array[i].end <= event.start)) {
+							return true;
+						}
+					}
 				}
-		   },
-		events: '/calendar/user_events.json/' + user_id
-	});
-	// jQuery UI Dialog
-	$('#edit_event').dialog({
-			autoOpen: false,
-			width: 400,
-			height: 300,
-			modal: true,
-			resizable: true,
-			buttons: {
-					"Submit": function() {
+				return false;
+			}
+
+
+			$(document).ready(function() {
+				var last_url = location.pathname.match(/\/user\/(.*)/)[1]
+				var user_id = '';
+				if (last_url[last_url.length - 1] == '/') {
+					user_id = last_url.substring(0, last_url.length - 1);
+				} else {
+					user_id = last_url;
+				}
+				$('#calendar').fullCalendar({
+					header : {
+						left : 'prev,next today',
+						center : 'title',
+						right : 'month,agendaWeek,agendaDay'
+					},
+					defaultView : 'agendaWeek',
+					selectable : false,
+					selectHelper : true,
+					editable : true,
+					disableResizing : true,
+					aspectRatio : 1.75,
+					eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+						if (!event.draggable) {
+							revertFunc();
+						} else {
+							var id = event.id;
+							$("#dayDelta").val(dayDelta);
+							$("#minuteDelta").val(minuteDelta);
+							$("#drop_event_id").val(id);
+							$("#eventType").val(event.type);
+							url = '/../../drop_event/' + user_id + '/';
+							document.editDropForm.action = url;
+							$("[id*=SubmitDrop]").click();
+
+						}
+					},
+					eventClick : function(event, jsEvent, view) {
+						if (event.editable) {
+							var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+							var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+							var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
+							var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
+							var id = event.id;
+							var title = event.title;
+							//tutor session (booking) is session (booking) with a tutor
+							if (event.type == "tutor_session" || event.type == "student_session") {
+								$("#edit_session_start").val(start_time);
+								$("#edit_session_end").val(end_time);
+								$("#edit_session_title").val(title);
+								$("#edit_session_event_id").val(id);
+								//$('#datePicker_session_start_edit').attr("disabled", false);
+								$('#datePicker_session_start_edit').datepicker("enable");
+								$('#datePicker_session_start_edit').val(start_date);
+								if (event.type == "tutor_session") {
+									$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+									//delete, reject, confirm based on creator id
+								} else {
+									//delete, reject, confirm based on creator id
+									$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+								}
+								$("#edit_session").dialog("open");
+							} else if (event.type == "tutor_booking" || event.type == "student_booking") {
+								$("#edit_start").val(start_time);
+								$("#edit_end").val(end_time);
+								$("#edit_title").val(title);
+								$("#edit_event_id").val(id);
+								$('#datePicker_start_edit').datepicker("enable");
+								$('#datePicker_start_edit').val(start_date);
+								if (event.type == "tutor_booking") {
+									//delete, reject, confirm based on creator id
+									$('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking: ' + event.title);
+								} else {
+									//delete, reject, confirm based on creator id
+									$('#edit_booking').dialog('option', 'title', 'Edit Student Booking: ' + event.title);
+								}
+								if (event.creator_id != user_id) {
+									$("#btnDelete").button("enable");
+									$("#btnConfirm").hide();
+									$("#btnReject").hide();
+								} else {
+									$("#btnDelete").hide()
+								}
+								//$("#edit_booking").dialog("open");
+								$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
+								$("#select_dialog").dialog("open");
+
+							}
+						}
+					},
+					events : '/calendar/user_events.json/' + user_id
+				});
+				$('#select_dialog').dialog({
+					autoOpen : false,
+					width : 400,
+					height : 100,
+					modal : true,
+					resizable : true,
+					buttons : [{
+						text : "Edit",
+						"id" : "btnEdit",
+						click : function(e) {
+							$('#edit_booking').dialog('open');
+							$(this).dialog('close');
+						}
+					}, {
+						text : "Confirm",
+						"id" : "btnConfirm",
+						click : function() {
 							$(this).dialog("close");
-							$(location).attr('href',$(this).dialog('option', 'anchor'));
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../confirm_booking/' + user_id + '/';
+							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
 							return true;
-					},
-					"Cancel": function() {
+						}
+					}, {
+						text : "Cancel",
+						"id" : "btnCancel",
+						click : function() {
 							$(this).dialog("close");
 							return false;
-					},
+						}
+					}, {
+						text : "Reject",
+						"id" : "btnReject",
+						click : function() {
+							$(this).dialog("close");
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../reject_booking/' + user_id + '/';
+							document.editBookingForm.action = url;
+							$("[id*=SubmitEdit]").click();
+							return true;
+						}
+					}, {
+						text : "Delete",
+						"id" : "btnDelete",
+						click : function() {
+							$(this).dialog("close");
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../delete_booking/' + user_id + '/';
+							document.editBookingForm.action = url;
+							$("[id*=SubmitEdit]").click();
+							return true;
+						}
+					}],
+				});
+
+				$('#edit_booking').dialog({
+					autoOpen : false,
+					width : 400,
+					height : 300,
+					modal : true,
+					resizable : true,
+					closeOnButton : false,
+					buttons : [{
+						text : "Submit",
+						"id" : "btnSubmit",
+						click : function() {
+							$(this).dialog("close");
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../update_booking/' + user_id + '/';
+							document.editBookingForm.action = url;
+							$("[id*=SubmitEdit]").click();
+							return true;
+						},
+					}, {
+						text : "Cancel",
+						"id" : "btnCancel2",
+						click : function() {
+							$(this).dialog("close");
+							return false;
+						},
+					}],
+				});
+				$('#edit_session').dialog({
+					autoOpen : false,
+					width : 400,
+					height : 300,
+					modal : true,
+					resizable : true,
+					buttons : [{
+						text : "Submit",
+						"id" : "btnSessionSubmit",
+						click : function() {
+							$(this).dialog("close");
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../update_session/' + user_id + '/';
+							document.editSessionForm.action = url;
+							$("[id*=SubmitEditSession]").click();
+							return true;
+						},
+					}, {
+						text : "Cancel",
+						"id" : "btnSessionCancel",
+						click : function() {
+							$(this).dialog("close");
+							return false;
+						},
+					}, {
+						text : "Delete",
+						"id" : "btnSessionDelete",
+						click : function() {
+							$(this).dialog("close");
+							$(location).attr('href', $(this).dialog('option', 'anchor'));
+							url = '/../../delete_session/' + user_id + '/';
+							document.editSessionForm.action = url;
+							$("[id*=SubmitEditSession]").click();
+							return true;
+						}
+					}]
+				});
+
+
+
+				$("#datePicker_start_edit").datepicker({
+					dateFormat : 'dd/mm/yy'
+				});
+
+				$('#datePicker_start_edit').datepicker("disable");
+				$('#datePicker_session_start_edit').datepicker("disable");
+				$('#a').click(function() {
+					$('#edit_booking').dialog('close');
+					$('#edit_session').dialog('close');
+				});
+				function myFunction() {
+					alert("Hello World!");
+				}
+
+			});
+			//]]>
+		</script>
+
+		<style type='text/css'>
+			/*<![CDATA[*/
+
+			body {
+				margin-top: 40px;
+				text-align: center;
+				font-size: 14px;
+				font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 			}
-	});
-  
 
-	$("#datePicker_start_edit").datepicker({ dateFormat: 'dd/mm/yy' });
-	$("#id_date").datepicker({ dateFormat: 'dd/mm/yy' });
-	
+			#calendar {
+				width: 800px;
+				margin: 0 auto;
+			}
 
+			/*]]>*/
+		</style>
+		<title>User Calendar</title>
+	</head>
+	<body>
+		<div id="edit_session" title="Edit Booking">
+			<form name="editSessionForm" action="/../../update_booking/"  method="post">
+				{% csrf_token %}
+				<fieldset>
+					<label for = "edit_session_date_start"> Date </label>
+					<input type="text" name = "edit_session_start_date" id="datePicker_session_start_edit" required="required" />
+					<br>
+					<label for="edit_start">Start Time</label>
+					<input type="text" name="edit_session_start" id="edit_session_start" class="text ui-widget-content ui-corner-all" required="required" />
+					<br>
+					<label for="edit_end">End Time</label>
+					<input type="text" name="edit_session_end" id="edit_session_end" class="text ui-widget-content ui-corner-all" required="required" />
+					<br>
+					<label for="title">Event Description</label>
+					<input type="text" name="edit_session_title" id="edit_session_title" class="text ui-widget-content ui-corner-all" />
+					<input type="hidden" name="edit_session_event_id" id="edit_session_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+				</fieldset>
+				<input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
+			</form>
+		</div>
+		<div id ="select_dialog"></div>
+		<div id="edit_booking" title="Edit Booking">
+			<form name="editBookingForm" action="/../../update_booking/"  method="post">
+				<div id="edit_div" style="display:block">
+					{% csrf_token %}
+					<fieldset>
+						<label for = "edit_date_start"> Date </label>
+						<input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" />
+						<br>
+						<label for="edit_start">Start Time</label>
+						<input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" />
+						<br>
+						<label for="edit_end">End Time</label>
+						<input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" />
+						<br>
+						<label for="title">Event Description</label>
+						<input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" />
 
-});
-    //]]>
-    </script>
-    <style type='text/css'>
-/*<![CDATA[*/
-
-    body {
-        margin-top: 40px;
-        text-align: center;
-        font-size: 14px;
-        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-    }
-
-    #calendar {
-    width: 900px;
-    margin: 0 auto;
-    }
-
-    /*]]>*/
-    </style>
-    <title></title>
-  </head>
-  <body>
-    {{ uos }}
-    <div id="edit_event" title="Edit Event">
-      <form action="/../../update_booking/" name="editForm" method="post">{% csrf_token %}
-        <fieldset>
-		    <div id="edit_div">
-              	<label for = "edit_date_start"> Date </label> 
-        		    <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" /> <br>
-              	<label for="edit_start">Start Time</label> 
-              	    <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" /> <br>
-		      	<label for="edit_end">End Time</label> 
-		      	    <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" /><br>
-              	<label for="title">Event Description</label> 
-              	    <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" required="required" /> 
-		    </div>
-		    <input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
-        </fieldset>
-         <input type="submit" value="Yes" id ="SubmitEdit" style="display:none"> 
-         <input  type= "submit" formaction= "/../delete" id ="SubmitDelete" style="display:none">
-      </form>
-    </div>
-    <div id='calendar'></div>
-  </body>
+						<input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+					</fieldset>
+				</div>
+				<input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
+			</form>
+		</div>
+		<div id="edit_drop" title="Edit Drop" style="display:none">
+			<form name="editDropForm" action="/../../update_drop/"  method="post">
+				{% csrf_token %}
+				<fieldset>
+					<input type="text" name = "dayDelta" id="dayDelta" required="required" />
+					<input type="text" name="minuteDelta" id="minuteDelta" required="required" />
+					<input type="text" name="eventType" id="eventType" required="required" />
+					<input type="hidden" name="drop_event_id" id="drop_event_id" required="required" />
+				</fieldset>
+				<input type="submit" value="Yes" id ="SubmitDrop" style="display:none">
+			</form>
+		</div>
+		<div id='calendar'></div>
+	</body>
 </html>
