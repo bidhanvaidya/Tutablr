@@ -463,9 +463,20 @@ def contactFormAjax(request):
 def dashboard(request):
     user_id = request.user.id
     #print tutablr.settings.STATIC_ROOT +" <------"
-    messages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)[:5]
+    arrayMessages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)
+    messages = arrayMessages[:5]
+    numberOfMessages = len(messages)
+    extraRows = 5 - numberOfMessages
+    if extraRows > 0:
+        temp = "<tr><td height=\"18\"></td></tr>"*extraRows
+        print temp + " <------------"
+    else:
+        temp = ""
     print  messages
     return render_to_response('dashboard.html',
-                              {"messages":messages,},
+                              {"messages":messages,
+                                 "numberOfMessages":numberOfMessages,
+                                 "extraRows":temp,
+                              },
                               context_instance=RequestContext(request))
 

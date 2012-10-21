@@ -5,21 +5,35 @@
         <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/dashboard.css" />
 {% endblock %}
 {% block content %}
-    <h2 id="timetable-title" >My Timetable</h2>
+    <h1 id="timetable-title" >My Timetable</h2>
     <div id="timetable-content" class="row-fluid">
                 <div id="timetable" class="span9">
-                    <img src="http://www.placehold.it/800x500" alt="Video Placeholder" />
+                    <img src="{{STATIC_URL}}tutablr/img/800x500.gif" alt="Video Placeholder" />
                 </div>
-    <h3 id="messages-title"class="home-caption">Recent Messages</h3>
+    <h3 id="messages-title"class="home-caption">Recent Messages ({{numberOfMessages}})</h3>
                 <div id="messages" class="span3">
                       <div class="caption">
-                        {% if messages|length == 0%}
-                            <p>You have no new messages!</p>
-                        {%else%}
-                            {% for message in messages %}
-                                <a href="/messages/view/{{message.id}}/?next=/messages/inbox/" title="{{message.subject}}"> {{message.subject}} </a></br>
-                            {% endfor %}
-                        {%endif%}
+                        <table border="0" class="table table-striped table-bordered">
+                            <tbody>
+                             {% if messages|length == 0%}
+                                <tr>
+                                    <td>You have no new messages.</td>
+                                </tr>
+                                <tr><td></td></tr>
+                                <tr><td></td></tr>
+                                <tr><td></td></tr>
+                                <tr><td></td></tr>
+                            {%else%}
+                                {% for message in messages %}
+                                    <tr>
+                                        <td><a href="/messages/view/{{message.id}}/?next=/messages/inbox">Subject: {{message.subject}}</a></td>
+                                    </tr>
+                                {% endfor %}
+                                {% autoescape off %}{{ extraRows }}{% endautoescape %}
+
+                            {%endif%}
+                            </tbody>
+                        </table>
                       </div>
                 </div>
           
@@ -43,8 +57,19 @@
         <li class="active"><a href="/dashboard">My Dashboard</a></li>
         <li><a href="/calendar">My Timetable</a></li>
         <li><a href="/messages">My Messages</a></li>
-        <li><a href="/">My Profile</a></li>
         <li><a href="/">Find a Tutor</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Edit Locations</a></li>
+              <li><a href="#">Edit Tutorable Subjects</a></li>
+              <li><a href="#">Add Review</a></li>
+              <li class="divider"></li>
+              <li class="nav-header">My Profile</li>
+              <li><a href="#">View Profile</a></li>
+              <li><a href="#">Edit Profile</a></li>
+            </ul>
+         </li>
     </ul>
 {% endblock %}
 

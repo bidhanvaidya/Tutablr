@@ -1,7 +1,8 @@
 #messages{
     position: relative;
     left: -20px;
-    top: 50px;
+    top: 30px;
+    min-height: 150px;
 }
 #timetable-content {
     position: relative;
@@ -25,17 +26,12 @@
 
 #timetable-title {
     position: relative;
-    left: 320px;
+    left: 310px;
 }
 
 #events-title {
     position: relative;
     top: -80px;
-}
-
-#messages {
-    border:  1px  solid black;
-    min-height: 150px;
 }
 
 #upcoming-events{
@@ -47,5 +43,6 @@
 
 #messages-title {
     position: relative;
-    top:60px;
+    left: -10px;
+    top:40px;
 }
