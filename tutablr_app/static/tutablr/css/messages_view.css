@@ -1,0 +1,28 @@
+#message-title {
+
+}
+
+#pm_messages {
+
+}
+
+#pm_buttons {
+    position: relative;
+    top:25px;
+    left:148px;
+}
+
+#sort-div {
+    position: relative;
+    left: -118px;
+    top:30px;
+
+}
+
+#sort-div a {
+    padding: 1px 3px;
+}
+
+#form_buttons {
+    
+}

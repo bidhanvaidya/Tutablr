@@ -28,9 +28,14 @@
     max-height:  800px;
 }
 
+#upcoming-div {
+    height:0px;
+}
+
 #timetable-title {
     position: relative;
     left: 310px;
+    width: 300px;
 }
 
 #events-title {

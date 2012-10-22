@@ -1,8 +1,42 @@
 {% extends "postman/base_folder.html" %}
 {% load i18n %}
-{% block pm_folder_title %}{% trans "Archived Messages" %}{% endblock %}
+{% block pm_folder_title %}{% trans "Messages - Archives" %}{% endblock %}
 {% block pm_archive_button %}{% endblock %}
 {% block pm_undelete_button %}{% endblock %}
 {% block pm_footer_info %}
 <p>{% trans "Messages in this folder will never be removed. You can use this folder for long term storage." %}</p>
 {% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+    <ul class="nav">
+        <li><a href="/dashboard">My Dashboard</a></li>
+        <li><a href="/calendar">My Timetable</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/messages/inbox">Inbox</a></li>
+              <li><a href="/messages/sent">Sent</a></li>
+              <li class="active"><a href="/messages/archives/">Archive</a></li>
+              <li><a href="/messages/trash">Trash</a></li>
+              <li><a href="/messages/write">Write Message</a></li>
+            </ul>
+         </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Edit Locations</a></li>
+              <li><a href="#">Edit Tutorable Subjects</a></li>
+              <li><a href="#">Add Review</a></li>
+              <li class="divider"></li>
+              <li class="nav-header">My Profile</li>
+              <li><a href="#">View Profile</a></li>
+              <li><a href="#">Edit Profile</a></li>
+            </ul>
+         </li>
+        <li><a href="/">Find a Tutor</a></li>
+    </ul>
+{% endblock %}
+
+ {% block extra_head %}
+    <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/messages_archives.css" />
+  {% endblock %}
