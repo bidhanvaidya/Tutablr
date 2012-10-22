@@ -653,7 +653,7 @@ def add_booking(request, cal_id):
 		message= Message(subject="Booking Created", 
 			body=" A booking for " +  booking.unit_id.unit_name+" has been created by " + booking.creator_id.username, 
 			sender=admin, 
-			recipient=booking.student_id, 
+			recipient=booking.tutor_id, 
 			moderation_status=STATUS_ACCEPTED, 
 			moderation_date=now)
 		message.save()
