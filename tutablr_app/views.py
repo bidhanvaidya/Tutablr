@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 import time, datetime
-from postman.models import Message
+from postman.models import Message, STATUS_ACCEPTED
 import tutablr
 from django.template import RequestContext
 from django.shortcuts import redirect, render
@@ -94,7 +94,8 @@ def calendar(request):
 			'editable' : True,
 			'type' : 'tutor_booking',
 			'session_id' : session_id,
-			'creator_id' : booking.creator_id.id
+			'creator_id' : booking.creator_id.id,
+			'creator' : booking.creator_id.username,
             })
         for booking in student_bookings:
 			draggable = False
@@ -120,7 +121,8 @@ def calendar(request):
 			'editable' : True,
             'type' : 'student_booking',
 			'session_id' : session_id,
-			'creator_id' : booking.creator_id.id
+			'creator_id' : booking.creator_id.id,
+			'creator' : booking.creator_id.username
             })
         # unavailable times---------------------------------------------------------------
         for ut in unavailable_times:
@@ -251,7 +253,8 @@ def user_calendar(request, cal_id):
 				'type' : 'tutor_booking',
 				'draggable' : draggable,
 				'session_id' : session_id,
-				'creator_id' : booking.creator_id.id
+				'creator_id' : booking.creator_id.id,
+				'creator' : booking.creator_id.username
 				})
 			else:
 				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
@@ -267,7 +270,8 @@ def user_calendar(request, cal_id):
 				'editable' : False,
 				'type' : 'tutor_booking',
 				'session_id' : session_id,
-				'creator_id' : booking.creator_id.id
+				'creator_id' : booking.creator_id.id,
+				'creator' : booking.creator_id.username,
 				})
 		for booking in student_bookings:
 			if booking.session_id is None:
@@ -454,6 +458,7 @@ def delete(request):
 #POST requests here must also have a description, start_time, and finish_time
 ##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
 def update(request):
+	return redirect('/notpost')
 	if request.method == 'POST':
 		id = request.POST.get('edit_event_id')
 		start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
@@ -505,21 +510,57 @@ def drop_event(request, cal_id):
 		eventType = request.POST.get('eventType')
 		event_id = request.POST.get('drop_event_id')
 		if eventType == 'student_session' or eventType == 'tutor_session':
-			session = SessionTime.objects.filter(pk=event_id)[0]
+			session = SessionTime.objects.get(pk=event_id)
 			booking = Booking(start_time = session.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
 					finish_time = session.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
 					creator_id = request.user,
-					#session_id = session,
+					session_id = session,
 					description = session.description,
 					tutor_id = session.tutor_id,
 					student_id = session.student_id,
 					unit_id = session.unit_id)
+			now= datetime.datetime.now()
+			admin= User.objects.all()[0]
+			if request.POST.get('type') == 'student_session':
+				message= Message(subject=" Change for existing session", 
+					body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+					sender=admin, 
+					recipient=session.tutor_id, 
+					moderation_status=STATUS_ACCEPTED, 
+					moderation_date=now)
+			else:
+				message= Message(subject=" Change for existing session", 
+                        body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+                        sender=admin, 
+                        recipient=session.student_id,
+                        moderation_status=STATUS_ACCEPTED, 
+                        moderation_date=now)
+			message.save()
 			booking.save()
 		elif eventType == 'student_booking' or eventType == 'tutor_booking':
 			booking = Booking.objects.filter(pk=event_id)[0]
 			booking.start_time = booking.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			booking.finish_time = booking.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			booking.save()
+			now= datetime.datetime.now()
+			admin= User.objects.all()[0]
+			if booking.student_id == request.user :
+				message= Message(subject="Booking Updated", 
+						body=" A booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.student_id.username, 
+						sender=admin, 
+						recipient=booking.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+			else:
+				message= Message(subject="Booking Updated", 
+						body="Your booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.tutor_id.username + "You will need to confirm it create a session", 
+						sender=admin, 
+						recipient=booking.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+
+				
+			message.save()
 		elif eventType == "unavailable":
 			unavailable = UnavailableTime.objects.filter(pk = event_id)[0]
 			unavailable.start_time = unavailable.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
@@ -606,6 +647,23 @@ def add_booking(request, cal_id):
 			description = request.POST.get('description'),
 			creator_id = request.user
 		)
+		now= datetime.datetime.now()
+		admin= User.objects.all()[0]
+		message= Message(subject="Booking Created", 
+			body=" A booking for " +  booking.unit_id.unit_name+" has been created by " + booking.creator_id.username, 
+			sender=admin, 
+			recipient=booking.student_id, 
+			moderation_status=STATUS_ACCEPTED, 
+			moderation_date=now)
+		message.save()
+		message= Message(subject="Booking Created", 
+			body=" You have created a booking for " +  booking.unit_id.unit_name+" with " + booking.tutor_id.username, 
+			sender=admin, 
+			recipient=booking.student_id, 
+			moderation_status=STATUS_ACCEPTED, 
+			moderation_date=now)
+		message.save()
+
 		booking.save()
 		if cal_id == str(0):
 			return redirect('/calendar/user/' + str(request.user.id) + '/')
@@ -630,8 +688,26 @@ def update_booking(request, cal_id):
 				booking.description = request.POST.get('edit_title')
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
+				now= datetime.datetime.now()
+				admin= User.objects.all()[0]
+				if booking.student_id == request.user :
+					message= Message(subject="Booking Updated", 
+							body=" A booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.student_id.username, 
+							sender=admin, 
+							recipient=booking.tutor_id, 
+							moderation_status=STATUS_ACCEPTED, 
+							moderation_date=now)
+				else:
+					message= Message(subject="Booking Updated", 
+							body="Your booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.tutor_id.username + "You will need to confirm it create a session", 
+							sender=admin, 
+							recipient=booking.tutor_id, 
+							moderation_status=STATUS_ACCEPTED, 
+							moderation_date=now)
+
 				booking.creator_id = request.user
 				booking.save()
+				message.save()
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:
@@ -644,11 +720,15 @@ def update_booking(request, cal_id):
 			
 #initial booking MUST be made by the student
 def confirm_booking(request, cal_id):
+
 		if request.method == 'POST':
 			id = request.POST.get('edit_event_id')
 			booking = Booking.objects.get(pk=id)
 			student = booking.student_id
 			tutor = booking.tutor_id
+			old_session = booking.session_id
+
+			
 			if (student.id== request.user.id or tutor.id== request.user.id) and request.user.id != booking.creator_id.id:
 				start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
 				start= time.strptime(start, "%d/%m/%Y %H:%M")
@@ -660,8 +740,11 @@ def confirm_booking(request, cal_id):
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
 				booking.is_confirmed = True
-				if booking.session_id is not None:
-					booking.session_id.delete()
+
+				if old_session != None:
+					print old_session
+					old_session.delete()
+				
 				session = SessionTime(unit_id = booking.unit_id,
 						description = booking.description,
 						start_time = booking.start_time,
@@ -669,7 +752,38 @@ def confirm_booking(request, cal_id):
 						tutor_id = booking.tutor_id,
 						student_id = booking.student_id)
 				session.save()
-				booking.session_id = session
+				now= datetime.datetime.now()
+				admin= User.objects.all()[0]
+				if booking.creator_id == booking.student_id:
+					message= Message(subject="Session Created", 
+						body="Your Booking has been accepted. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.tutor_id.username, 
+						sender=admin, 
+						recipient=booking.student_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+					message= Message(subject="Session Created", 
+						body="You have accepted a booking. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.student_id.username, 
+						sender=admin, 
+						recipient=booking.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+				else:
+					message= Message(subject="Session Created", 
+						body="Booking session has been approved by your tutor. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.tutor_id.username, 
+						sender=admin, 
+						recipient=booking.student_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+					message= Message(subject="Booking Rejected", 
+						body="Booking with the changes you made have been approved. Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
+						sender=admin, 
+						recipient=booking.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+				message.save()	
 				booking.save()
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
@@ -699,6 +813,38 @@ def reject_booking(request, cal_id):
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
 				booking.is_rejected = True
+				now= datetime.datetime.now()
+				admin= User.objects.all()[0]
+				if booking.creator_id == booking.student_id:
+					message= Message(subject="Booking Rejected", 
+						body="You have rejected a booking by " +  booking.creator_id.username+ " for "+ booking.unit_id.unit_name, 
+						sender=admin, 
+						recipient=booking.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+					message= Message(subject="Booking Rejected", 
+						body="Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
+						sender=admin, 
+						recipient=booking.creator_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+				else:
+					message= Message(subject="Booking Rejected", 
+						body="You have rejected a booking by " +  booking.creator_id.username+ " for "+ booking.unit_id.unit_name, 
+						sender=admin, 
+						recipient=booking.student_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()
+					message= Message(subject="Booking Rejected", 
+						body="Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
+						sender=admin, 
+						recipient=booking.creator_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
+					message.save()	
 				booking.save()
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
@@ -717,6 +863,25 @@ def delete_booking(request, cal_id):
 		booking = Booking.objects.get(pk=id)
 		if booking.creator_id == request.user:
 			booking.delete()
+			now= datetime.datetime.now()
+			admin= User.objects.all()[0]
+			if booking.creator_id == booking.student_id:
+
+				message= Message(subject="Booking Deleted", 
+					body="A Booking of "+ booking.unit_id.unit_name + " has been deleted by " + booking.creator_id.username, 
+					sender=admin, 
+					recipient=booking.tutor_id, 
+					moderation_status=STATUS_ACCEPTED, 
+					moderation_date=now)
+			else:
+				message= Message(subject="Booking Deleted", 
+					body="A Booking of "+ booking.unit_id.unit_name +" has been deleted by " + booking.creator_id.username, 
+					sender=admin, 
+					recipient=booking.student_id, 
+					moderation_status=STATUS_ACCEPTED, 
+					moderation_date=now)	
+			message.save()
+			
 			if cal_id == str(0):
 				return redirect('/calendar/user/' + str(request.user.id) + '/')
 			else:
@@ -729,11 +894,15 @@ def delete_booking(request, cal_id):
 #-------------END BOOKINGS-----------------------
 #-------------SESSIONS---------------------------
 def update_session(request, cal_id):
+		raise http.Http404
 		if request.method == 'POST':
 			id = request.POST.get('edit_session_event_id')
+
 			session = SessionTime.objects.get(pk=id)
 			student = session.student_id
 			tutor = session.tutor_id
+			
+			
 			if student.id== request.user.id or tutor.id== request.user.id:
 				start= request.POST.get('edit_session_start_date') + " " + request.POST.get('edit_session_start')
 				start= time.strptime(start, "%d/%m/%Y %H:%M")
@@ -741,16 +910,42 @@ def update_session(request, cal_id):
 				end=  request.POST.get('edit_session_start_date') + " "+ request.POST.get('edit_session_end')
 				end= time.strptime(end, "%d/%m/%Y %H:%M")
 				end_datetime= datetime.datetime(*end[:6])
-				description = request.POST.get('edit_session_title')
-				booking = Booking(start_time = start_datetime, 
-					finish_time = end_datetime,
-					creator_id = request.user,
-					session_id = session,
-					description = description,
-					tutor_id = tutor,
-					student_id = student,
-					unit_id = session.unit_id)
-				booking.save()
+				session_start_time=timezone.make_aware(session.start_time, timezone.get_default_timezone()) + datetime.timedelta(0,39600)
+				calendar_start= timezone.make_aware(start_datetime, timezone.get_default_timezone())
+				session_end_time= timezone.make_aware(session.finish_time, timezone.get_default_timezone()) + datetime.timedelta(0,39600)
+				calendar_end= timezone.make_aware(end_datetime, timezone.get_default_timezone())
+				if session_start_time == calendar_start and session_end_time == calendar_end:
+					session.description = request.POST.get('edit_session_title')
+					session.save()
+				else:
+					description = request.POST.get('edit_session_title')
+					now= datetime.datetime.now()
+					admin= User.objects.all()[0]
+					if request.POST.get('type') == 'student_session':
+						message= Message(subject=" Change for existing session", 
+							body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+							sender=admin, 
+							recipient=session.tutor_id, 
+							moderation_status=STATUS_ACCEPTED, 
+							moderation_date=now)
+					else:
+						message= Message(subject=" Change for existing session", 
+                                body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+                                sender=admin, 
+                                recipient=student, 
+                                moderation_status=STATUS_ACCEPTED, 
+                                moderation_date=now)
+					print session
+					booking = Booking(start_time = start_datetime, 
+						finish_time = end_datetime,
+						creator_id = request.user,
+						session_id = session,
+						description = description,
+						tutor_id = tutor,
+						student_id = student,
+						unit_id = session.unit_id)
+					message.save()
+					booking.save()
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:

@@ -108,6 +108,11 @@
 								$("#edit_end").val(end_time);
 								$("#edit_title").val(title);
 								$("#edit_event_id").val(id);
+								$("#booking_start_date").html(start_date);
+								$("#booking_start").html(start_time);
+								$("#booking_end").html(end_time);
+								$("#booking_title").html(title);
+								$("#booking_creator").html(event.creator);
 								$('#datePicker_start_edit').datepicker("enable");
 								$('#datePicker_start_edit').val(start_date);
 								if (event.type == "tutor_booking") {
@@ -136,7 +141,6 @@
 				$('#select_dialog').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 100,
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -192,7 +196,6 @@
 				$('#edit_booking').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
 					modal : true,
 					resizable : true,
 					closeOnButton : false,
@@ -219,7 +222,6 @@
 				$('#edit_session').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -257,7 +259,6 @@
 				$('#add_booking').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -289,7 +290,7 @@
 				});
 				$('#id_date').datepicker("disable");
 				$('#datePicker_start_edit').datepicker("disable");
-				$('#datePicker_session_start_edit').datepicker("disable");
+				$('#datePicker_session_start_edit').datepicker("close");
 				$('#a').click(function() {
 					$('#add_booking').dialog('close');
 					$('#edit_booking').dialog('close');
@@ -343,7 +344,34 @@
 				<input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
 			</form>
 		</div>
-		<div id ="select_dialog"></div>
+		<div id ="select_dialog">
+		<table>
+                                <tr>
+                                        <td><label for = "booking_creator"> Created By </label> </td>
+                                        <td><div id = "booking_creator"></div></td>
+                                </tr>
+                                <tr>
+                                        <td><label for = "booking_start_date"> Start Date </label> </td>
+                                        <td><div id = "booking_start_date"></div></td>
+                                </tr>
+                                
+                                <tr>
+                                        <td><label for="booking_start">Start</label> </td>
+                                        <td><div id = "booking_start"></div> </td>
+
+                                </tr>
+                                <tr>
+                                        <td><label for="booking_end">End Time</label> </td>
+                                        <td><div id = "booking_end"></div></td>
+
+                                </tr>
+                                <tr>
+                                        <td><label for="title">Event Description</label> </td>
+                                        <td><div id = "booking_title"></div></td>
+
+                                </tr>   
+
+                    </table></div>
 		<div id="edit_booking" title="Edit Booking">
 			<form name="editBookingForm" action="/../../update_booking/"  method="post">
 				<div id="edit_div" style="display:block">
@@ -380,7 +408,7 @@
 			</form>
 		</div>
 		<div id="add_booking" title="Add Booking">
-			<form name="addForm" action="/../../add_poo/" method="post">
+			<form name="addForm" action="/../../add_booking/{{user.id}}/" method="post">
 				{% csrf_token %}
 				{{form.as_p}}
 				<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />

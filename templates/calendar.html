@@ -96,6 +96,11 @@
 								$("#edit_end").val(end_time);
 								$("#edit_title").val(title);
 								$("#edit_event_id").val(id);
+								$("#booking_start_date").html(start_date);
+								$("#booking_start").html(start_time);
+								$("#booking_end").html(end_time);
+								$("#booking_title").html(title);
+								$("#booking_creator").html(event.creator);
 								$('#datePicker_start_edit').datepicker("enable");
 								$('#datePicker_start_edit').val(start_date);
 								if (event.type == "tutor_booking") {
@@ -135,7 +140,7 @@
 				$('#select_dialog').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 100,
+					
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -191,7 +196,7 @@
 				$('#edit_booking').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
+					
 					modal : true,
 					resizable : true,
 					closeOnButton : false,
@@ -218,7 +223,7 @@
 				$('#edit_session').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
+					
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -255,7 +260,7 @@
 				$('#edit_unavailable').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
+				
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -284,7 +289,7 @@
 							$(location).attr('href', $(this).dialog('option', 'anchor'));
 							url = '/../../delete_unavailable/';
 							document.editSessionForm.action = url;
-							$("[id*=SubmitEditUnavailable]").click();
+							$("[id*=SubmitDeleteUnavailable]").click();
 							return true;
 						}
 					}]
@@ -292,7 +297,7 @@
 				$('#add_unavailable').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
+					
 					modal : true,
 					resizable : true,
 					buttons : [{
@@ -384,7 +389,35 @@
 				<input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
 			</form>
 		</div>
-		<div id ="select_dialog"></div>
+		<div id ="select_dialog">
+			<table>
+                                <tr>
+                                        <td><label for = "booking_creator"> Created By </label> </td>
+                                        <td><div id = "booking_creator"></div></td>
+                                </tr>
+                                <tr>
+                                        <td><label for = "booking_start_date"> Start Date </label> </td>
+                                        <td><div id = "booking_start_date"></div></td>
+                                </tr>
+                                
+                                <tr>
+                                        <td><label for="booking_start">Start</label> </td>
+                                        <td><div id = "booking_start"></div> </td>
+
+                                </tr>
+                                <tr>
+                                        <td><label for="booking_end">End Time</label> </td>
+                                        <td><div id = "booking_end"></div></td>
+
+                                </tr>
+                                <tr>
+                                        <td><label for="title">Event Description</label> </td>
+                                        <td><div id = "booking_title"></div></td>
+
+                                </tr>   
+
+                    </table>
+                </div></div>
 		<div id="edit_booking" title="Edit Booking">
 			<form name="editBookingForm" action="/../../update_booking/"  method="post">
 				<div id="edit_div" style="display:block">
@@ -414,7 +447,7 @@
 					{% csrf_token %}
 					<fieldset>
 						<label for = "edit_unavailable_date"> Date </label>
-						<input type="text" name = "edit_unavailable_date" id="edit_unavailable_date" required="required" />
+						<input type="text" class = "datePicker" name = "edit_unavailable_date" id="edit_unavailable_date" required="required" />
 						<br>
 						<label for="edit_unavailable_start">Start Time</label>
 						<input type="text" name="edit_unavailable_start" id="edit_unavailable_start" class="text ui-widget-content ui-corner-all" required="required" />
@@ -429,6 +462,7 @@
 					</fieldset>
 				</div>
 				<input type="submit" value="Yes" id ="SubmitEditUnavailable" style="display:none">
+				<input  type= "submit" formaction= "/../delete_unavailable" id ="SubmitDeleteUnavailable" style="display:none">
 			</form>
 		</div>
 		<div id="edit_drop" title="Edit Drop" style="display:none">
@@ -463,5 +497,13 @@
 			</form>
 		</div> 
 		<div id='calendar'></div>
+		<script>
+			$(document).keypress(
+			    function(event){
+			     if (event.which == '13') {
+			        event.preventDefault();
+			      }
+			});
+		</script>
 	</body>
 </html>
