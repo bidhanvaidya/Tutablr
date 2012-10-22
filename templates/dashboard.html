@@ -17,12 +17,12 @@
                             <tbody>
                              {% if messages|length == 0%}
                                 <tr>
-                                    <td>You have no new messages.</td>
+                                    <td id="no-message"text-align="center">You have no new messages.</td>
                                 </tr>
-                                <tr><td></td></tr>
-                                <tr><td></td></tr>
-                                <tr><td></td></tr>
-                                <tr><td></td></tr>
+                                <tr><td height="18"></td></tr>
+                                <tr><td height="18"></td></tr>
+                                <tr><td height="18"></td></tr>
+                                <tr><td height="18"></td></tr>
                             {%else%}
                                 {% for message in messages %}
                                     <tr>
