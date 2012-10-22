@@ -1,7 +1,8 @@
-{% extends "base.html" %}
+{% extends "base_logged_out.html" %}
+
 {% load url from future %}
 {% load i18n %}{% load postman_tags %}
-{% block title %}{% trans "Messaging" %}{% endblock %}
+{% block title %}{% trans "Tutablr" %}{% endblock %}
 {% block extrahead %}{{ block.super }}
 <link type="text/css" media="all" rel="stylesheet" href="
 {# dj v1.4 #}{% load static %}{% static 'postman/css/postman.css' %}
@@ -17,3 +18,4 @@
  <li><a href="{% url 'postman_trash' %}">&raquo;&nbsp;{% trans "Trash" %}</a></li>
 </ul>
 {% endblock %}
+

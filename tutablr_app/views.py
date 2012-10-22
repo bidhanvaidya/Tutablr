@@ -60,6 +60,7 @@ def calendar_view(request, cal_id):
 			form = addBookingForm(tutor_id=cal_id)
 		return render(request, "user_calendar.html", { 'form': form })
 
+
 @login_required
 def calendar(request):
         enrolls = Enrolled.objects.filter (user_id=request.user.id) # get all the enrolled class for the student
@@ -989,12 +990,41 @@ def loginAjax(request):
         else:
             return HttpResponse("0")
 
+def contactFormAjax(request):
+    if request.method == "POST":
+        if request.is_ajax:
+            name = request.POST.get("fullName")
+            message = request.POST.get("message")
+            email = request.POST.get("email")
+            tempMessage = "Name: " +  name + "\n" + "Email: " + email + "\n" + "Message: " + message + "\n"
+            senderUser =  User.objects.get(username="ContactForm")
+            recieverUser = User.objects.get(username="admin")
+            m = Message(subject="Contact Form Message!!", body=tempMessage,sender=senderUser,recipient=recieverUser,moderation_status='a')
+            m.save()
+            print request.POST
+            return HttpResponse("1")
+        else:
+            print "NOT AJAX"
+    return HttpResponse("0") 
+
+@login_required
 def dashboard(request):
     user_id = request.user.id
     #print tutablr.settings.STATIC_ROOT +" <------"
-    messages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)[:5]
+    arrayMessages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)
+    messages = arrayMessages[:5]
+    numberOfMessages = len(messages)
+    extraRows = 5 - numberOfMessages
+    if extraRows > 0:
+        temp = "<tr><td height=\"18\"></td></tr>"*extraRows
+        print temp + " <------------"
+    else:
+        temp = ""
     print  messages
     return render_to_response('dashboard.html',
-                              {"messages":messages,},
+                              {"messages":messages,
+                                 "numberOfMessages":numberOfMessages,
+                                 "extraRows":temp,
+                              },
                               context_instance=RequestContext(request))
 

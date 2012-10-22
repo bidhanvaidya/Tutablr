@@ -16,23 +16,19 @@ admin.autodiscover()
 dajaxice_autodiscover()
 
 urlpatterns = patterns('',
-	 #url(r'^calendar/$', 'tutablr_app.views.calendar'),
-	# (r'^banana/$', direct_to_template, {
-        	#	'template': 'index.html'
-    	#}),
-	#(r'^test$', login_required(direct_to_template), {'template': 'test.html'}),
 	 url(r'^login$','tutablr_app.views.loginAjax'),
 	 #url ( r'^calendar/user/(.*)$' , TemplateView . as_view ( template_name = "user_calendar.html" ), name = 'user_calendar' ),
 	 url( r'^calendar/user/(?P<cal_id>\d+)/$', 'tutablr_app.views.calendar_view', name='user_calendar'),
 	 url( r'^calendar/$', 'tutablr_app.views.calendar_user', name='calendar'),
 	 url ( r'^calendar/user_events.json/(?P<cal_id>\d+)/$' , 'tutablr_app.views.user_calendar' , name = 'user_events.json' ),
 	 #url ( r'^calendar/$' , login_required(TemplateView . as_view ( template_name = "calendar.html" )), name = 'calendar' ),
-     url ( r'^calendar/events.json/*$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
+     	url ( r'^calendar/events.json/*$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
+	 url(r'^contact$',auth_views.login,{'template_name':'contact.html'},name='auth_login'), # home page
+	 url(r'^submitContact$','tutablr_app.views.contactFormAjax'),
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	(r'^search$','tutablr_app.views.tutor_search'),
-	
 	(r'^delete$','tutablr_app.views.delete'),
 	(r'^update$','tutablr_app.views.update'),
 	(r'drop_event/(?P<cal_id>\d+)/$','tutablr_app.views.drop_event'),
@@ -46,28 +42,13 @@ urlpatterns = patterns('',
 	(r'^delete_booking/(?P<cal_id>\d+)/$','tutablr_app.views.delete_booking'),
 	(r'^update_session/(?P<cal_id>\d+)/$','tutablr_app.views.update_session'),
 	(r'^delete_session/(?P<cal_id>\d+)/$','tutablr_app.views.delete_session'),
-	# Examples:
-	# url(r'^$', 'django_test_project.views.home', name='home'),
-	# url(r'^django_test_project/', include('django_test_project.foo.urls')),
-
-	# Uncomment the admin/doc line below to enable admin documentation:
-	# url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-	# Uncomment the next line to enable the admin:
 	('^profiles/edit', 'profiles.views.edit_profile', {'form_class': ProfileForm,}),
 	(r'^profiles/', include('profiles.urls')),
 	 url(r'^admin/', include(admin.site.urls)),
 	 url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'),
 	 url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'),	 	
 	 url(r'^messages/', include('postman.urls')),
-	 #url(r'^accounts/register/$', register,
-	#	{'backend': 'registration.backends.default.DefaultBackend', 'form_class' : YourRegistrationForm},
-	#	name='registration_register'),
 	 url(r'^accounts/profile/', direct_to_template, {'template': 'index.html'}, 'index'),
 	 url(r'^accounts/', include('registration.backends.default.urls')),
-	 #url(r'^accounts/register/$', 'tutablr.views.register', {'template_name' : 'registration/register.html'}),
-	 #url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name' : 'registration/login.html'}),
-	 #url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'template_name' : 'registration/logout/html'}),
-	 #url(r'^accounts/profile/$', 'tutablr.views.index'),
 	url(r'^dashboard$','tutablr_app.views.dashboard'),
-	 #(r'^dashboard$', login_required(direct_to_template), {'template': 'dashboard.html'}),
 )
