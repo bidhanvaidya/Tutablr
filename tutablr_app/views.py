@@ -21,15 +21,9 @@ session_locks = {}
 
 #initialize the locks
 #need to delete when the events are deleted and add when they are added
-def initLocks():
-	bookings = Booking.objects.all()
-	sessions = SessionTime.objects.all()
-	for b in bookings:
-		booking_locks[str(b.id)] = False
-	
-	for s in sessions:
-		session_locks[str(s.id)] = False
-		
+
+
+
 def get_lock(request):
 	#lock status
 	if request.method == "POST":
@@ -45,6 +39,7 @@ def get_lock(request):
 				return HttpResponse("1")
 			else:
 				return HttpResponse("0")
+				
 def lock(event_id, event_type):
 	if event_type == "booking":
 		booking_locks[str(event_id)] = True
