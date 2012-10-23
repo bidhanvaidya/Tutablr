@@ -1,7 +1,7 @@
 # Create your views here.
 from django import http
 from django.utils import simplejson as json
-from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails
+from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails, Location
 from tutablr_app.forms import *
 from django.shortcuts import render_to_response
 from django.utils import timezone
@@ -1029,3 +1029,60 @@ def dashboard(request):
                               context_instance=RequestContext(request)
    )
 
+@login_required
+def location(request):
+	return render_to_response("location.html",
+		{},
+		context_instance = RequestContext(request)
+	)
+
+@login_required
+def locationEditPersonal(request):
+	if request.method == "POST":
+		loc = Location.objects.get(user_id=request.user)
+		f = LocationForm(request.POST,instance=loc)
+		f.save()
+		#print (request.get.POST)
+		return render_to_response("location_edit_personal.html",
+			{"response":"Successfully changed location.",
+			},
+			context_instance = RequestContext(request)
+		)
+	else:
+		try: #get location
+			loc = Location.objects.get(user_id=request.user)
+		except Location.DoesNotExist: # create location
+			print "Making Location"
+			loc = Location(preferred_suburb="Sydney",longitude=151.20699020000006 ,latitude=-33.8674869,preferred_postcode=2000,user_id=request.user)
+			loc.save()
+
+		form = LocationForm(instance=loc)
+		return render_to_response("location_edit_personal.html",
+			{"form":form,
+			},
+			context_instance = RequestContext(request)
+		)
+
+@login_required
+def locationAddTutoring(request):
+	if request.method == "POST":
+		print (request.get.POST)
+	else:
+		form = TutorLocationForm()
+		return render_to_response("locationAdd.html",
+			{"form":form,},
+			context_instance = RequestContext(request)
+		)
+"""
+@login_required
+def locationSelector(request):
+	if request.method == "POST":
+		print (request.get.POST)
+	else:
+		if request.user
+		form = LocationForm()
+		return render_to_response("locationAdd.html",
+			{"form":form,},
+			context_instance = RequestContext(request)
+		)
+"""

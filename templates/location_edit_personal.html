@@ -1,0 +1,27 @@
+{% extends "base_logged_out.html" %}
+{% load i18n %}
+
+{% block content %}
+
+{% if form%}
+    <form action="/profile/locations/personal/edit" method="POST" accept-charset="utf-8">{% csrf_token %}
+        {{form.as_p}}
+        <button type="submit"> Save </button>
+    </form>
+{% else %}
+  <p>{{response}}</p>
+{%endif%}
+
+{% endblock %}
+
+ {% block extra_head %}
+    <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/contact.css" />
+  {% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+  <ul class="nav">
+      <li ><a href="/">Home</a></li>
+      <li><a href="/accounts/register">Register As Tutor</a></li>
+      <li><a href="#">How TuTablr Works</a></li>
+  </ul>
+{% endblock %}

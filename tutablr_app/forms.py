@@ -89,3 +89,12 @@ class searchForm(forms.Form):
   		uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in Enrolled.objects.filter(user_id = user_id, is_complete=False)]
   		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
 """	
+
+
+class LocationForm (ModelForm):
+	class Meta:
+		model = Location
+
+class TutorLocationForm (ModelForm):
+	class Meta:
+		model = TutoringLocation
