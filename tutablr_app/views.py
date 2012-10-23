@@ -1053,7 +1053,7 @@ def locationEditPersonal(request):
 			loc = Location.objects.get(user_id=request.user)
 		except Location.DoesNotExist: # create location
 			print "Making Location"
-			loc = Location(preferred_suburb="Sydney",longitude=151.20699020000006 ,latitude=-33.8674869,preferred_postcode=2000,user_id=request.user)
+			loc = Location(preferred_suburb="Sydney",longitude=151.20699020000006 ,latitude=-33.8674869,user_id=request.user)
 			loc.save()
 
 		form = LocationForm(instance=loc)
