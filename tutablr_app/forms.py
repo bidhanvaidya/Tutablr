@@ -69,23 +69,21 @@ class addBookingForm(forms.Form):
 		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
 		#self.fields['creator_id'].widget = forms.HiddenInput()
 
-
-"""
 class searchForm(forms.Form):
-	UoS = forms.ChoiceField()
-	price_from = forms.IntegerField(initial = 0, required=False)
-	price_to = forms.IntegerField(initial=30, required=False)
-	distance_choices = [(5, '5 km'), (10, '10km'), (15, '15km'), (25, '25km'), (1000, 'Any')]
-	distance = forms.ChoiceField(widget=forms.Select(), choices=distance_choices, initial=choices[0][5], required=False)
-	#only if students
-	grade_from_choices = [('HD', 'HD'), ('D', 'D'), ('C', 'C')]
-	grade_from = forms.ChoiceField(widget=forms.Select(), choices=grade_choices, initial=choices[0][0], required=True)
-	students_only = forms.BooleanField(label="StudentsOnly")
-	rating_from_choices = [(5, '5 Stars'), (4, '4 Stars'), (3, '3 Stars'), (2, '2 Stars'), (1, '1 Star'), (0, 'Any')]
-	rating_from = forms.ChoiceField(widget=forms.Select(), choices=rating_from_choices, initial=choices[0][5], required=True)
- 	def __init__(self, *args, **kwargs):
-  		user_id=kwargs.pop('user_id',0)
-  		super(addBookingForm, self).__init__(*args, **kwargs)
-  		uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in Enrolled.objects.filter(user_id = user_id, is_complete=False)]
-  		self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=choices[0][0], choices=choices, required=True)
-"""	
+        UoS = forms.ChoiceField(label="Unit of Study")
+        price_from = forms.IntegerField(label="Price From ($)", initial = 0, required=False)
+        price_to = forms.IntegerField(label="Price To ($)", initial=150, required=False)
+        distance_choices = [(5, '5 km'), (10, '10km'), (15, '15km'), (25, '25km'), (1000, 'Any')]
+        distance = forms.ChoiceField(widget=forms.Select(),initial=distance_choices[4][1],  choices=distance_choices, required=False)
+        #only if students
+        students_only = forms.BooleanField(label="Students Only")
+        rating_from_choices = [(5, '5 Stars'), (4, '4 Stars'), (3, '3 Stars'), (2, '2 Stars'), (1, '1 Star'), (0, 'Any')]
+        rating_from = forms.ChoiceField(label="Rating From", widget=forms.Select(), choices=rating_from_choices, initial=rating_from_choices[5][1], required=True)
+        def __init__(self, *args, **kwargs):
+                user_id=kwargs.pop('user_id',0)
+                super(searchForm, self).__init__(*args, **kwargs)
+                uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in Enrolled.objects.filter(user_id = int(user_id), is_complete=False)]
+                print uos_choices
+                if len(uos_choices) > 0:
+                        self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), initial=uos_choices[0][0], choices=uos_choices, required=True)
+        

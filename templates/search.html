@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
-	<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+        <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
     <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
     <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
-	<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+        <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
     <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
     <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-	
+        
     <style type='text/css'>
 /*<![CDATA[*/
 
@@ -31,12 +31,25 @@
   </head>
   <body>
  <div id="tutor_search" title="Tutor Search">
-    <form name="searchForm" action="/../../tutor_search/" method="post">{% csrf_token %}
+    <form name="searchForm" action="/../../search/" method="post">{% csrf_token %}
         {{form.as_p}}
-		<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
-		<input type="submit" value="Yes" id="SubmitAdd" style="display:none"> 
+                <input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
+                <input type="submit" value="Yes" id="SubmitAdd"> 
     </form>
+    </div>
+    <div id="eligible_tutors" title="Eligible Tutors">
+	{% if eligible_tutor_results %}
+		<ul>
+		{% for tutor in eligible_tutor_results %}
+		<HR>
+			Username: {{tutor.username}} | Price: ${{tutor.price}}/hour | Average Rating: {{tutor.rating}}/5 | Distance: {{tutor.distance_in_kms}}kms | Latitude: {{tutor.latitude}} | Longitude: {{tutor.longitude}} | <a href={{tutor.timetable_url}}>Make a Booking</a> | <a href={{tutor.profile_url}}>View Tutor's Profile</a>
+		{% endfor %}
+		<HR>
+		</ul>
+	{% else %}
+		<p>No tutors available.</p>
+	{% endif %}
+
     </div>
   </body>
 </html>
-

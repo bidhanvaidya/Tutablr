@@ -15,30 +15,125 @@ import tutablr
 from django.template import RequestContext
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
+from math import cos, sin, tan, atan2, sqrt
 
+def radians(x):
+        return x*3.14159/180.0
 
+#0 is latitude, 1 is longitude
+def haversine(p1, p2):
+        R = 6371; #radians of earth in km
+        print p2
+        print p1
+        dLat  = radians(p2[0] - p1[0])
+        dLong = radians(p2[1] - p1[1])
+
+        a = sin(dLat/2) * sin(dLat/2) + cos(radians(p1[0])) * cos(radians(p2[0])) * sin(dLong/2) * sin(dLong/2)
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        d = R * c
+        return d
+
+class eligibleTutorResult:
+	def __init__(self, id, username, price, latitude, longitude, distance_in_kms, rating, timetable_url, profile_url):
+		self.id=id
+		self.username=username
+		self.price=price
+		self.latitude=latitude
+		self.longitude=longitude
+		self.distance_in_kms=distance_in_kms
+		self.rating=rating
+		self.timetable_url=timetable_url
+		self.profile_url=profile_url
+	
 @login_required
 def tutor_search(request):
- 	if request.method == 'POST': 
-  		user_id = request.user.id
-  		uos = request.POST.get('UoS')
-  		price_from = request.POST.get('price_from')
-  		price_to = request.POST.get('price_to')
-  		distance_in_kms = request.POST.get('distance')
-  		grade_from = request.POST.get('grade_from')
-  		students_only = request.POST.get('students_only')
- 		rating_from = request.POST.get('rating_from')
-  		if students_only:
-   			#eligible_tutors = User.objects.filter(userprofile.is_student_until__gr=datetime.now())
-			eligible_tutors = User.objects.all()
-  		else:
-   			eligible_tutors= User.objects.all()
-		form = searchForm()
-		
-	else:
-		form = searchForm()
+	eligible_tutors = []
+	eligible_tutor_results = []
+	if request.method == 'POST': 
+			user_id = request.user.id
+			unit = request.POST.get('UoS')
+			price_from = request.POST.get('price_from')
+			price_to = request.POST.get('price_to')
+			distance_in_kms = request.POST.get('distance')
 
-	return render(request, "search.html", { 'form': form })
+	#grade_from = request.POST.get('grade_from')
+			students_only = request.POST.get('students_only')
+			rating_from = request.POST.get('rating_from')
+			print user_id
+			print unit
+			print price_from
+			print price_to
+			print distance_in_kms
+			print students_only
+			print rating_from
+			
+			if students_only is not None:
+			#current student
+					eligible_tutors = User.objects.filter(userprofile__is_student_until__gt=datetime.now()).exclude(id = request.user.id)
+			else:
+			#all possible tutors
+					eligible_tutors = User.objects.exclude(id = request.user.id)
+			#between prices & for UoS
+			eligible_tutors = list(set(eligible_tutors).intersection(set([e.user_id for e in UnitDetails.objects.filter(unit_id__unit_id = unit, price__gte=price_from, price__lte=price_to, is_tutorable=True)])))  
+			#rating
+			if int(rating_from) > 0:
+					for t in eligible_tutors:
+							ratings = [r.rating for r in Review.objects.filter(tutor_id__id = t.id)]
+							if len(ratings) > 0:
+									avg_rating = float(sum(ratings))/float(len(ratings))
+									if avg_rating <= int(rating_from):
+											eligible_tutors.remove(t)
+							else:
+											eligible_tutors.remove(t)
+			#distance 
+			if int(distance_in_kms) != 1000:
+					user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id, is_tutoring_location=True)]
+					print len(user_location)
+					if len(user_location) != 0:
+							for t in eligible_tutors:
+									tutor_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=t.id)]
+									if len(tutor_location) == 0 or haversine(user_location, tutor_location) > distance_in_kms:
+											eligible_tutors.remove(t)
+
+			
+			for t in eligible_tutors:
+				id = t.id
+				username = t.username
+				location = Location.objects.filter(user_id__id=id)
+				avg_rating = 0
+				user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id)]
+				if len(location) != 0 and len(user_location) != 0:
+					latitude = location[0].latitude
+					longitude = location[0].longitude
+					distance_in_kms = haversine(user_location[0], [latitude, longitude])
+				else:
+					latitude = "N/A"
+					longitude="N/A"
+					distance_in_kms = "N/A"
+				ratings = [r.rating for r in Review.objects.filter(tutor_id__id = id)]
+				if len(ratings) > 0:
+						avg_rating = float(sum(ratings))/float(len(ratings))
+				else:
+					avg_rating = "N/A"
+				unit_details = UnitDetails.objects.filter(user_id__id = id, unit_id__unit_id = unit)
+				price = unit_details[0].price
+				profile_url = "/profiles/" + username + "/"
+				timetable_url = "/calendar/user/" + str(id) + "/"
+				eligible_tutor_results.append(eligibleTutorResult(id=id, 
+					username=username, 
+					price=price, 
+					latitude="{0:.2f}".format(latitude), 
+					longitude="{0:.2f}".format(longitude), 
+					distance_in_kms="{0:.2f}".format(distance_in_kms), 
+					rating="{0:.1f}".format(avg_rating), 
+					timetable_url=timetable_url, 
+					profile_url=profile_url))
+				
+			form = searchForm(user_id =request.user.id)
+	else:
+			form = searchForm(user_id = request.user.id)
+
+	return render(request, "search.html", { 'form': form , 'eligible_tutor_results' : eligible_tutor_results})
 
 @login_required
 def calendar_user(request):
