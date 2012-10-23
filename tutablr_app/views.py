@@ -31,7 +31,7 @@ def initLocks():
 		session_locks[str(s.id)] = False
 		
 def get_lock(request, event_id, event_type):
-	#releasing a lock
+	#lock status
 	if request.method == "POST":
 		if event_type == "booking":
 			if booking_locks[str(event_id)] == False:
