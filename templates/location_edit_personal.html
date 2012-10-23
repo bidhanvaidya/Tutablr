@@ -10,12 +10,22 @@
     </form>
 {% else %}
   <p>{{response}}</p>
-{%endif%}
 
+{%endif%}
+        <input id="address" type="text" name="" value="" placeholder="Address">
+        <button onclick="codeAddress()" id="submit" type="button">Geolocate</button>
+        <div id="map_canvas"></div>
+{% endblock %}
+
+{% block extra_scripts %} 
+    <script src="{{STATIC_URL}}tutablr/js/gmaps_location.js"></script>
 {% endblock %}
 
  {% block extra_head %}
-    <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/contact.css" />
+    <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/location_personal.css" />
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXP-Ie48j28NaBt_x-4oVMaE3wpfY7t4s&sensor=true">
+     </script>
   {% endblock %}
 
 {% block navigation-bar %} {# Navigation Bar #}
@@ -25,3 +35,7 @@
       <li><a href="#">How TuTablr Works</a></li>
   </ul>
 {% endblock %}
+
+{% block body_attributes%}
+  onload="initialize()"
+{%endblock%}

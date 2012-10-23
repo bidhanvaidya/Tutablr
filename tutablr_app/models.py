@@ -24,7 +24,7 @@ class UserProfile(models.Model):
 		  return "%s's profile" % self.user  
 		  
 class Location(models.Model): # Where you would like to get tutored (can only have 1)
-	preferred_postcode = models.IntegerField(max_length=4)
+	preferred_postcode = models.IntegerField(max_length=4,null=True)
 	preferred_suburb = models.CharField(max_length=50)
 	longitude = models.FloatField()
 	latitude = models.FloatField()
@@ -32,7 +32,7 @@ class Location(models.Model): # Where you would like to get tutored (can only ha
 	is_tutoring_location = models.BooleanField(default=False) # only applies to tutors
 
 class TutoringLocation(models.Model): # Where you can tutor
-	preferred_postcode = models.IntegerField(max_length=4)
+	preferred_postcode = models.IntegerField(max_length=4,null=True)
 	preferred_suburb = models.CharField(max_length=50)
 	longitude = models.FloatField()
 	latitude = models.FloatField()
