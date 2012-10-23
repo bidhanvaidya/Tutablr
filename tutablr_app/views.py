@@ -1026,5 +1026,6 @@ def dashboard(request):
                                  "numberOfMessages":numberOfMessages,
                                  "extraRows":temp,
                               },
-                              context_instance=RequestContext(request))
+                              context_instance=RequestContext(request)
+   )
 

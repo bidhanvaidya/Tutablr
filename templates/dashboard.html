@@ -46,6 +46,8 @@
                       <div id = "upcoming-events"class="caption">
                         <p> Add Messages Here Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
+                            <p> This is test -> {{ current_path }}</p>
+
                       </div>
                 </div>
     </div>
@@ -59,7 +61,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li><a href="/messages/inbox">Inbox</a></li>
-              <li><a href="/messages/sent">Outbox</a></li>
+              <li><a href="/messages/sent">Sent</a></li>
               <li><a href="/messages/archives/">Archive</a></li>
               <li><a href="/messages/trash">Trash</a></li>
               <li><a href="/messages/write">Write Message</a></li>
@@ -80,5 +82,4 @@
         <li><a href="/">Find a Tutor</a></li>
     </ul>
 {% endblock %}
-
 

@@ -2,6 +2,7 @@
 {% load url from future %}
 {% load i18n postman_tags %}{% load pagination_tags %}
 {% block content %}
+<form id="form-block" action="{% block pm_form_action %}{% endblock %}" method="post">{% csrf_token %}
 <div id="postman">
     <div class="row-fluid">
         <h2 class="span4" id="messages-title">{% block pm_folder_title %}{% endblock %}</h2>        
@@ -22,13 +23,13 @@
                             {% endif %}
                         </div>
                     </div>{% endblock pm_by_modes %}
-                    <form id="form-actions"class="span4 "action="{% block pm_form_action %}{% endblock %}" method="post">{% csrf_token %}
+                    <div id="form-actions"class="span4 ">{% csrf_token %}
                         {% block pm_form_buttons %}<span id="pm_buttons">
                             {% block pm_delete_button %}<button class=" btn-danger"type="submit" onclick="this.form.action='{% url 'postman_delete' %}'">{% trans "Delete Selected" %}</button>{% endblock %}
                             {% block pm_archive_button %}<button class=" btn-info"type="submit" onclick="this.form.action='{% url 'postman_archive' %}'">{% trans "Archive Selected" %}</button>{% endblock %}
                             {% block pm_undelete_button %}<button class=" btn-success" type="submit" onclick="this.form.action='{% url 'postman_undelete' %}'">{% trans "Undelete Selected" %}</button>{% endblock %}
                         </span>{% endblock %}
-                    </form>
+                    </div>
                 {%endif%}
         {%endif%}
     </div>

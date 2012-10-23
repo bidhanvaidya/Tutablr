@@ -163,6 +163,7 @@ TEMPLATE_CONTEXT_PROCESSORS =(
 					"django.contrib.messages.context_processors.messages",
 					"postman.context_processors.inbox",
                                                                                                     "django.core.context_processors.csrf",
+                                                                                                    "tutablr_app.context_processors.get_current_path",
 )
 POSTMAN_DISALLOW_ANONYMOUS = True
 POSTMAN_AUTO_MODERATE_AS = True
