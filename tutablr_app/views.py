@@ -16,7 +16,45 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from math import cos, sin, tan, atan2, sqrt
+booking_locks = {}
+session_locks = {}
 
+#initialize the locks
+#need to delete when the events are deleted and add when they are added
+def initLocks():
+	bookings = Booking.objects.all()
+	sessions = SessionTime.objects.all()
+	for b in bookings:
+		booking_locks[str(b.id)] = False
+	
+	for s in sessions:
+		session_locks[str(s.id)] = False
+		
+def get_lock(request, event_id, event_type):
+	#releasing a lock
+	if request.method == "POST":
+		if event_type == "booking":
+			if booking_locks[str(event_id)] == False:
+				return HttpResponse("1")
+			else:
+				return HttpResponse("0")
+		else:
+			if session_locks[str(event_id)] == False:
+				return HttpResponse("1")
+			else:
+				return HttpResponse("0")
+def lock(event_id, event_type):
+	if event_type == "booking":
+		booking_locks[str(event_id)] = True
+	else:
+		session_locks[str(event_id)] = True
+		
+def unlock(event_id, event_type):
+	if event_type == "booking":
+		booking_locks[str(event_id)] = False
+	else:
+		session_locks[str(event_id)] = False
+		
 def radians(x):
         return x*3.14159/180.0
 
@@ -533,70 +571,6 @@ def user_calendar(request, cal_id):
 		else:
 			return http.HttpResponse(json.dumps(calendar_list), content_type='application/json')
 			
-#POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
-##id, type
-def delete(request):
-    if request.method == 'POST': 
-				id = request.POST.get('edit_event_id')
-				user_id = request.user.id
-				unavailable = UnavailableTime.objects.get(pk=id)
-				user = unavailable.user_id
-				if user.id== request.user.id:
-					unavailable.delete()
-					return redirect('/calendar')
-				else:
-					raise http.Http404
-        
-    else:
-        raise http.Http404
-
-
-#POST requests here must also have a description, start_time, and finish_time
-##id, type, description, start_time, finish_time, is_rejected, is_confirmed, 
-def update(request):
-	return redirect('/notpost')
-	if request.method == 'POST':
-		id = request.POST.get('edit_event_id')
-		start= request.POST.get('edit_start_date') + " " + request.POST.get('edit_start')
-		start= time.strptime(start, "%d/%m/%Y %H:%M")
-		start_datetime= datetime.datetime(*start[:6])
-		end=  request.POST.get('edit_start_date') + " "+ request.POST.get('edit_end')
-		end= time.strptime(end, "%d/%m/%Y %H:%M")
-		end_datetime= datetime.datetime(*end[:6])
-		if request.POST.get('type') == 'student_session':
-				tutor_id= SessionTime.objects.get(pk=id).tutor_id
-				unit_id= SessionTime.objects.get(pk=id).unit_id
-				booking = Booking(unit_id = unit_id,
-				start_time = start_datetime,
-				finish_time = end_datetime,
-				tutor_id = tutor_id,
-				student_id = request.user,
-				description = request.POST.get('edit_title')
-				)
-				booking.save()
-				return redirect('/calendar')
-		elif request.POST.get('type') == 'student_booking':
-				booking = Booking.objects.get(pk=id)
-				booking.description = request.POST.get('edit_title')
-				booking.start_time = start_datetime
-				booking.finish_time = end_datetime
-				booking.save()
-				return redirect('/calendar')
-		elif request.POST.get('type') == 'unavailable':
-			unavailable = UnavailableTime.objects.get(pk=id)
-			user = unavailable.user_id
-			if user.id== request.user.id:	
-				print user.id
-				unavailable.description = request.POST.get('edit_title')
-				unavailable.start_time = start_datetime
-				unavailable.finish_time = end_datetime
-				print "hello"
-				unavailable.save()
-				return redirect('/calendar')
-			else:
-				return redirect('/wronguser')
-		else:
-			return redirect('/notpost')
 
 #-------------------EVENT DROP----------------------------------
 def drop_event(request, cal_id):
@@ -633,6 +607,8 @@ def drop_event(request, cal_id):
                         moderation_date=now)
 			message.save()
 			booking.save()
+			#unlock the event
+			unlock(event_id, eventType)
 		elif eventType == 'student_booking' or eventType == 'tutor_booking':
 			booking = Booking.objects.filter(pk=event_id)[0]
 			booking.start_time = booking.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
@@ -654,15 +630,15 @@ def drop_event(request, cal_id):
 						recipient=booking.tutor_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
-
-				
 			message.save()
+			#unlock the event
+			unlock(event_id, eventType)
 		elif eventType == "unavailable":
 			unavailable = UnavailableTime.objects.filter(pk = event_id)[0]
 			unavailable.start_time = unavailable.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			unavailable.finish_time = unavailable.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			unavailable.save()
-		#print(id)
+		
 		if cal_id == str(0):
 			return redirect('/calendar/user/' + str(request.user.id) + '/')
 		else:
@@ -759,8 +735,10 @@ def add_booking(request, cal_id):
 			moderation_status=STATUS_ACCEPTED, 
 			moderation_date=now)
 		message.save()
-
+	
 		booking.save()
+		#add to booking_locks
+		booking_locks[str(booking.id)] = False
 		if cal_id == str(0):
 			return redirect('/calendar/user/' + str(request.user.id) + '/')
 		else:
@@ -803,12 +781,15 @@ def update_booking(request, cal_id):
 
 				booking.creator_id = request.user
 				booking.save()
+				#release booking lock
+				unlock(booking.id, "booking")
 				message.save()
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:
 					return redirect('/calendar/user/' + cal_id + '/')
 			else:
+				unlock(booking.id, "booking")
 				raise http.Http404
 
 		else:
@@ -816,7 +797,6 @@ def update_booking(request, cal_id):
 			
 #initial booking MUST be made by the student
 def confirm_booking(request, cal_id):
-
 		if request.method == 'POST':
 			id = request.POST.get('edit_event_id')
 			booking = Booking.objects.get(pk=id)
@@ -848,6 +828,8 @@ def confirm_booking(request, cal_id):
 						tutor_id = booking.tutor_id,
 						student_id = booking.student_id)
 				session.save()
+				#add to session locks
+				session_locks[str(session.id)] = False
 				now= datetime.datetime.now()
 				admin= User.objects.all()[0]
 				if booking.creator_id == booking.student_id:
@@ -881,11 +863,14 @@ def confirm_booking(request, cal_id):
 						moderation_date=now)
 				message.save()	
 				booking.save()
+				#unlock booking
+				unlock(booking.id, "booking")
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:
 					return redirect('/calendar/user/' + cal_id + '/')
 			else:
+				unlock(booking.id, "booking")
 				raise http.Http404
 
 		else:
@@ -941,12 +926,15 @@ def reject_booking(request, cal_id):
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
 					message.save()	
+				#unlock booking
 				booking.save()
+				unlock(booking.id, "booking")
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:
 					return redirect('/calendar/user/' + cal_id + '/')
 			else:
+				unlock(booking.id, "booking")
 				raise http.Http404
 
 		else:
@@ -958,11 +946,9 @@ def delete_booking(request, cal_id):
 		user_id = request.user.id
 		booking = Booking.objects.get(pk=id)
 		if booking.creator_id == request.user:
-			booking.delete()
 			now= datetime.datetime.now()
 			admin= User.objects.all()[0]
 			if booking.creator_id == booking.student_id:
-
 				message= Message(subject="Booking Deleted", 
 					body="A Booking of "+ booking.unit_id.unit_name + " has been deleted by " + booking.creator_id.username, 
 					sender=admin, 
@@ -977,28 +963,27 @@ def delete_booking(request, cal_id):
 					moderation_status=STATUS_ACCEPTED, 
 					moderation_date=now)	
 			message.save()
-			
+			#delete booking
+			del booking_locks[str(booking.id)]
+			booking.delete()
 			if cal_id == str(0):
 				return redirect('/calendar/user/' + str(request.user.id) + '/')
 			else:
 				return redirect('/calendar/user/' + cal_id + '/')
 		else:
-			print("herherherherh")
+			unlock(booking.id, "booking")
 			raise http.Http404
 	else:
 		raise http.Http404
 #-------------END BOOKINGS-----------------------
 #-------------SESSIONS---------------------------
 def update_session(request, cal_id):
-		raise http.Http404
+		#raise http.Http404
 		if request.method == 'POST':
 			id = request.POST.get('edit_session_event_id')
-
 			session = SessionTime.objects.get(pk=id)
 			student = session.student_id
 			tutor = session.tutor_id
-			
-			
 			if student.id== request.user.id or tutor.id== request.user.id:
 				start= request.POST.get('edit_session_start_date') + " " + request.POST.get('edit_session_start')
 				start= time.strptime(start, "%d/%m/%Y %H:%M")
@@ -1013,6 +998,7 @@ def update_session(request, cal_id):
 				if session_start_time == calendar_start and session_end_time == calendar_end:
 					session.description = request.POST.get('edit_session_title')
 					session.save()
+					
 				else:
 					description = request.POST.get('edit_session_title')
 					now= datetime.datetime.now()
@@ -1042,13 +1028,17 @@ def update_session(request, cal_id):
 						unit_id = session.unit_id)
 					message.save()
 					booking.save()
+					booking_locks[str(booking.id)] = False
+					#add booking to locks
+				#unlock session
+				unlock(session.id, "session")
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
 				else:
 					return redirect('/calendar/user/' + cal_id + '/')
 			else:
+				unlock(session.id, "session")
 				raise http.Http404
-
 		else:
 			return redirect('/calendaKKr')
 			
@@ -1059,11 +1049,13 @@ def delete_session(request, cal_id):
 		session = SessionTime.objects.get(pk=id)
 		if session.student_id.id == request.user.id or session.tutor_id.id == request.user.id:
 			session.delete()
+			del session_locks[str(session.id)]
 			if cal_id == str(0):
 				return redirect('/calendar/user/' + str(request.user.id) + '/')
 			else:
 				return redirect('/calendar/user/' + cal_id + '/')
 		else:
+			unlock(session.id, "session")
 			raise http.Http404
 	else:
 			raise http.Http404
