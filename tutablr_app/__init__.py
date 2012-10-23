@@ -8,5 +8,6 @@ sessions = SessionTime.objects.all()
 for b in bookings:
 	booking_locks[str(b.id)] = False
 
+	
 for s in sessions:
 	session_locks[str(s.id)] = False
