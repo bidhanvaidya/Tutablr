@@ -34,6 +34,7 @@ class TutoringLocation(models.Model): # Where you can tutor
 	longitude = models.FloatField()
 	latitude = models.FloatField()
 	user_id = models.ForeignKey(User)	
+	deleted = models.BooleanField(default=False)
 
 class UOS(models.Model): # unit of study information
 	unit_name = models.CharField(max_length=128)
