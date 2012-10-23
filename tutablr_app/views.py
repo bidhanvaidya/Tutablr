@@ -30,9 +30,11 @@ def initLocks():
 	for s in sessions:
 		session_locks[str(s.id)] = False
 		
-def get_lock(request, event_id, event_type):
+def get_lock(request):
 	#lock status
 	if request.method == "POST":
+		event_id = request.POST.get('event_id')
+		event_type = request.POST.get('event_type')
 		if event_type == "booking":
 			if booking_locks[str(event_id)] == False:
 				return HttpResponse("1")
