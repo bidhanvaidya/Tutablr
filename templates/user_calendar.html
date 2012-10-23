@@ -46,6 +46,7 @@
 					disableResizing : true,
 					aspectRatio : 1.75,
 					eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+						//check for lock and revertFunc if locked
 						if (!event.draggable) {
 							revertFunc();
 						} else {
@@ -84,6 +85,7 @@
 							var title = event.title;
 							//tutor session (booking) is session (booking) with a tutor
 							if (event.type == "tutor_session" || event.type == "student_session") {
+								//check for lock
 								if(event.pending){
 									alert('Session already has a pending edit');
 								}else{
@@ -104,6 +106,7 @@
 									$("#edit_session").dialog("open");
 								}
 							} else if (event.type == "tutor_booking" || event.type == "student_booking") {
+								//check for lock
 								$("#edit_start").val(start_time);
 								$("#edit_end").val(end_time);
 								$("#edit_title").val(title);
@@ -159,6 +162,7 @@
 							url = '/../../confirm_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							//refetchEvents
 							return true;
 						}
 					}, {
@@ -177,6 +181,7 @@
 							url = '/../../reject_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							//refetchEvents
 							return true;
 						}
 					}, {
@@ -188,6 +193,7 @@
 							url = '/../../delete_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							//refetchEvents
 							return true;
 						}
 					}],
@@ -208,6 +214,7 @@
 							url = '/../../update_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							//refetchEvents
 							return true;
 						},
 					}, {
@@ -233,6 +240,7 @@
 							url = '/../../update_session/' + user_id + '/';
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
+							//refetchEvents
 							return true;
 						},
 					}, {
@@ -251,6 +259,7 @@
 							url = '/../../delete_session/' + user_id + '/';
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
+							//refetchEvents
 							return true;
 						}
 					}]
@@ -270,6 +279,7 @@
 							document.addForm.action = url;
 							$("[id*=SubmitAdd]").click();
 							$(this).dialog("close");
+							//refetchEvents
 							return true;
 						},
 					}, {
