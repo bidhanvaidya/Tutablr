@@ -24,8 +24,8 @@
             title: "Hello World"
         }); 
             marker['infowindow'] = new google.maps.InfoWindow({
-            content: "TEST"
-        });
+            content: marker.position.lng().toString() + "  <> "+ marker.position.lat().toString()
+         });
 
     google.maps.event.addListener(marker, 'click', function() {
         this['infowindow'].open(map, this);
