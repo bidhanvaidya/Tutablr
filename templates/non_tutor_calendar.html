@@ -38,7 +38,7 @@
 		</script>
 		<script type='text/javascript'>
 			//<![CDATA[
-			function isOverlapping(event) {
+			/*function isOverlapping(event) {
 				var array = calendar.fullCalendar('clientEvents');
 				for (i in array) {
 					if (array[i].id != event.id) {
@@ -48,9 +48,18 @@
 					}
 				}
 				return false;
+			}*/
+
+			var dialog_open = false;
+			setInterval("refresh_check();",3000);
+			
+			function refresh_check(){
+				console.log("check");
+				if(dialog_open == false){
+					$('#calendar').fullCalendar('refetchEvents');
+					console.log(dialog_open);
+				}
 			}
-
-
 			$(document).ready(function() {
 				var last_url = location.pathname.match(/\/user\/(.*)/)[1]
 				var user_id = '';
@@ -142,6 +151,7 @@
 												$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
 											}
 											$("#edit_session").dialog("open");
+											dialog_open = true;
 
 										} else {
 											alert("This session is already being edited")
@@ -195,8 +205,9 @@
 												$("#btnConfirm").button("enable");
 												$("#btnReject").button("enable");
 											}
-											$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
+											//$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
 											$("#select_dialog").dialog("open");
+											dialog_open = true;
 										} else {
 											console.log("got 0");
 											alert("Booking is being edited by another user");
@@ -216,12 +227,14 @@
 					height : 100,
 					modal : true,
 					resizable : true,
+					closeOnEscape: false,
 					buttons : [{
 						text : "Edit",
 						"id" : "btnEdit",
 						click : function(e) {
 							$('#edit_booking').dialog('open');
 							$(this).dialog('close');
+							dialog_open = true;
 						}
 					}, {
 						text : "Confirm",
@@ -232,6 +245,7 @@
 							url = '/../../confirm_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							dialog_open = false;
 							return true;
 						}
 					}, {
@@ -239,6 +253,7 @@
 						"id" : "btnCancel",
 						click : function() {
 							$(this).dialog("close");
+							dialog_open = false;
 							$.ajax({
 								url : "/../../unlock_request/",
 								type : 'POST',
@@ -264,6 +279,7 @@
 							url = '/../../reject_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							dialog_open = false;
 							return true;
 						}
 					}, {
@@ -275,6 +291,7 @@
 							url = '/../../delete_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							dialog_open = false;
 							return true;
 						}
 					}],
@@ -286,6 +303,7 @@
 					height : 300,
 					modal : true,
 					resizable : true,
+					closeOnEscape: false,
 					closeOnButton : false,
 					buttons : [{
 						text : "Submit",
@@ -296,6 +314,7 @@
 							url = '/../../update_booking/' + user_id + '/';
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
+							dialog_open = false;
 							return true;
 						},
 					}, {
@@ -303,6 +322,7 @@
 						"id" : "btnCancel2",
 						click : function() {
 							$(this).dialog("close");
+							dialog_open = false;
 							$.ajax({
 								url : "/../../unlock_request/",
 								type : 'POST',
@@ -326,6 +346,7 @@
 					width : 400,
 					height : 300,
 					modal : true,
+					closeOnEscape: false,
 					resizable : true,
 					buttons : [{
 						text : "Submit",
@@ -336,6 +357,7 @@
 							url = '/../../update_session/' + user_id + '/';
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
+							dialog_open = false;
 							return true;
 						},
 					}, {
@@ -343,6 +365,7 @@
 						"id" : "btnSessionCancel",
 						click : function() {
 							$(this).dialog("close");
+							dialog_open = false;
 							$.ajax({
 								url : "/../../unlock_request/",
 								type : 'POST',
@@ -368,6 +391,7 @@
 							url = '/../../delete_session/' + user_id + '/';
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
+							dialog_open = false;
 							return true;
 						}
 					}]
