@@ -35,6 +35,19 @@ html .fc,
 
 /* Header
 ------------------------------------------------------------------------*/
+.fc-view-agendaDay .fc-today {
+     color:white;
+     background:#FFDEAD;
+  } 
+
+.fc-view-agendaWeek .fc-today {
+     color:white;
+     background:#FFDEAD;
+  } 
+.fc-view-month .fc-today {
+     color:white;
+     background:#FFDEAD;
+  } 
 
 .fc-header td {
 	white-space: nowrap;
@@ -57,11 +70,6 @@ html .fc,
 .fc-header-title {
 	display: inline-block;
 	vertical-align: top;
-	}
-	
-.fc-header-title h2 {
-	margin-top: 0;
-	white-space: nowrap;
 	}
 	
 .fc .fc-header-space {

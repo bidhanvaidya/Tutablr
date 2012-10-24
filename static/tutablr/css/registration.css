@@ -1,0 +1,26 @@
+#registration-form {
+    position: relative;
+    width: 600px;
+    left: 290px;
+}
+#terms_id {
+    position: relative;
+    top: -25px;
+    width: 210px;
+    
+}
+
+#id_extra_details {
+    width:360px;
+}
+
+#buttons_check_id {
+    position: relative;
+    top: 15px;
+    left: 130px;
+}
+
+#buttons_div {
+    position: relative;
+    left: 230px;
+}

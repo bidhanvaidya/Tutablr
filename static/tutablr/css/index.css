@@ -1,0 +1,34 @@
+#bottom-boxes {
+    position: relative;
+    top:30px;
+}
+
+.bottom-boxes {
+    height: 180px;
+}
+
+#main-area {
+    position:relative;
+    top: 30px;
+}
+
+#homeimage {
+    height: 247px;
+    width: 400px;
+    position: relative;
+    left:62px;
+    top:2px;
+}
+
+#home-maintext {
+    position: relative;
+    left:-115px;
+    height: 250px;
+    width: 420px;
+}
+
+#home-maintext-thumbnail {
+    height:240px;
+    position:relative;
+    left:-20px;
+}

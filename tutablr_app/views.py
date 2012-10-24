@@ -895,7 +895,6 @@ def delete_booking(request, cal_id):
 #-------------END BOOKINGS-----------------------
 #-------------SESSIONS---------------------------
 def update_session(request, cal_id):
-		raise http.Http404
 		if request.method == 'POST':
 			id = request.POST.get('edit_session_event_id')
 

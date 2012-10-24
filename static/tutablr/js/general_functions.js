@@ -61,6 +61,7 @@ $("#login-form").submit(function(){
                 window.location.replace(redirectURL);
             }
             else if(data==0){
+                  $("#login-input").addClass("control-group error")
                 alert("Username and Password do not match!");
             }
         }
@@ -77,6 +78,71 @@ $('#logout-btn').click(function(){
         }
     });
 
+});
+
+$("#id_extra_details").hover(function(){
+    options = {
+        html:false,
+        trigger:'click',
+        content:"Please give details regarding your experience in various fields, what subjects you can tutor and any references. These details will be used to assignn you tutorable subjects.",
+        title: "What do I put in here?",
+        placement:'right'
+    }
+    $('#id_extra_details').popover(options);
+});
+
+$("#terms_checkbox").click(function(){
+    if ($("#terms_checkbox").attr('checked')) {
+        $("#reg_submit_btn").removeAttr("disabled");
+    }
+    else {
+        $("#reg_submit_btn").attr("disabled","disabled");
+    }
+});
+
+$("#reset-reg-btn").click(function(){
+        $("#reg_submit_btn").attr("disabled","disabled");
+});
+
+
+$("#contactForm").submit(function(){
+   /* var redirectURL;
+    if (getUrlVar("next")== "") {
+        redirectURL = baseURL + "/dashboard";
+    }
+    else {
+        redirectURL = baseURL + getUrlVar("next");
+    }
+    var username = $('#id_username').val();
+    var password = $('#id_password').val();
+    if (username == "" || password == "") {
+        $("#login-input").addClass("control-group error")
+        alert("Please enter a valid username and password.");
+    }    */
+    var fullName = $('#fullname').val();
+    var email = $('#email').val();
+    var message =  $('#message').val();
+    $.ajax({
+      url: '/submitContact',
+      type: 'POST',
+      //dataType: 'xml/html/script/json/jsonp',
+      data: {
+            fullName: fullName,
+            email: email,
+            message:  message
+    },
+
+        success: function(data) {
+           if (data == "1") {
+                $('#form-input-fields').replaceWith('<p>Your message was sent successfully!</p>');
+            }
+            else {
+                $('#form-input-fields').replaceWith('<p>There was an error in sending your message. Please try again later.</p>');
+            }
+            $('#buttons_div').remove();
+        }
+    });  
+    return false;
 });
 
 
