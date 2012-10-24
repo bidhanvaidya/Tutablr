@@ -1,4 +1,12 @@
 $(document).ready(function() {
+        var dialog_open = false;
+      setInterval("refresh_check();",2000);
+      
+      function refresh_check(){
+        
+          $('#calendar').fullCalendar('refetchEvents');
+          
+      }
          $.getJSON("/calendar/events.json", function(json) {
           for (i = 0; i < json.length; i++) { 
             console.log(json[i].editable);
