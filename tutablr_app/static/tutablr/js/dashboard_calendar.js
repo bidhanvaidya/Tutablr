@@ -18,6 +18,7 @@ $(document).ready(function() {
           editable : true,
           disableResizing : true,
           aspectRatio : 1.75,
+          allDaySlot:false,
           
           
           
