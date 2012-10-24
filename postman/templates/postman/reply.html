@@ -1,7 +1,14 @@
 {% extends "postman/base_write.html" %}
 {% load i18n %}
-{% block pm_write_title %}{% trans "Reply"%}{% endblock %}
-{% block pm_write_recipient %}<tr><th><label>{% trans "Recipient" %}:</label></th><td>{{ recipient }}</td></tr>{% endblock %}
+{% block pm_write_title %}{% trans "Messages - Reply"%}{% endblock %}
+{% block pm_write_current_recipient %}
+              <div class="control-group">
+                      <label for="fullname-" class="control-label">Reciepient(s):</label>
+                      <div class="controls">
+                        <input id="fullname" class="input-large" name="fullName" value="{{recipient}}" type="text" disabled="disabled">
+                      </div>
+              </div>
+{% endblock %}
 
 {% block navigation-bar %} {# Navigation Bar #}
     <ul class="nav">

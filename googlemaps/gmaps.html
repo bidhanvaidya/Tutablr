@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <link rel="stylesheet" href="gmaps.css" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <style type="text/css">
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map_canvas { height: 100% }
+        </style>
+        <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXP-Ie48j28NaBt_x-4oVMaE3wpfY7t4s&sensor=true">
+        </script>
+</head>
+<script src="gmaps.js"></script>
+<body onload="initialize()">
+        <input id="address" type="text" name="" value="" placeholder="Address">
+        <button onclick="codeAddress()" id="submit" type="button">Geolocate</button>
+        <div id="map_canvas" style="width:500px; height:500px"></div>
+</body>
+</html>

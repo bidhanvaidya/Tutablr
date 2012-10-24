@@ -1,0 +1,14 @@
+#id_body {
+    min-width: 676px;
+    max-width:676px;
+}
+
+#btn-submit-message {
+    position: relative;
+    left:820px;
+    top:-10px;
+}
+
+#replyForm {
+    width:930px;
+}

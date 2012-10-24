@@ -42,8 +42,8 @@ urlpatterns = patterns('',
 	(r'^delete_booking/(?P<cal_id>\d+)/$','tutablr_app.views.delete_booking'),
 	(r'^update_session/(?P<cal_id>\d+)/$','tutablr_app.views.update_session'),
 	(r'^delete_session/(?P<cal_id>\d+)/$','tutablr_app.views.delete_session'),
-	('^profiles/edit', 'profiles.views.edit_profile', {'form_class': ProfileForm,}),
-	(r'^profiles/', include('profiles.urls')),
+	('^profiles/edit', 'profiles.views.edit_profile', {'form_class': ProfileForm,}), #remove later
+	(r'^profiles/', include('profiles.urls')), # remove later
 	 url(r'^admin/', include(admin.site.urls)),
 	 url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'),
 	 url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'),	 	
@@ -51,4 +51,11 @@ urlpatterns = patterns('',
 	 url(r'^accounts/profile/', direct_to_template, {'template': 'index.html'}, 'index'),
 	 url(r'^accounts/', include('registration.backends.default.urls')),
 	url(r'^dashboard$','tutablr_app.views.dashboard'),
+
+	################# LOCATION URLS  #################
+	url(r'^profile/locations$','tutablr_app.views.location'),
+	#url(r'^profile/locations/tutoring/edit$','tutablr_app.views.locationSelector'),
+	url(r'^profile/locations/tutoring/add$','tutablr_app.views.locationAddTutoring'),
+	url(r'^profile/locations/personal/edit$','tutablr_app.views.locationEditPersonal'),
+	################# LOCATION URLS  #################
 )
