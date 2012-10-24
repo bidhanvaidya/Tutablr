@@ -141,30 +141,42 @@ def tutor_search(request):
 					print len(user_location)
 					if len(user_location) != 0:
 							for t in eligible_tutors:
-									tutor_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=t.id)]
-									if len(tutor_location) == 0 or haversine(user_location, tutor_location) > distance_in_kms:
-											eligible_tutors.remove(t)
-
-			
+									found = False
+									tutor_location = [[l.latitude, l.longitude] for l in TutoringLocation.objects.filter(user_id__id=t.id)]
+									if len(tutor_location) == 0:
+										eligible_tutors.remove(t)
+									else:
+										for l in tutor_location:
+											if haversine(user_location, tutor_location[0]) < distance_in_kms:
+												found = True
+												break
+										if not found:
+											eligible_tutors.remove(t)	
+																							
 			for t in eligible_tutors:
 				id = t.id
 				username = t.username
-				location = Location.objects.filter(user_id__id=id)
+				locations = [[l.latitude, l.longitude] for l in TutoringLocation.objects.filter(user_id__id=id)]
 				avg_rating = 0
 				user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id)]
-				if len(location) != 0 and len(user_location) != 0:
-					latitude = location[0].latitude
-					longitude = location[0].longitude
-					distance_in_kms = haversine(user_location[0], [latitude, longitude])
+				if len(locations) != 0 and len(user_location) != 0:
+					distance_in_kms = 1000000
+					latitude = 0
+					longitude = 0
+					for l in locations:
+						if haversine(user_location[0], l) < distance_in_kms:
+							distance_in_kms = haversine(user_location[0], l) 
+							latitude = l[0]
+							longitude = l[1]
 				else:
-					latitude = "N/A"
-					longitude="N/A"
-					distance_in_kms = "N/A"
+					latitude = 0
+					longitude=0
+					distance_in_kms = 0
 				ratings = [r.rating for r in Review.objects.filter(tutor_id__id = id)]
 				if len(ratings) > 0:
 						avg_rating = float(sum(ratings))/float(len(ratings))
 				else:
-					avg_rating = "N/A"
+					avg_rating = 0
 				unit_details = UnitDetails.objects.filter(user_id__id = id, unit_id__unit_id = unit)
 				price = unit_details[0].price
 				profile_url = "/profiles/" + username + "/"
