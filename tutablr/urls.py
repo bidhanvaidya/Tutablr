@@ -25,12 +25,14 @@ urlpatterns = patterns('',
      	url ( r'^calendar/events.json/*$' , 'tutablr_app.views.calendar' , name = 'events.json' ),
 	 url(r'^contact$',auth_views.login,{'template_name':'contact.html'},name='auth_login'), # home page
 	 url(r'^submitContact$','tutablr_app.views.contactFormAjax'),
+	 url(r'^get_lock/$', 'tutablr_app.views.get_lock'),
+	url(r'^unlock_request/$', 'tutablr_app.views.unlock_request'),
 	(r'^%s/' % settings.DAJAXICE_MEDIA_PREFIX, include('dajaxice.urls')),
 	url(r'^$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	url(r'^index$',auth_views.login,{'template_name':'index.html'},name='auth_login'), # home page
 	(r'^search/$','tutablr_app.views.tutor_search'),
-	(r'^delete$','tutablr_app.views.delete'),
-	(r'^update$','tutablr_app.views.update'),
+	#(r'^delete$','tutablr_app.views.delete'),
+	#(r'^update$','tutablr_app.views.update'),
 	(r'drop_event/(?P<cal_id>\d+)/$','tutablr_app.views.drop_event'),
 	(r'^add_unavailable/$','tutablr_app.views.add_unavailable'),
 	(r'^update_unavailable/$','tutablr_app.views.update_unavailable'),

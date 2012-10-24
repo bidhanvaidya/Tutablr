@@ -7,7 +7,8 @@ return result && result[1] || "";
 
 
 $.ajaxSetup({ 
-     beforeSend: function(xhr, settings) {
+     console.log("ajax loaded");
+	beforeSend: function(xhr, settings) {
          function getCookie(name) {
              var cookieValue = null;
              if (document.cookie && document.cookie != '') {

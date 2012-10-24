@@ -9,23 +9,31 @@
 		<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-
-		<script type='text/javascript'>
-			//<![CDATA[
-			function isOverlapping(event) {
-				var array = calendar.fullCalendar('clientEvents');
-				for (i in array) {
-					if (array[i].id != event.id) {
-						if (!(array[i].start >= event.end || array[i].end <= event.start)) {
-							return true;
+		<script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
+		<script type="text/javascript">
+			window.onbeforeunload = function() {
+				$.ajax({
+					url : "/../../unlock_request/",
+					type : 'POST',
+					async: false,
+					data : {
+						event_type : $('#cancel_event_type').val(),
+						event_id : $('#cancel_event_id').val()
+					},
+					success : function(data) {
+						if (data == "1") {
+							console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
 						}
+						return true;
 					}
-				}
-				return false;
+				});
+				return null;
 			}
-
+		</script>
+		<script type='text/javascript'>
 
 			$(document).ready(function() {
+				
 				var last_url = location.pathname.match(/\/user\/(.*)/)[1]
 				var user_id = '';
 				if (last_url[last_url.length - 1] == '/') {
@@ -50,15 +58,35 @@
 						if (!event.draggable) {
 							revertFunc();
 						} else {
-							var id = event.id;
-							$("#dayDelta").val(dayDelta);
-							$("#minuteDelta").val(minuteDelta);
-							$("#drop_event_id").val(id);
-							$("#eventType").val(event.type);
-							url = '/../../drop_event/' + user_id + '/';
-							document.editDropForm.action = url;
-							$("[id*=SubmitDrop]").click();
-
+							var type = "booking";
+							if (event.type == "tutor_session" || event.type == "student_session") {
+								type = "session";
+							}
+							$.ajax({
+								url : "/../../get_lock/",
+								type : 'POST',
+								data : {
+									event_type : type,
+									event_id : event.id
+								},
+								success : function(data) {
+									if (data == "1") {
+										console.log("event unlocked");
+										var id = event.id;
+										$("#dayDelta").val(dayDelta);
+										$("#minuteDelta").val(minuteDelta);
+										$("#drop_event_id").val(id);
+										$("#eventType").val(event.type);
+										url = '/../../drop_event/' + user_id + '/';
+										document.editDropForm.action = url;
+										$("[id*=SubmitDrop]").click();
+									} else {
+										console.log("event locked");
+										alert("This event is currently being edited");
+									}
+									return false;
+								}
+							});
 						}
 					},
 					select : function(start, end, allDay) {
@@ -86,55 +114,103 @@
 							//tutor session (booking) is session (booking) with a tutor
 							if (event.type == "tutor_session" || event.type == "student_session") {
 								//check for lock
-								if(event.pending){
+								//post to /../../get_lock/
+								//event_type = "session"
+								//event_id = event.id
+								//receive either "1" = was unlocked but now locked and "0" = already locked.
+								if (event.pending) {
 									alert('Session already has a pending edit');
-								}else{
-									$("#edit_session_start").val(start_time);
-									$("#edit_session_end").val(end_time);
-									$("#edit_session_title").val(title);
-									$("#edit_session_event_id").val(id);
-									//$('#datePicker_session_start_edit').attr("disabled", false);
-									$('#datePicker_session_start_edit').datepicker("enable");
-									$('#datePicker_session_start_edit').val(start_date);
-									if (event.type == "tutor_session") {
-										$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
-										//delete, reject, confirm based on creator id
-									} else {
-										//delete, reject, confirm based on creator id
-										$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+									return false;
+								}
+								$.ajax({
+									url : "/../../get_lock/",
+									type : 'POST',
+									data : {
+										event_type : "session",
+										event_id : id
+									},
+									success : function(data) {
+										if (data == "1") {
+											//unlocked but now locked
+											console.log("session " + id + " unlocked");
+											$("#edit_session_start").val(start_time);
+											$("#edit_session_end").val(end_time);
+											$("#edit_session_title").val(title);
+											$("#edit_session_event_id").val(id);
+											$('#datePicker_session_start_edit').datepicker("enable");
+											$('#datePicker_session_start_edit').val(start_date);
+											$('#cancel_event_id').val(id);
+											$('#cancel_event_type').val("session");
+											if (event.type == "tutor_session") {
+												$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+												//delete, reject, confirm based on creator id
+											} else {
+												//delete, reject, confirm based on creator id
+												$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+											}
+											$("#edit_session").dialog("open");
+
+										} else {
+											alert("This session is already being edited")
+											console.log("got 0");
+										}
+										return false;
 									}
-									$("#edit_session").dialog("open");
-								}
+								});
+
 							} else if (event.type == "tutor_booking" || event.type == "student_booking") {
-								//check for lock
-								$("#edit_start").val(start_time);
-								$("#edit_end").val(end_time);
-								$("#edit_title").val(title);
-								$("#edit_event_id").val(id);
-								$("#booking_start_date").html(start_date);
-								$("#booking_start").html(start_time);
-								$("#booking_end").html(end_time);
-								$("#booking_title").html(title);
-								$("#booking_creator").html(event.creator);
-								$('#datePicker_start_edit').datepicker("enable");
-								$('#datePicker_start_edit').val(start_date);
-								if (event.type == "tutor_booking") {
-									//delete, reject, confirm based on creator id
-									$('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking: ' + event.title);
-								} else {
-									//delete, reject, confirm based on creator id
-									$('#edit_booking').dialog('option', 'title', 'Edit Student Booking: ' + event.title);
-								}
-								if (event.creator_id != user_id) {
-									$("#btnDelete").button("enable");
-									$("#btnConfirm").hide();
-									$("#btnReject").hide();
-								} else {
-									$("#btnDelete").hide()
-								}
-								//$("#edit_booking").dialog("open");
-								$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
-								$("#select_dialog").dialog("open");
+								$.ajax({
+									url : "/../../get_lock/",
+									type : 'POST',
+									data : {
+										event_type : "booking",
+										event_id : id
+									},
+									success : function(data) {
+										if (data == "1") {
+											console.log("booking " + id + " unlocked");
+											//check for lock
+											$("#edit_start").val(start_time);
+											$("#edit_end").val(end_time);
+											$("#edit_title").val(title);
+											$("#edit_event_id").val(id);
+											$("#booking_start_date").html(start_date);
+											$("#booking_start").html(start_time);
+											$("#booking_end").html(end_time);
+											$("#booking_title").html(title);
+											$("#booking_creator").html(event.creator);
+											$('#datePicker_start_edit').datepicker("enable");
+											$('#datePicker_start_edit').val(start_date);
+											$('#cancel_event_id').val(id);
+											$('#cancel_event_type').val("booking");
+											if (event.type == "tutor_booking") {
+												//delete, reject, confirm based on creator id
+												$('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking: ' + event.title);
+											} else {
+												//delete, reject, confirm based on creator id
+												$('#edit_booking').dialog('option', 'title', 'Edit Student Booking: ' + event.title);
+											}
+											//console.log(event.creator_id);
+											//console.log(user_id);
+											if (event.creator_id != user_id) {
+												$("#btnDelete").button("enable");
+												$("#btnConfirm").hide();
+												$("#btnReject").hide();
+											} else {
+												console.log("here");
+												$("#btnDelete").hide();
+												$("#btnConfirm").button("enable");
+												$("#btnReject").button("enable");
+											}
+											$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
+											$("#select_dialog").dialog("open");
+										} else {
+											console.log("got 0");
+											alert("Booking already has a pending edit");
+										}
+										return false;
+									}
+								});
 
 							}
 						}
@@ -163,6 +239,7 @@
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						}
 					}, {
@@ -170,6 +247,20 @@
 						"id" : "btnCancel",
 						click : function() {
 							$(this).dialog("close");
+							$.ajax({
+								url : "/../../unlock_request/",
+								type : 'POST',
+								data : {
+									event_type : $('#cancel_event_type').val(),
+									event_id : $('#cancel_event_id').val()
+								},
+								success : function(data) {
+									if (data == "1") {
+										console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+									}
+									return false;
+								}
+							});
 							return false;
 						}
 					}, {
@@ -182,6 +273,7 @@
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						}
 					}, {
@@ -194,6 +286,7 @@
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						}
 					}],
@@ -215,6 +308,7 @@
 							document.editBookingForm.action = url;
 							$("[id*=SubmitEdit]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						},
 					}, {
@@ -222,6 +316,20 @@
 						"id" : "btnCancel2",
 						click : function() {
 							$(this).dialog("close");
+							$.ajax({
+								url : "/../../unlock_request/",
+								type : 'POST',
+								data : {
+									event_type : $('#cancel_event_type').val(),
+									event_id : $('#cancel_event_id').val()
+								},
+								success : function(data) {
+									if (data == "1") {
+										console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+									}
+									return false;
+								}
+							});
 							return false;
 						},
 					}],
@@ -241,6 +349,7 @@
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						},
 					}, {
@@ -248,6 +357,20 @@
 						"id" : "btnSessionCancel",
 						click : function() {
 							$(this).dialog("close");
+							$.ajax({
+								url : "/../../unlock_request/",
+								type : 'POST',
+								data : {
+									event_type : $('#cancel_event_type').val(),
+									event_id : $('#cancel_event_id').val()
+								},
+								success : function(data) {
+									if (data == "1") {
+										console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+									}
+									return false;
+								}
+							});
 							return false;
 						},
 					}, {
@@ -260,6 +383,7 @@
 							document.editSessionForm.action = url;
 							$("[id*=SubmitEditSession]").click();
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						}
 					}]
@@ -280,6 +404,7 @@
 							$("[id*=SubmitAdd]").click();
 							$(this).dialog("close");
 							//refetchEvents
+							$('#calendar').fullCalendar('refetchEvents');
 							return true;
 						},
 					}, {
@@ -355,33 +480,34 @@
 			</form>
 		</div>
 		<div id ="select_dialog">
-		<table>
-                                <tr>
-                                        <td><label for = "booking_creator"> Created By </label> </td>
-                                        <td><div id = "booking_creator"></div></td>
-                                </tr>
-                                <tr>
-                                        <td><label for = "booking_start_date"> Start Date </label> </td>
-                                        <td><div id = "booking_start_date"></div></td>
-                                </tr>
-                                
-                                <tr>
-                                        <td><label for="booking_start">Start</label> </td>
-                                        <td><div id = "booking_start"></div> </td>
+			<table>
+				<tr>
+					<td><label for = "booking_creator"> Created By </label></td>
+					<td><div id = "booking_creator"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "booking_start_date"> Start Date </label></td>
+					<td><div id = "booking_start_date"></div></td>
+				</tr>
 
-                                </tr>
-                                <tr>
-                                        <td><label for="booking_end">End Time</label> </td>
-                                        <td><div id = "booking_end"></div></td>
+				<tr>
+					<td><label for="booking_start">Start</label></td>
+					<td><div id = "booking_start"></div></td>
 
-                                </tr>
-                                <tr>
-                                        <td><label for="title">Event Description</label> </td>
-                                        <td><div id = "booking_title"></div></td>
+				</tr>
+				<tr>
+					<td><label for="booking_end">End Time</label></td>
+					<td><div id = "booking_end"></div></td>
 
-                                </tr>   
+				</tr>
+				<tr>
+					<td><label for="title">Event Description</label></td>
+					<td><div id = "booking_title"></div></td>
 
-                    </table></div>
+				</tr>
+
+			</table>
+		</div>
 		<div id="edit_booking" title="Edit Booking">
 			<form name="editBookingForm" action="/../../update_booking/"  method="post">
 				<div id="edit_div" style="display:block">
@@ -403,6 +529,14 @@
 					</fieldset>
 				</div>
 				<input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
+			</form>
+		</div>
+		<div id ="cancel" style="display:none">
+			<form name="cancel" action="/../../unlock/" method="post">
+				{% csrf_token %}
+				<input type="text" name = "cancel_event_id" id="cancel_event_id" required="required" />
+				<input type="text" name = "cancel_event_type" id="cancel_event_type" required="required" />
+				<input type="submit" value="Yes" id ="SubmitCancel" style="display:none">
 			</form>
 		</div>
 		<div id="edit_drop" title="Edit Drop" style="display:none">
