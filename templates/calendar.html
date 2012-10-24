@@ -350,7 +350,7 @@
 											}
 											//console.log(event.creator_id);
 											//console.log(user_id);
-											if (event.creator_id != user_id) {
+											if (event.creator_id == user_id) {
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
@@ -364,7 +364,7 @@
 											$("#select_dialog").dialog("open");
 										} else {
 											console.log("got 0");
-											alert("Booking already has a pending edit");
+											alert("Booking is currently being edited");
 										}
 										return false;
 									}
