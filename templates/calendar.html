@@ -10,7 +10,7 @@
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
 		<script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
-
+        		<script type='text/javscript' src='{{STATIC_URL}}tutablr/js/calendar.js'></script>
 		<style type='text/css'>
 			/*<![CDATA[*/
 
@@ -30,7 +30,7 @@
 		</style>
 		<title>User Calendar</title>
 	</head>
-	<body>
+	<body style="display: ndone;">
 
 		<div id="edit_session" title="Edit Booking">
 			<form name="editSessionForm" action="/../../update_booking/"  method="post">
@@ -166,6 +166,10 @@
 		</div>
 		<div id='calendar'></div>
 		<script>
+			$(window).load(function(){
+			  $("body").fadeIn("slow");
+			});
+
 			$(document).keypress(function(event) {
 				if (event.which == '13') {
 					event.preventDefault();
@@ -206,6 +210,7 @@
 					console.log(dialog_open);
 				}
 			}
+
 			$(document).ready(function() {
 
 				var last_url = location.pathname.match(/\/user\/(.*)/)[1]
@@ -410,14 +415,24 @@
 						text : "Confirm",
 						"id" : "btnConfirm",
 						click : function() {
+							 var url = "/../../confirm_booking/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_start_date: $("#datePicker_start_edit").val(),
+									edit_start:$("#edit_start").val(),
+									edit_end: $("#edit_end").val(),
+									edit_title: $("#edit_title").val(),
+									edit_event_id:$("#edit_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../confirm_booking/' + 0 + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}, {
 						text : "Cancel",
@@ -446,29 +461,47 @@
 						text : "Reject",
 						"id" : "btnReject",
 						click : function() {
+							 var url = "/../../reject_booking/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_start_date: $("#datePicker_start_edit").val(),
+									edit_start:$("#edit_start").val(),
+									edit_end: $("#edit_end").val(),
+									edit_title: $("#edit_title").val(),
+									edit_event_id:$("#edit_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../reject_booking/' + 0 + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-
-							return true;
 						}
 					}, {
 						text : "Delete",
 						"id" : "btnDelete",
 						click : function() {
+							 var url = "/../../delete_booking/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_start_date: $("#datePicker_start_edit").val(),
+									edit_start:$("#edit_start").val(),
+									edit_end: $("#edit_end").val(),
+									edit_title: $("#edit_title").val(),
+									edit_event_id:$("#edit_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_booking/' + 0 + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-
-							return true;
 						}
 					}],
 				});
@@ -484,14 +517,24 @@
 						text : "Submit",
 						"id" : "btnSubmit",
 						click : function() {
+							 var url = "/../../update_booking/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_event_id: $("#edit_event_id").val(),
+									edit_start_date:$("#datePicker_start_edit").val(),
+									edit_end: $("#edit_end").val(),
+									edit_start: $("#edit_start").val(),
+									edit_title:$("#edit_title").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_booking/' + 0 + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -527,14 +570,27 @@
 						text : "Submit",
 						"id" : "btnSessionSubmit",
 						click : function() {
+
+							 var url = "/../../update_session/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_session_start_date: $("#datePicker_session_start_edit").val(),
+									edit_session_start:$("#edit_session_start").val(),
+									edit_session_end: $("#edit_session_end").val(),
+									edit_session_title: $("#edit_session_title").val(),
+									edit_session_event_id:$("#edit_session_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
+
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_session/' + 0 + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -562,17 +618,31 @@
 						text : "Delete",
 						"id" : "btnSessionDelete",
 						click : function() {
-							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_session/' + 0 + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
+
+							 var url = "/../../delete_session/0/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_session_start_date: $("#datePicker_session_start_edit").val(),
+									edit_session_start:$("#edit_session_start").val(),
+									edit_session_end: $("#edit_session_end").val(),
+									edit_session_title: $("#edit_session_title").val(),
+									edit_session_event_id:$("#edit_session_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
+							$(this).dialog("close");
+
 						}
 					}]
 				});
+				
 				
 				$('#edit_unavailable_div').dialog({
 					autoOpen : false,
@@ -584,35 +654,28 @@
 						text : "Submit",
 						"id" : "btnUnavailableSubmit",
 						click : function() {
-							$("#edit_unavailable").submit();
-							$(this).dialog("close");
-							$('#calendar').fullCalendar('refetchEvents');
-							dialog_open = false;
-						}
-					}, {
-						text : "Cancel",
-						"id" : "btnUnavailableCancel",
-						click : function() {
-							$(this).dialog("close");
-							dialog_open = false;
-							return false;
-						}
-					}]
-				});
-				
-				
-				$('#eddit_unavailable_div').dialog({
-					autoOpen : false,
-					width : 400,
-					closeOnEscape: false,
-					modal : true,
-					resizable : true,
-					buttons : [{
-						text : "Submit",
-						"id" : "btnUnavailableSubmit",
-						click : function() {
-							//$(location).attr('href', $(this).dialog('option', 'anchor'));
-							$("#edit_unavailable").submit();	
+							 var url = "/../../update_unavailable/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_unavailable_event_id: $("#edit_unavailable_event_id").val(),
+									edit_unavailable_date:$("#edit_unavailable_date").val(),
+									edit_unavailable_end: $("#edit_unavailable_end").val(),
+									edit_unavailable_start: $("#edit_unavailable_start").val(),
+									edit_unavailable_title:$("#edit_unavailable_title").val()
+								},
+								success: function(data) {
+									console.log(data);
+								}
+							});
+
+
+
+
+
+
+
 							$(this).dialog("close");
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
@@ -630,14 +693,25 @@
 						text : "Delete",
 						"id" : "btnUnavailableDelete",
 						click : function() {
+
+							 var url = "/../../delete_unavailable/";
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_unavailable_event_id: $("#edit_unavailable_event_id").val(),
+									edit_unavailable_date:$("#edit_unavailable_date").val(),
+									edit_unavailable_end: $("#edit_unavailable_end").val(),
+									edit_unavailable_start: $("#edit_unavailable_start").val(),
+									edit_unavailable_title:$("#edit_unavailable_title").val()
+								},
+								success: function(data) {
+									console.log(data);
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_unavailable/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitDeleteUnavailable]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}]
 				});
@@ -733,25 +807,7 @@
 				return false;
 				// avoid to execute the actual submit of the form.
 			});
-			$("#edit_unavailable").submit(function() {
 
-				var url = "/../../update_unavailable/";
-				// the script where you handle the form input.
-				console.log("hitting ajax");
-				$.ajax({
-					type : "POST",
-					url : url,
-					data : $("#edit_unavailable").serialize(), // serializes the form's elements.
-					success : function(data) {
-						alert(data);
-						//return true;
-						// show response from the php script.
-					}
-				});
-
-				return false;
-				// avoid to execute the actual submit of the form.
-			});
 			/*
 			$("#_unavailable").submit(function() {
 

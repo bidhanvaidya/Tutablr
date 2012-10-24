@@ -699,6 +699,7 @@ def drop_event(request, cal_id):
 
 			
 #--------------------UNAVAILABLE TIMES--------------------------
+@csrf_exempt
 def add_unavailable(request):
     if request.method == 'POST': 
 		print  request.POST.get('add_unavailable_date')
@@ -716,11 +717,16 @@ def add_unavailable(request):
 		unavailable.save()
 		#return redirect('/calendar/user/' + str(request.user.id) + '/')
 		return HttpResponse("1")
-		
+
+@csrf_exempt
 def update_unavailable(request):
+	print "hits"
+	print request.method
 	if request.method == 'POST':
+		print request.POST
 		id = request.POST.get('edit_unavailable_event_id')
 		start= request.POST.get('edit_unavailable_date') + " " + request.POST.get('edit_unavailable_start')
+		print "STEP 2"
 		start= time.strptime(start, "%d/%m/%Y %H:%M")
 		start_datetime= datetime.datetime(*start[:6])
 		end=  request.POST.get('edit_unavailable_date') + " "+ request.POST.get('edit_unavailable_end')
@@ -728,13 +734,18 @@ def update_unavailable(request):
 		end_datetime= datetime.datetime(*end[:6])
 		unavailable = UnavailableTime.objects.get(pk=id)
 		user = unavailable.user_id
+		print "STEP 2"
 		if user.id== request.user.id:	
 			print user.id
 			unavailable.description = request.POST.get('edit_unavailable_title')
 			unavailable.start_time = start_datetime
 			unavailable.finish_time = end_datetime
 			print "hello"
-			unavailable.save()
+			try:
+				unavailable.save()
+			except Exception,e: 
+				print str(e)
+			print "hello CATCAT"
 			#return redirect('/calendar/user/' + str(request.user.id) + '/')
 			return HttpResponse("1")
 		else:
@@ -743,6 +754,7 @@ def update_unavailable(request):
 			
 #POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
 ##id, type
+@csrf_exempt
 def delete_unavailable(request):
     if request.method == 'POST': 
 		id = request.POST.get('edit_unavailable_event_id')
@@ -806,9 +818,11 @@ def add_booking(request, cal_id):
 			return redirect('/calendar/user/' + cal_id + '/')
 	else:
 		return redirect('/calendar/user/' + cal_id + '/')
-		
+
+@csrf_exempt	
 def update_booking(request, cal_id):
 		if request.method == 'POST':
+			print request.POST
 			id = request.POST.get('edit_event_id')
 			booking = Booking.objects.get(pk=id)
 			student = booking.student_id
@@ -841,7 +855,11 @@ def update_booking(request, cal_id):
 							moderation_date=now)
 
 				booking.creator_id = request.user
-				booking.save()
+				try:
+					booking.save()
+				except Exception,e: 
+					print str(e)
+				#booking.save()
 				#release booking lock
 				unlock(booking.id, "booking")
 				message.save()
@@ -857,6 +875,7 @@ def update_booking(request, cal_id):
 			return redirect('/calendaKKr')	
 			
 #initial booking MUST be made by the student
+@csrf_exempt
 def confirm_booking(request, cal_id):
 	if request.method == 'POST':
 		id = request.POST.get('edit_event_id')
@@ -940,6 +959,7 @@ def confirm_booking(request, cal_id):
         	return redirect('/calendaKKr')
 
 #initial booking MUST be made by the student
+@csrf_exempt
 def reject_booking(request, cal_id):
 		if request.method == 'POST':
 			id = request.POST.get('edit_event_id')
@@ -1002,7 +1022,7 @@ def reject_booking(request, cal_id):
 
 		else:
 			return redirect('/calendaKKr')
-			
+@csrf_exempt		
 def delete_booking(request, cal_id):
 	if request.method == 'POST': 
 		id = request.POST.get('edit_event_id')
@@ -1040,12 +1060,19 @@ def delete_booking(request, cal_id):
 		raise http.Http404
 #-------------END BOOKINGS-----------------------
 #-------------SESSIONS---------------------------
+@csrf_exempt
 def update_session(request, cal_id):
 		if request.method == 'POST':
+			print request.POST
+			try:
+				print "hi"
+			except Exception,e: 
+				print str(e)
 			id = request.POST.get('edit_session_event_id')
 			session = SessionTime.objects.get(pk=id)
 			student = session.student_id
 			tutor = session.tutor_id
+			print "BBB"
 			if student.id== request.user.id or tutor.id== request.user.id:
 				start= request.POST.get('edit_session_start_date') + " " + request.POST.get('edit_session_start')
 				start= time.strptime(start, "%d/%m/%Y %H:%M")
@@ -1057,6 +1084,7 @@ def update_session(request, cal_id):
 				calendar_start= timezone.make_aware(start_datetime, timezone.get_default_timezone())
 				session_end_time= timezone.make_aware(session.finish_time, timezone.get_default_timezone()) + datetime.timedelta(0,39600)
 				calendar_end= timezone.make_aware(end_datetime, timezone.get_default_timezone())
+				print "AAA"
 				if session_start_time == calendar_start and session_end_time == calendar_end:
 					session.description = request.POST.get('edit_session_title')
 					session.save()
@@ -1079,6 +1107,7 @@ def update_session(request, cal_id):
                                 recipient=student, 
                                 moderation_status=STATUS_ACCEPTED, 
                                 moderation_date=now)
+					print "HELO WORLD"
 					print session
 					booking = Booking(start_time = start_datetime, 
 						finish_time = end_datetime,
@@ -1103,15 +1132,15 @@ def update_session(request, cal_id):
 				raise http.Http404
 		else:
 			return redirect('/calendaKKr')
-			
+@csrf_exempt		
 def delete_session(request, cal_id):
 	if request.method == 'POST': 
 		id = request.POST.get('edit_session_event_id')
 		user_id = request.user.id
 		session = SessionTime.objects.get(pk=id)
 		if session.student_id.id == request.user.id or session.tutor_id.id == request.user.id:
-			session.delete()
 			del session_locks[str(session.id)]
+			session.delete()
 			if cal_id == str(0):
 				return redirect('/calendar/user/' + str(request.user.id) + '/')
 			else:
@@ -1162,7 +1191,7 @@ def dashboard(request):
     #print tutablr.settings.STATIC_ROOT +" <------"
     arrayMessages = Message.objects.filter(recipient=user_id).exclude(read_at__isnull=False)
     messages = arrayMessages[:5]
-    numberOfMessages = len(messages)
+    numberOfMessages = len(arrayMessages)
     extraRows = 5 - numberOfMessages
     if extraRows > 0:
         temp = "<tr><td height=\"18\"></td></tr>"*extraRows

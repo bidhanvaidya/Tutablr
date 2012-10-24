@@ -245,15 +245,24 @@
 						text : "Confirm",
 						"id" : "btnConfirm",
 						click : function() {
-							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
 							url = '/../../confirm_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
-							//refetchEvents
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_start_date: $("#datePicker_start_edit").val(),
+									edit_start:$("#edit_start").val(),
+									edit_end: $("#edit_end").val(),
+									edit_title: $("#edit_title").val(),
+									edit_event_id:$("#edit_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
+							$(this).dialog("close");
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}, {
 						text : "Cancel",

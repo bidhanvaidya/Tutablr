@@ -1,0 +1,705 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+        <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+        <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
+        <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
+        <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+        <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+        <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+        <script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
+        <script type='text/javscript' src='{{STATIC_URL}}tutablr/js/calendar.js'></script>
+        <style type='text/css'>
+            /*<![CDATA[*/
+
+            body {
+                margin-top: 40px;
+                text-align: center;
+                font-size: 14px;
+                font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+            }
+
+            #calendar {
+                width: 800px;
+                margin: 0 auto;
+            }
+
+            /*]]>*/
+        </style>
+        <title>User Calendar</title>
+    </head>
+    <body display="hidden">
+
+        <div id="edit_session" title="Edit Booking">
+            <form name="editSessionForm" action="/../../update_booking/"  method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <label for = "edit_session_date_start"> Date </label>
+                    <input type="text" name = "edit_session_start_date" id="datePicker_session_start_edit" required="required" />
+                    <br>
+                    <label for="edit_start">Start Time</label>
+                    <input type="text" name="edit_session_start" id="edit_session_start" class="text ui-widget-content ui-corner-all" required="required" />
+                    <br>
+                    <label for="edit_end">End Time</label>
+                    <input type="text" name="edit_session_end" id="edit_session_end" class="text ui-widget-content ui-corner-all" required="required" />
+                    <br>
+                    <label for="title">Event Description</label>
+                    <input type="text" name="edit_session_title" id="edit_session_title" class="text ui-widget-content ui-corner-all" />
+                    <input type="hidden" name="edit_session_event_id" id="edit_session_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+                </fieldset>
+                <input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
+            </form>
+        </div>
+        <div id ="select_dialog">
+            <table>
+                <tr>
+                    <td><label for = "booking_creator"> Created By </label></td>
+                    <td><div id = "booking_creator"></div></td>
+                </tr>
+                <tr>
+                    <td><label for = "booking_start_date"> Start Date </label></td>
+                    <td><div id = "booking_start_date"></div></td>
+                </tr>
+
+                <tr>
+                    <td><label for="booking_start">Start</label></td>
+                    <td><div id = "booking_start"></div></td>
+
+                </tr>
+                <tr>
+                    <td><label for="booking_end">End Time</label></td>
+                    <td><div id = "booking_end"></div></td>
+
+                </tr>
+                <tr>
+                    <td><label for="title">Event Description</label></td>
+                    <td><div id = "booking_title"></div></td>
+
+                </tr>
+
+            </table>
+        </div></div>
+        <div id="edit_booking" title="Edit Booking">
+            <form name="editBookingForm" action="/../../update_booking/"  method="post">
+                <div id="edit_div" style="display:block">
+                    {% csrf_token %}
+                    <fieldset>
+                        <label for = "edit_date_start"> Date </label>
+                        <input type="text" name = "edit_start_date" id="datePicker_start_edit" required="required" />
+                        <br>
+                        <label for="edit_start">Start Time</label>
+                        <input type="text" name="edit_start" id="edit_start" class="text ui-widget-content ui-corner-all" required="required" />
+                        <br>
+                        <label for="edit_end">End Time</label>
+                        <input type="text" name="edit_end" id="edit_end" class="text ui-widget-content ui-corner-all" required="required" />
+                        <br>
+                        <label for="title">Event Description</label>
+                        <input type="text" name="edit_title" id="edit_title" class="text ui-widget-content ui-corner-all" />
+
+                        <input type="hidden" name="edit_event_id" id="edit_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+                    </fieldset>
+                </div>
+                <input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
+            </form>
+        </div>
+        <div style="display:block" id="edit_unavailable_div" title="Edit Booking">
+                    <form name="edit_unavailable" action="/../../update_unavailable/"  method="post">{% csrf_token %}
+                    <fieldset>
+                        <label for = "edit_unavailable_date"> Date </label>
+                        <input type="text" class = "datePicker" name = "edit_unavailable_date" id="edit_unavailable_date" required="required" />
+                        <br>
+                        <label for="edit_unavailable_start">Start Time</label>
+                        <input type="text" name="edit_unavailable_start" id="edit_unavailable_start" class="text ui-widget-content ui-corner-all" required="required" />
+                        <br>
+                        <label for="edit_unavailable_end">End Time</label>
+                        <input type="text" name="edit_unavailable_end" id="edit_unavailable_end" class="text ui-widget-content ui-corner-all" required="required" />
+                        <br>
+                        <label for="edit_unavailable_title">Event Description</label>
+                        <input type="text" name="edit_unavailable_title" id="edit_unavailable_title" class="text ui-widget-content ui-corner-all" />
+
+                        <input type="hidden" name="edit_unavailable_event_id" id="edit_unavailable_event_id" class="text ui-widget-content ui-corner-all" required="required" />
+                    </fieldset>
+                <input type="submit" value="Yes" id ="SubmitEditUnavailable" style="display:none">
+                <input  type= "submit" formaction= "/../delete_unavailable" id ="SubmitDeleteUnavailable" style="display:none">
+            </form>
+        </div>
+        <div id="edit_drop-PENIS" title="Edit Drop" style="display:none">
+            <form id="edit_drop" name="editDropForm" action="#"  method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <input type="text" name = "dayDelta" id="dayDelta" required="required" />
+                    <input type="text" name="minuteDelta" id="minuteDelta" required="required" />
+                    <input type="text" name="eventType" id="eventType" required="required" />
+                    <input type="hidden" name="drop_event_id" id="drop_event_id" required="required" />
+                </fieldset>
+                <input type="submit" value="Yes" id ="SubmitDrop" style="display:none">
+            </form>
+        </div>
+        <div id ="cancel" style="display:none">
+            <form name="cancel" action="/../../unlock/" method="post">
+                {% csrf_token %}
+                <input type="text" name = "cancel_event_id" id="cancel_event_id" required="required" />
+                <input type="text" name = "cancel_event_type" id="cancel_event_type" required="required" />
+                <input type="submit" value="Yes" id ="SubmitCancel" style="display:none">
+            </form>
+        </div>
+        <div id="add_unavailable_div" title="Add Unavailable">
+            <form id="add_unavailable" name="addForm" action="/../../add_unavailable/" method="post">
+                {% csrf_token %}
+                <fieldset>
+                    <label for = "add_unavailable_date"> Date </label>
+                    <input type="text" name = "add_unavailable_date" id="add_unavailable_date" required="required" />
+                    <br>
+                    <label for="add_unavailable_start_time">Start Time</label>
+                    <input type="text" name="add_unavailable_start_time" id="add_unavailable_start_time" class="text ui-widget-content ui-corner-all" required="required" />
+                    <br>
+                    <label for="add_unavailable_finish_time">End Time</label>
+                    <input type="text" name="add_unavailable_finish_time" id="add_unavailable_finish_time" class="text ui-widget-content ui-corner-all" required="required" />
+                    <br>
+                    <label for="add_unavailable_title">Event Description</label>
+                    <input type="text" name="add_unavailable_title" id="add_title" class="text ui-widget-content ui-corner-all" />
+                </fieldset>
+                <input type="submit" value="Yes" id ="SubmitAdd" style="display:none">
+            </form>
+        </div>
+        <div id='calendar'></div>
+        <script>
+            $(document).keypress(function(event) {
+                if (event.which == '13') {
+                    event.preventDefault();
+                }
+            });
+        </script>
+        <script type="text/javascript">
+            window.onbeforeunload = function() {
+                $.ajax({
+                    url : "/../../unlock_request/",
+                    type : 'POST',
+                    async : false,
+                    data : {
+                        event_type : $('#cancel_event_type').val(),
+                        event_id : $('#cancel_event_id').val()
+                    },
+                    success : function(data) {
+                        if (data == "1") {
+                            console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                        }
+                        return true;
+                    }
+                });
+                return null;
+            }
+        </script>
+        <script type='text/javascript'>
+            $(document).ready(function() {
+
+                var last_url = location.pathname.match(/\/user\/(.*)/)[1]
+                var user_id = '';
+                if (last_url[last_url.length - 1] == '/') {
+                    user_id = last_url.substring(0, last_url.length - 1);
+                } else {
+                    user_id = last_url;
+                }
+                $('#calendar').fullCalendar({
+                    header : {
+                        left : 'prev,next today',
+                        center : 'title',
+                        right : 'month,agendaWeek,agendaDay'
+                    },
+                    defaultView : 'agendaWeek',
+                    selectable : true,
+                    selectHelper : true,
+                    editable : true,
+                    disableResizing : true,
+                    aspectRatio : 1.75,
+
+                    eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+                        if (!event.draggable) {
+                            revertFunc();
+                        } else {
+                            //$("#dayDelta").val(dayDelta);
+                            //$("#minuteDelta").val(minuteDelta);
+                            //$("#drop_event_id").val(id);
+                            //$("#eventType").val(event.type);
+                            $.ajax({
+                                url : '/../../drop_event/' + user_id + '/',
+                                type : 'POST',
+                                data : {
+                                    dayDelta : dayDelta,
+                                    minuteDelta : minuteDelta,
+                                    drop_event_id : event.id,
+                                    eventType : event.type
+                                },
+                                success : function(data) {
+                                    if (data == "1") {
+                                        //console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                                        console.log("unlocked");
+                                    }
+                                    return true;
+                                }
+                            });
+                            //$('#edit_drop').submit();
+                            //url = '/../../drop_event/' + user_id + '/';
+                            //document.editDropForm.action = url;
+                            //$("[id*=SubmitDrop]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                        }
+                    },
+                    select : function(start, end, allDay) {
+                        var start_time = $.fullCalendar.formatDate(start, "HH:mm");
+                        var end_time = $.fullCalendar.formatDate(end, "HH:mm");
+                        var start_date = $.fullCalendar.formatDate(start, "dd/MM/yyyy");
+                        var end_date = $.fullCalendar.formatDate(end, "dd/MM/yyyy");
+                        $('#add_unavailable_div').dialog('option', 'title', 'Add Unavailable Time');
+                        $("#add_unavailable_start_time").val(start_time);
+                        $("#add_unavailable_finish_time").val(end_time);
+                        $('#add_unavailable_date').datepicker("enable");
+                        $('#add_unavailable_date').val(start_date);
+                        $("#add_unavailable_div").dialog("open");
+
+                        calendar.fullCalendar('unselect');
+                        //add default descriptions based on tutor or student and session or booking, as well as the unit name
+                    },
+                    eventClick : function(event, jsEvent, view) {
+                        if (event.editable) {
+                            var start_time = $.fullCalendar.formatDate(event.start, "HH:mm");
+                            var end_time = $.fullCalendar.formatDate(event.end, "HH:mm");
+                            var start_date = $.fullCalendar.formatDate(event.start, "dd/MM/yyyy");
+                            var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
+                            var id = event.id;
+                            var title = event.title;
+                            //tutor session (booking) is session (booking) with a tutor
+                            if (event.type == "tutor_session" || event.type == "student_session") {
+                                //check for lock
+                                //post to /../../get_lock/
+                                //event_type = "session"
+                                //event_id = event.id
+                                //receive either "1" = was unlocked but now locked and "0" = already locked.
+                                if (event.pending) {
+                                    alert('Session already has a pending edit');
+                                    return false;
+                                }
+                                $.ajax({
+                                    url : "/../../get_lock/",
+                                    type : 'POST',
+                                    data : {
+                                        event_type : "session",
+                                        event_id : id
+                                    },
+                                    success : function(data) {
+                                        if (data == "1") {
+                                            //unlocked but now locked
+                                            console.log("session " + id + " unlocked");
+                                            $("#edit_session_start").val(start_time);
+                                            $("#edit_session_end").val(end_time);
+                                            $("#edit_session_title").val(title);
+                                            $("#edit_session_event_id").val(id);
+                                            $('#datePicker_session_start_edit').datepicker("enable");
+                                            $('#datePicker_session_start_edit').val(start_date);
+                                            $('#cancel_event_id').val(id);
+                                            $('#cancel_event_type').val("session");
+                                            if (event.type == "tutor_session") {
+                                                $('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+                                                //delete, reject, confirm based on creator id
+                                            } else {
+                                                //delete, reject, confirm based on creator id
+                                                $('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+                                            }
+                                            $("#edit_session").dialog("open");
+
+                                        } else {
+                                            alert("This session is already being edited")
+                                            console.log("got 0");
+                                        }
+                                        return false;
+                                    }
+                                });
+                            } else if (event.type == "tutor_booking" || event.type == "student_booking") {
+                                $.ajax({
+                                    url : "/../../get_lock/",
+                                    type : 'POST',
+                                    data : {
+                                        event_type : "booking",
+                                        event_id : id
+                                    },
+                                    success : function(data) {
+                                        if (data == "1") {
+                                            console.log("booking " + id + " unlocked");
+                                            //check for lock
+                                            $("#edit_start").val(start_time);
+                                            $("#edit_end").val(end_time);
+                                            $("#edit_title").val(title);
+                                            $("#edit_event_id").val(id);
+                                            $("#booking_start_date").html(start_date);
+                                            $("#booking_start").html(start_time);
+                                            $("#booking_end").html(end_time);
+                                            $("#booking_title").html(title);
+                                            $("#booking_creator").html(event.creator);
+                                            $('#datePicker_start_edit').datepicker("enable");
+                                            $('#datePicker_start_edit').val(start_date);
+                                            $('#cancel_event_id').val(id);
+                                            $('#cancel_event_type').val("booking");
+                                            if (event.type == "tutor_booking") {
+                                                //delete, reject, confirm based on creator id
+                                                $('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking: ' + event.title);
+                                            } else {
+                                                //delete, reject, confirm based on creator id
+                                                $('#edit_booking').dialog('option', 'title', 'Edit Student Booking: ' + event.title);
+                                            }
+                                            //console.log(event.creator_id);
+                                            //console.log(user_id);
+                                            if (event.creator_id != user_id) {
+                                                $("#btnDelete").button("enable");
+                                                $("#btnConfirm").hide();
+                                                $("#btnReject").hide();
+                                            } else {
+                                                //console.log("here");
+                                                $("#btnDelete").hide();
+                                                $("#btnConfirm").button("enable");
+                                                $("#btnReject").button("enable");
+                                            }
+                                            $('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
+                                            $("#select_dialog").dialog("open");
+                                        } else {
+                                            console.log("got 0");
+                                            alert("Booking already has a pending edit");
+                                        }
+                                        return false;
+                                    }
+                                });
+                            } else if (event.type == "unavailable") {
+                                $("#edit_unavailable_start").val(start_time);
+                                $("#edit_unavailable_end").val(end_time);
+                                $("#edit_unavailable_title").val(title);
+                                $("#edit_unavailable_event_id").val(id);
+                                $('#edit_unavailable_date').datepicker("enable");
+                                $('#edit_unavailable_date').val(start_date);
+                                $('#edit_unavailable_div').dialog('option', 'title', 'Unavailable: ' + event.title);
+                                $("#edit_unavailable_div").dialog("open");
+                            }
+                        }
+                    },
+                    events : '/calendar/events.json/'
+                });
+
+                $('#select_dialog').dialog({
+                    autoOpen : false,
+                    width : 400,
+
+                    modal : true,
+                    resizable : true,
+                    buttons : [{
+                        text : "Edit",
+                        "id" : "btnEdit",
+                        click : function(e) {
+                            $('#edit_booking').dialog('open');
+                            $(this).dialog('close');
+                        }
+                    }, {
+                        text : "Confirm",
+                        "id" : "btnConfirm",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../confirm_booking/' + 0 + '/';
+                            document.editBookingForm.action = url;
+                            $("[id*=SubmitEdit]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        }
+                    }, {
+                        text : "Cancel",
+                        "id" : "btnCancel",
+                        click : function() {
+                            $(this).dialog("close");
+                            $.ajax({
+                                url : "/../../unlock_request/",
+                                type : 'POST',
+                                data : {
+                                    event_type : $('#cancel_event_type').val(),
+                                    event_id : $('#cancel_event_id').val()
+                                },
+                                success : function(data) {
+                                    if (data == "1") {
+                                        console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                                    }
+                                    return false;
+                                }
+                            });
+                            return false;
+                        }
+                    }, {
+                        text : "Reject",
+                        "id" : "btnReject",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../reject_booking/' + 0 + '/';
+                            document.editBookingForm.action = url;
+                            $("[id*=SubmitEdit]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        }
+                    }, {
+                        text : "Delete",
+                        "id" : "btnDelete",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../delete_booking/' + 0 + '/';
+                            document.editBookingForm.action = url;
+                            $("[id*=SubmitEdit]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        }
+                    }],
+                });
+
+                $('#edit_booking').dialog({
+                    autoOpen : false,
+                    width : 400,
+
+                    modal : true,
+                    resizable : true,
+                    closeOnButton : false,
+                    buttons : [{
+                        text : "Submit",
+                        "id" : "btnSubmit",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../update_booking/' + 0 + '/';
+                            document.editBookingForm.action = url;
+                            $("[id*=SubmitEdit]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        },
+                    }, {
+                        text : "Cancel",
+                        "id" : "btnCancel2",
+                        click : function() {
+                            $(this).dialog("close");
+                            return false;
+                            $.ajax({
+                                url : "/../../unlock_request/",
+                                type : 'POST',
+                                data : {
+                                    event_type : $('#cancel_event_type').val(),
+                                    event_id : $('#cancel_event_id').val()
+                                },
+                                success : function(data) {
+                                    if (data == "1") {
+                                        console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                                    }
+                                    return false;
+                                }
+                            });
+                        },
+                    }],
+                });
+                $('#edit_session').dialog({
+                    autoOpen : false,
+                    width : 400,
+
+                    modal : true,
+                    resizable : true,
+                    buttons : [{
+                        text : "Submit",
+                        "id" : "btnSessionSubmit",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../update_session/' + 0 + '/';
+                            document.editSessionForm.action = url;
+                            $("[id*=SubmitEditSession]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        },
+                    }, {
+                        text : "Cancel",
+                        "id" : "btnSessionCancel",
+                        click : function() {
+                            $(this).dialog("close");
+                            $.ajax({
+                                url : "/../../unlock_request/",
+                                type : 'POST',
+                                data : {
+                                    event_type : $('#cancel_event_type').val(),
+                                    event_id : $('#cancel_event_id').val()
+                                },
+                                success : function(data) {
+                                    if (data == "1") {
+                                        console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                                    }
+                                    return false;
+                                }
+                            });
+                            return false;
+                        },
+                    }, {
+                        text : "Delete",
+                        "id" : "btnSessionDelete",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../delete_session/' + 0 + '/';
+                            document.editSessionForm.action = url;
+                            $("[id*=SubmitEditSession]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        }
+                    }]
+                });
+                
+                
+                
+                $('#edit_unavailable_div').dialog({
+                    autoOpen : false,
+                    width : 400,
+
+                    modal : true,
+                    resizable : true,
+                    buttons : [{
+                        text : "Submit",
+                        "id" : "btnUnavailableSubmit",
+                        click : function() {
+                                        $("#edit_unavailable").submit(function() {
+
+                                            var url = "/../../update_unavailable/";
+                                            // the script where you handle the form input.
+                                            console.log("hitting ajax");
+                                            $.ajax({
+                                                type : "POST",
+                                                url : url,
+                                                data : $("#edit_unavailable").serialize(), // serializes the form's elements.
+                                                success : function(data) {
+                                                    alert(data);
+                                                    //return true;
+                                                    // show response from the php script.
+                                                }
+                                            });
+
+                                            return false;
+                                            // avoid to execute the actual submit of the form.
+                                        });
+                            $("#SubmitEditUnavailable").click(function(){
+                                            var url = "/../../update_unavailable/";
+                                            // the script where you handle the form input.
+                                            console.log("hitting ajax");
+                                            $.ajax({
+                                                type : "POST",
+                                                url : url,
+                                                data : $("#edit_unavailable").serialize(), // serializes the form's elements.
+                                                success : function(data) {
+                                                    alert(data);
+                                                    //return true;
+                                                    // show response from the php script.
+                                                }
+                                            });
+
+                                            return false;
+                            });
+                            $("#SubmitEditUnavailable").click();
+                            //$(location).attr('href', $(this).dialog('option', 'anchor'));
+                            $(this).dialog("close");
+                            $('#calendar').fullCalendar('refetchEvents');
+                            //return true;
+                        },
+                    }, {
+                        text : "Cancel",
+                        "id" : "btnUnavailableCancel",
+                        click : function() {
+                            $(this).dialog("close");
+                            return false;
+                        },
+                    }, {
+                        text : "Delete",
+                        "id" : "btnUnavailableDelete",
+                        click : function() {
+                            $(this).dialog("close");
+                            $(location).attr('href', $(this).dialog('option', 'anchor'));
+                            url = '/../../delete_unavailable/';
+                            document.editSessionForm.action = url;
+                            $("[id*=SubmitDeleteUnavailable]").click();
+                            $('#calendar').fullCalendar('refetchEvents');
+                            return true;
+                        }
+                    }]
+                });
+                $('#add_unavailable_div').dialog({
+                    autoOpen : false,
+                    width : 400,
+
+                    modal : true,
+                    resizable : true,
+                    buttons : [{
+                        text : "Submit",
+                        "id" : "btnAddSubmit",
+                        click : function() {
+                            $("#add_unavailable").submit();
+                            $(this).dialog("close");
+                            $('#calendar').fullCalendar('refetchEvents');
+                        }
+                    }, {
+                        text : "Cancel",
+                        "id" : "btnAddCancel",
+                        click : function() {
+                            $(this).dialog("close");
+                            return false;
+                        }
+                    }]
+                });
+
+                $("#datePicker_start_edit").datepicker({
+                    dateFormat : 'dd/mm/yy'
+                });
+                $("#id_date").datepicker({
+                    dateFormat : 'dd/mm/yy'
+                });
+                $('#id_date').datepicker("disable");
+                $('#datePicker_start_edit').datepicker("disable");
+                $('#datePicker_session_start_edit').datepicker("disable");
+                $('#edit_unavailable_date').datepicker("disable");
+                $('#add_unavailable_date').datepicker("disable");
+                $('#a').click(function() {
+                    $('#add_unavailable').dialog('close');
+                    $('#edit_unavailable').dialog('close');
+                    $('#select_dialog').dialog('close');
+                    $('#edit_booking').dialog('close');
+                    $('#edit_session').dialog('close');
+                });
+                function myFunction() {
+                    alert("Hello World!");
+                }
+
+                /*
+                 $("#edit_drop").submit(function(){
+                 console.log("submitted");
+                 $('#edit_drop').action = '/../../drop_event/' + user_id + '/';
+                 $.ajax({
+                 url : '/../../drop_event/' + user_id + '/',
+                 type : 'POST',
+                 data : {
+                 dayDelta : $("#dayDelta").val(),
+                 minuteDelta : $("#minuteDelta").val(),
+                 drop_event_id: $("#drop_event_id").val(),
+                 eventType: $("#eventType").val()
+                 },
+                 success : function(data) {
+
+                 if (data == "1") {
+                 //console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+                 console.log("dropped");
+                 }
+                 return false;
+                 }
+                 });
+                 });*/
+
+            });
+
+        </script>
+    </body>
+</html>
