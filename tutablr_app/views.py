@@ -592,10 +592,6 @@ def drop_event(request, cal_id):
 		minuteDelta = request.POST.get('minuteDelta')
 		eventType = request.POST.get('eventType')
 		event_id = request.POST.get('drop_event_id')
-		print dayDelta
-		print minuteDelta
-		print eventType
-		print event_id
 		if eventType == 'student_session' or eventType == 'tutor_session':
 			session = SessionTime.objects.get(pk=event_id)
 			booking = Booking(start_time = session.start_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta)),
@@ -658,14 +654,12 @@ def drop_event(request, cal_id):
 			unavailable.finish_time = unavailable.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			unavailable.save()
 		return HttpResponse("1")
-		#if cal_id == str(0):
-		#	return redirect('/calendar/user/' + str(request.user.id) + '/')
-		#else:
-		#	return redirect('/calendar/user/' + cal_id + '/')
+
 			
 #--------------------UNAVAILABLE TIMES--------------------------
 def add_unavailable(request):
     if request.method == 'POST': 
+		print  request.POST.get('add_unavailable_date')
 		start=  request.POST.get('add_unavailable_date') + " " + request.POST.get('add_unavailable_start_time')
 		start= time.strptime(start, "%d/%m/%Y %H:%M")
 		start_datetime= datetime.datetime(*start[:6])
@@ -678,7 +672,8 @@ def add_unavailable(request):
 			finish_time = end_datetime)
 		print "test"
 		unavailable.save()
-		return redirect('/calendar/user/' + str(request.user.id) + '/')
+		#return redirect('/calendar/user/' + str(request.user.id) + '/')
+		return HttpResponse("1")
 		
 def update_unavailable(request):
 	if request.method == 'POST':
@@ -698,9 +693,11 @@ def update_unavailable(request):
 			unavailable.finish_time = end_datetime
 			print "hello"
 			unavailable.save()
-			return redirect('/calendar/user/' + str(request.user.id) + '/')
+			#return redirect('/calendar/user/' + str(request.user.id) + '/')
+			return HttpResponse("1")
 		else:
-			return redirect('/wronguser')
+			return HttpResponse("0")
+			#return redirect('/wronguser')
 			
 #POST requests for the following three methods must have an id corresponding to the event id and a type corresponding to the event type
 ##id, type
@@ -712,11 +709,14 @@ def delete_unavailable(request):
 		user = unavailable.user_id
 		if user.id== request.user.id:
 			unavailable.delete()
-			return redirect('/calendar/user/' + str(request.user.id) + '/')
+			#return redirect('/calendar/user/' + str(request.user.id) + '/')
+			return HttpResponse("1")
 		else:
-			raise http.Http404
+			#raise http.Http404
+			return HttpResponse("0")
     else:
-        raise http.Http404
+        #raise http.Http404
+	return HttpResponse("0")
 #----------------END UNAVAILABLE TIMES------------
 #----------------BOOKING--------------------------
 #initial booking (with null session) MUST be made by the student

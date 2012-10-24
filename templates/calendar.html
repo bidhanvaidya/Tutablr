@@ -11,7 +11,6 @@
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
 		<script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
 
-
 		<style type='text/css'>
 			/*<![CDATA[*/
 
@@ -105,10 +104,8 @@
 				<input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
 			</form>
 		</div>
-		<div id="edit_unavailable" title="Edit Booking">
-			<form name="editUnavailableForm" action="/../../update_unavailable/"  method="post">
-				<div id="edit_unavailable_div" style="display:block">
-					{% csrf_token %}
+		<div style="display:block" id="edit_unavailable_div" title="Edit Booking">
+					<form name="edit_unavailable" action="/../../update_unavailable/"  method="post">{% csrf_token %}
 					<fieldset>
 						<label for = "edit_unavailable_date"> Date </label>
 						<input type="text" class = "datePicker" name = "edit_unavailable_date" id="edit_unavailable_date" required="required" />
@@ -124,7 +121,6 @@
 
 						<input type="hidden" name="edit_unavailable_event_id" id="edit_unavailable_event_id" class="text ui-widget-content ui-corner-all" required="required" />
 					</fieldset>
-				</div>
 				<input type="submit" value="Yes" id ="SubmitEditUnavailable" style="display:none">
 				<input  type= "submit" formaction= "/../delete_unavailable" id ="SubmitDeleteUnavailable" style="display:none">
 			</form>
@@ -149,8 +145,8 @@
 				<input type="submit" value="Yes" id ="SubmitCancel" style="display:none">
 			</form>
 		</div>
-		<div id="add_unavailable" title="Add Unavailable">
-			<form name="addForm" action="/../../add_poo/" method="post">
+		<div id="add_unavailable_div" title="Add Unavailable">
+			<form id="add_unavailable" name="addForm" action="/../../add_unavailable/" method="post">
 				{% csrf_token %}
 				<fieldset>
 					<label for = "add_unavailable_date"> Date </label>
@@ -176,7 +172,7 @@
 				}
 			});
 		</script>
-				<script type="text/javascript">
+		<script type="text/javascript">
 			window.onbeforeunload = function() {
 				$.ajax({
 					url : "/../../unlock_request/",
@@ -233,8 +229,8 @@
 								data : {
 									dayDelta : dayDelta,
 									minuteDelta : minuteDelta,
-									drop_event_id: event.id,
-									eventType: event.type
+									drop_event_id : event.id,
+									eventType : event.type
 								},
 								success : function(data) {
 									if (data == "1") {
@@ -256,12 +252,12 @@
 						var end_time = $.fullCalendar.formatDate(end, "HH:mm");
 						var start_date = $.fullCalendar.formatDate(start, "dd/MM/yyyy");
 						var end_date = $.fullCalendar.formatDate(end, "dd/MM/yyyy");
-						$('#add_unavailable').dialog('option', 'title', 'Add Unavailable Time');
+						$('#add_unavailable_div').dialog('option', 'title', 'Add Unavailable Time');
 						$("#add_unavailable_start_time").val(start_time);
 						$("#add_unavailable_finish_time").val(end_time);
 						$('#add_unavailable_date').datepicker("enable");
 						$('#add_unavailable_date').val(start_date);
-						$("#add_unavailable").dialog("open");
+						$("#add_unavailable_div").dialog("open");
 
 						calendar.fullCalendar('unselect');
 						//add default descriptions based on tutor or student and session or booking, as well as the unit name
@@ -380,8 +376,8 @@
 								$("#edit_unavailable_event_id").val(id);
 								$('#edit_unavailable_date').datepicker("enable");
 								$('#edit_unavailable_date').val(start_date);
-								$('#edit_unavailable').dialog('option', 'title', 'Unavailable: ' + event.title);
-								$("#edit_unavailable").dialog("open");
+								$('#edit_unavailable_div').dialog('option', 'title', 'Unavailable: ' + event.title);
+								$("#edit_unavailable_div").dialog("open");
 							}
 						}
 					},
@@ -556,7 +552,8 @@
 						}
 					}]
 				});
-				$('#edit_unavailable').dialog({
+				
+				$('#edit_unavailable_div').dialog({
 					autoOpen : false,
 					width : 400,
 
@@ -566,13 +563,36 @@
 						text : "Submit",
 						"id" : "btnUnavailableSubmit",
 						click : function() {
+							$("#edit_unavailable").submit();
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_unavailable/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditUnavailable]").click();
 							$('#calendar').fullCalendar('refetchEvents');
-							return true;
+						}
+					}, {
+						text : "Cancel",
+						"id" : "btnUnavailableCancel",
+						click : function() {
+							$(this).dialog("close");
+							return false;
+						}
+					}]
+				});
+				
+				
+				$('#eddit_unavailable_div').dialog({
+					autoOpen : false,
+					width : 400,
+
+					modal : true,
+					resizable : true,
+					buttons : [{
+						text : "Submit",
+						"id" : "btnUnavailableSubmit",
+						click : function() {
+							//$(location).attr('href', $(this).dialog('option', 'anchor'));
+							$("#edit_unavailable").submit();	
+							$(this).dialog("close");
+							$('#calendar').fullCalendar('refetchEvents');
+							//return true;
 						},
 					}, {
 						text : "Cancel",
@@ -595,7 +615,7 @@
 						}
 					}]
 				});
-				$('#add_unavailable').dialog({
+				$('#add_unavailable_div').dialog({
 					autoOpen : false,
 					width : 400,
 
@@ -605,14 +625,10 @@
 						text : "Submit",
 						"id" : "btnAddSubmit",
 						click : function() {
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../add_unavailable/';
-							document.addForm.action = url;
-							$("[id*=SubmitAdd]").click();
+							$("#add_unavailable").submit();
 							$(this).dialog("close");
 							$('#calendar').fullCalendar('refetchEvents');
-							return true;
-						},
+						}
 					}, {
 						text : "Cancel",
 						"id" : "btnAddCancel",
@@ -644,31 +660,87 @@
 				function myFunction() {
 					alert("Hello World!");
 				}
+
 				/*
-				$("#edit_drop").submit(function(){
-					console.log("submitted");
-					$('#edit_drop').action = '/../../drop_event/' + user_id + '/';
-					$.ajax({
-								url : '/../../drop_event/' + user_id + '/',
-								type : 'POST',
-								data : {
-									dayDelta : $("#dayDelta").val(),
-									minuteDelta : $("#minuteDelta").val(),
-									drop_event_id: $("#drop_event_id").val(),
-									eventType: $("#eventType").val()
-								},
-								success : function(data) {
-									
-									if (data == "1") {
-										//console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
-										console.log("dropped");
-									}
-									return false;
-								}
-							});
-				});*/
+				 $("#edit_drop").submit(function(){
+				 console.log("submitted");
+				 $('#edit_drop').action = '/../../drop_event/' + user_id + '/';
+				 $.ajax({
+				 url : '/../../drop_event/' + user_id + '/',
+				 type : 'POST',
+				 data : {
+				 dayDelta : $("#dayDelta").val(),
+				 minuteDelta : $("#minuteDelta").val(),
+				 drop_event_id: $("#drop_event_id").val(),
+				 eventType: $("#eventType").val()
+				 },
+				 success : function(data) {
+
+				 if (data == "1") {
+				 //console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+				 console.log("dropped");
+				 }
+				 return false;
+				 }
+				 });
+				 });*/
 
 			});
+
+			$("#add_unavailable").submit(function() {
+
+				var url = "/../../add_unavailable/";
+				// the script where you handle the form input.
+
+				$.ajax({
+					type : "POST",
+					url : url,
+					data : $("#add_unavailable").serialize(), // serializes the form's elements.
+					success : function(data) {
+						return true;
+						// show response from the php script.
+					}
+				});
+
+				return false;
+				// avoid to execute the actual submit of the form.
+			});
+			$("#edit_unavailable").submit(function() {
+
+				var url = "/../../update_unavailable/";
+				// the script where you handle the form input.
+				console.log("hitting ajax");
+				$.ajax({
+					type : "POST",
+					url : url,
+					data : $("#edit_unavailable").serialize(), // serializes the form's elements.
+					success : function(data) {
+						alert(data);
+						//return true;
+						// show response from the php script.
+					}
+				});
+
+				return false;
+				// avoid to execute the actual submit of the form.
+			});
+			/*
+			$("#_unavailable").submit(function() {
+
+			var url = "/../../add_unavailable/"; // the script where you handle the form input.
+
+			$.ajax({
+			type: "POST",
+			url: url,
+			data: $("#add_unavailable").serialize(), // serializes the form's elements.
+			success: function(data)
+			{
+			return true;// show response from the php script.
+			}
+			});
+
+			return false; // avoid to execute the actual submit of the form.
+			});*/
 			//]]>
 		</script>
 	</body>
