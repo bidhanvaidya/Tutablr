@@ -87,3 +87,4 @@ class searchForm(forms.Form):
                 if len(uos_choices) > 0:
                         self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), choices=uos_choices, required=True)
         
+

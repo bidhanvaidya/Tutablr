@@ -1,7 +1,8 @@
 #messages{
     position: relative;
     left: -20px;
-    top: 50px;
+    top: 30px;
+    min-height: 150px;
 }
 #timetable-content {
     position: relative;
@@ -11,6 +12,10 @@
     position: relative;
     left: -20px;
     top:-170px;
+}
+
+#no-message {
+    text-align: center;;
 }
 
 #timetable{
@@ -23,15 +28,30 @@
     max-height:  800px;
 }
 
-#timetable-title {
-    position: relative;
-    left: 320px;
+#upcoming-div {
+    height:0px;
 }
 
-#messages {
-    border:  1px  solid black;
+#timetable-title {
+    position: relative;
+    left: 310px;
+    width: 300px;
+}
+
+#events-title {
+    position: relative;
+    top: -80px;
 }
 
 #upcoming-events{
+    position: relative;
+    top:-86px;
     border:  1px  solid black;
+        min-height: 150px;
+}
+
+#messages-title {
+    position: relative;
+    left: -10px;
+    top:40px;
 }

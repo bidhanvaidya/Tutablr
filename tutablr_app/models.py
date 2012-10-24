@@ -23,13 +23,18 @@ class UserProfile(models.Model):
 	def __str__(self):  
 		  return "%s's profile" % self.user  
 		  
-class Location(models.Model): # all location details
-	preferred_postcode = models.IntegerField(max_length=4)
+class Location(models.Model): # Where you would like to get tutored (can only have 1)
 	preferred_suburb = models.CharField(max_length=50)
 	longitude = models.FloatField()
 	latitude = models.FloatField()
 	user_id = models.OneToOneField(User)
-	is_tutoring_location = models.BooleanField(default=False) # only applies to tutors
+
+class TutoringLocation(models.Model): # Where you can tutor
+	preferred_suburb = models.CharField(max_length=50)
+	longitude = models.FloatField()
+	latitude = models.FloatField()
+	user_id = models.ForeignKey(User)	
+	deleted = models.BooleanField(default=False)
 
 class UOS(models.Model): # unit of study information
 	unit_name = models.CharField(max_length=128)

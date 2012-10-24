@@ -1,0 +1,41 @@
+{% extends "base_logged_out.html" %}
+{% load i18n %}
+
+{% block content %}
+
+{% if form%}
+    <form action="/profile/locations/personal/edit" method="POST" accept-charset="utf-8">{% csrf_token %}
+        {{form.as_p}}
+        <button type="submit"> Save </button>
+    </form>
+{% else %}
+  <p>{{response}}</p>
+
+{%endif%}
+        <input id="address" type="text" name="" value="" placeholder="Address">
+        <button onclick="codeAddress()" id="submit" type="button">Geolocate</button>
+        <div id="map_canvas"></div>
+{% endblock %}
+
+{% block extra_scripts %} 
+    <script src="{{STATIC_URL}}tutablr/js/gmaps_location.js"></script>
+{% endblock %}
+
+ {% block extra_head %}
+    <link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/location_personal.css" />
+    <script type="text/javascript"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCXP-Ie48j28NaBt_x-4oVMaE3wpfY7t4s&sensor=true">
+     </script>
+  {% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+  <ul class="nav">
+      <li ><a href="/">Home</a></li>
+      <li><a href="/accounts/register">Register As Tutor</a></li>
+      <li><a href="#">How TuTablr Works</a></li>
+  </ul>
+{% endblock %}
+
+{% block body_attributes%}
+  onload="initialize()"
+{%endblock%}
