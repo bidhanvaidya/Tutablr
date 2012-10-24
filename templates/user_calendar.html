@@ -245,7 +245,7 @@
 						text : "Confirm",
 						"id" : "btnConfirm",
 						click : function() {
-							url = '/../../confirm_booking/' + user_id + '/';
+							var url = '/../../confirm_booking/' + user_id + '/';
 							$.ajax({
 								url: url,
 								type:'POST',
@@ -290,29 +290,47 @@
 						text : "Reject",
 						"id" : "btnReject",
 						click : function() {
-							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../reject_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
-							//refetchEvents
-							$('#calendar').fullCalendar('refetchEvents');
-							dialog_open = false;
-							return true;
-						}
+							var url = '/../../reject_booking/' + user_id + '/';
+							$.ajax({
+									url: url,
+									type:'POST',
+									data: {
+										edit_start_date: $("#datePicker_start_edit").val(),
+										edit_start:$("#edit_start").val(),
+										edit_end: $("#edit_end").val(),
+										edit_title: $("#edit_title").val(),
+										edit_event_id:$("#edit_event_id").val()
+									},
+									success: function(data) {
+										console.log("1");
+									}
+								});
+								$(this).dialog("close");
+								$('#calendar').fullCalendar('refetchEvents');
+								dialog_open = false;
+							}
 					}, {
 						text : "Delete",
 						"id" : "btnDelete",
 						click : function() {
+							var url = '/../../delete_booking/' + user_id + '/';
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_start_date: $("#datePicker_start_edit").val(),
+									edit_start:$("#edit_start").val(),
+									edit_end: $("#edit_end").val(),
+									edit_title: $("#edit_title").val(),
+									edit_event_id:$("#edit_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
-							//refetchEvents
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}],
 				});
@@ -328,15 +346,24 @@
 						text : "Submit",
 						"id" : "btnSubmit",
 						click : function() {
+							var url = '/../../update_booking/' + user_id + '/';
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_event_id: $("#edit_event_id").val(),
+									edit_start_date:$("#datePicker_start_edit").val(),
+									edit_end: $("#edit_end").val(),
+									edit_start: $("#edit_start").val(),
+									edit_title:$("#edit_title").val()
+								},
+								success: function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
-							//refetchEvents
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -372,15 +399,26 @@
 						text : "Submit",
 						"id" : "btnSessionSubmit",
 						click : function() {
+							var url = '/../../update_session/' + user_id + '/';
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_session_start_date: $("#datePicker_session_start_edit").val(),
+									edit_session_start:$("#edit_session_start").val(),
+									edit_session_end: $("#edit_session_end").val(),
+									edit_session_title: $("#edit_session_title").val(),
+									edit_session_event_id:$("#edit_session_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
+
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_session/' + user_id + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
-							//refetchEvents
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -408,15 +446,25 @@
 						text : "Delete",
 						"id" : "btnSessionDelete",
 						click : function() {
-							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_session/' + user_id + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
-							//refetchEvents
+							var url = '/../../delete_session/' + user_id + '/';
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									edit_session_start_date: $("#datePicker_session_start_edit").val(),
+									edit_session_start:$("#edit_session_start").val(),
+									edit_session_end: $("#edit_session_end").val(),
+									edit_session_title: $("#edit_session_title").val(),
+									edit_session_event_id:$("#edit_session_event_id").val()
+								},
+								success: function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
+							$(this).dialog("close");
 						}
 					}]
 				});
@@ -431,15 +479,25 @@
 						text : "Submit",
 						"id" : "btnAddSubmit",
 						click : function() {
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../add_booking/' + user_id + '/';
-							document.addForm.action = url;
-							$("[id*=SubmitAdd]").click();
-							$(this).dialog("close");
-							//refetchEvents
+							var url = '/../../add_booking/' + user_id + '/';
+							$.ajax({
+								url: url,
+								type:'POST',
+								data: {
+									date: $("#id_date").val(),
+									start_time:$("#id_start_time").val(),
+									finish_time: $("#id_finish_time").val(),
+									UoS: $("#id_UoS").val(),
+									description:$("#id_description").val()
+								},
+								success: function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
 							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
+							$(this).dialog("close");
 						},
 					}, {
 						text : "Cancel",

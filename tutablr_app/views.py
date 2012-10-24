@@ -774,6 +774,7 @@ def delete_unavailable(request):
 #----------------END UNAVAILABLE TIMES------------
 #----------------BOOKING--------------------------
 #initial booking (with null session) MUST be made by the student
+@csrf_exempt
 def add_booking(request, cal_id):
 	if request.method == 'POST':
 		start=  request.POST.get('date') + " " + request.POST.get('start_time')
