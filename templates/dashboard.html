@@ -7,46 +7,6 @@
     <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
     <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
     <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
-    <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-
-    <script type='text/javascript'>
-
-      $(document).ready(function() {
-         $.getJSON("/calendar/events.json", function(json) {
-          for (i = 0; i < json.length; i++) { 
-            console.log(json[i].editable);
-          json[i].selectable =  true;
-          json[i].editable = false;
-        }
-          
-        $('#calendar').fullCalendar({
-         header : {
-            left : 'prev,next today',
-            center : 'title',
-            right : 'month,agendaWeek,agendaDay'
-          },
-          defaultView : 'agendaWeek',
-          selectable : true,
-          selectHelper : true,
-          editable : true,
-          disableResizing : true,
-          aspectRatio : 1.75,
-          
-          
-          
-         
-          events : json,
-         
-        });
-        
-        });
-        
-      
-      });
-      //]]>
-    </script>
     <style type='text/css'>
       /*<![CDATA[*/
 
@@ -96,17 +56,6 @@
 
             </div>
     </div>
-    <div id="upcoming" class="row-fluid">
-                        <div  id="upcoming-div"class="span3  offset9">
-                    <h3 id="events-title"class="home-caption">Upcoming Events</h3>
-                      <div id = "upcoming-events"class="caption">
-                        <p> Add Messages Here Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad mini</p>
-                            <p> This is test -> {{ current_path }}</p>
-
-                      </div>
-                </div>
-    </div>
 {% endblock %}
 
 {% block navigation-bar %} {# Navigation Bar #}
@@ -138,4 +87,13 @@
         <li><a href="/">Find a Tutor</a></li>
     </ul>
 {% endblock %}
+
+{%block extra_scripts%}
+
+  <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+        <script type='text/javascript' src='{{STATIC_URL}}tutablr/js/dashboard_calendar.js'></script>
+
+{%endblock %}
 

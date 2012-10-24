@@ -50,7 +50,7 @@
             </div>
         </footer>
 
-        
+        {% block jquery %}<script src="{{STATIC_URL}}tutablr/js/jquery-1.8.2.min.js"></script>{% endblock%}
         <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
         <script src="{{STATIC_URL}}tutablr/js/general_functions.js"></script>
         {% block extra_scripts %} {% endblock %}
