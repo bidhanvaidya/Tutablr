@@ -185,7 +185,7 @@
 											}
 											//console.log(event.creator_id);
 											//console.log(user_id);
-											if (event.creator_id != user_id) {
+											if (event.creator_id == user_id) {
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();

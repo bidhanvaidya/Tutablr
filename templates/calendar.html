@@ -219,10 +219,6 @@
 						if (!event.draggable) {
 							revertFunc();
 						} else {
-							//$("#dayDelta").val(dayDelta);
-							//$("#minuteDelta").val(minuteDelta);
-							//$("#drop_event_id").val(id);
-							//$("#eventType").val(event.type);
 							$.ajax({
 								url : '/../../drop_event/' + user_id + '/',
 								type : 'POST',
@@ -234,16 +230,11 @@
 								},
 								success : function(data) {
 									if (data == "1") {
-										//console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
 										console.log("unlocked");
 									}
 									return true;
 								}
 							});
-							//$('#edit_drop').submit();
-							//url = '/../../drop_event/' + user_id + '/';
-							//document.editDropForm.action = url;
-							//$("[id*=SubmitDrop]").click();
 							$('#calendar').fullCalendar('refetchEvents');
 						}
 					},
@@ -258,7 +249,6 @@
 						$('#add_unavailable_date').datepicker("enable");
 						$('#add_unavailable_date').val(start_date);
 						$("#add_unavailable_div").dialog("open");
-
 						calendar.fullCalendar('unselect');
 						//add default descriptions based on tutor or student and session or booking, as well as the unit name
 					},
@@ -387,7 +377,6 @@
 				$('#select_dialog').dialog({
 					autoOpen : false,
 					width : 400,
-
 					modal : true,
 					resizable : true,
 					buttons : [{
