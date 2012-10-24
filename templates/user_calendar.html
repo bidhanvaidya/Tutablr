@@ -141,7 +141,6 @@
 									success : function(data) {
 										if (data == "1") {
 											//unlocked but now locked
-											console.log("session " + id + " unlocked");
 											$("#edit_session_start").val(start_time);
 											$("#edit_session_end").val(end_time);
 											$("#edit_session_title").val(title);
@@ -162,7 +161,6 @@
 
 										} else {
 											alert("This session is already being edited")
-											console.log("got 0");
 										}
 										return false;
 									}
@@ -178,7 +176,6 @@
 									},
 									success : function(data) {
 										if (data == "1") {
-											console.log("booking " + id + " unlocked");
 											//check for lock
 											$("#edit_start").val(start_time);
 											$("#edit_end").val(end_time);
@@ -202,17 +199,18 @@
 											}
 											//console.log(event.creator_id);
 											//console.log(user_id);
-											if (event.creator_id == user_id) {
+											console.log(event.creator_id);
+											console.log(user_id);
+											if (event.creator_id != user_id) {
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
 											} else {
-												console.log("here");
 												$("#btnDelete").hide();
 												$("#btnConfirm").button("enable");
 												$("#btnReject").button("enable");
 											}
-											//$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
+											$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
 											$("#select_dialog").dialog("open");
 											dialog_open = true;
 										} else {
@@ -459,9 +457,6 @@
 					$('#edit_booking').dialog('close');
 					$('#edit_session').dialog('close');
 				});
-				function myFunction() {
-					alert("Hello World!");
-				}
 
 			});
 			//]]>

@@ -36,17 +36,17 @@ html .fc,
 /* Header
 ------------------------------------------------------------------------*/
 .fc-view-agendaDay .fc-today {
-     color:white;
-     background:#FFDEAD;
+     color:black;
+     background:#F2F2F2;
   } 
 
 .fc-view-agendaWeek .fc-today {
-     color:white;
-     background:#FFDEAD;
+     color:black;
+     background:#F2F2F2;
   } 
 .fc-view-month .fc-today {
-     color:white;
-     background:#FFDEAD;
+     color:black;
+     background:#F2F2F2;
   } 
 
 .fc-header td {

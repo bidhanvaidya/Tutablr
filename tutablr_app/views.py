@@ -224,8 +224,11 @@ def calendar(request):
 				session_id=booking.session_id.id
 			booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
 			booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
+			border_color = '#949eff'
 			if(booking.creator_id == request.user):
 				draggable = True
+			else:
+				border_color = '#ff282a'
 			calendar_list.append({
 			'id'  :  booking.id,
 			'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -234,7 +237,7 @@ def calendar(request):
 			'allDay' : False,
 			'textColor' : 'black',
 			'backgroundColor' :  '#949eff',
-			'borderColor' : '#ff282a',
+			'borderColor' : border_color,
 			'draggable' : draggable,
 			'selectable' : True,
 			'editable' : True,
@@ -249,8 +252,12 @@ def calendar(request):
 				session_id = 0;
 			else:
 				session_id=booking.session_id.id
+			border_color = '#fffd79'
+
 			if(booking.creator_id == request.user):
 				draggable = True
+			else:
+				border_color =  '#ff282a'
 			booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
 			booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
 			calendar_list.append({
@@ -260,8 +267,8 @@ def calendar(request):
 			'title' : booking.description,
 			'allDay' : False,
 			'textColor' : 'black',
-			'backgroundColor' :  '#949eff',
-			'borderColor' : '#ff282a',
+			'backgroundColor' :  '#fffd79',
+			'borderColor' : border_color,
 			'draggable' : draggable,
 			'selectable' : True,
 			'editable' : True,
@@ -291,10 +298,13 @@ def calendar(request):
         for session in tutor_sessions:
 			bookings = Booking.objects.filter(session_id=session)
 			pending = False
+			border_color =  '#5e7eff'
+
 			if len(bookings) > 0:
 				for b in bookings:
 					if b.is_rejected == False and b.is_confirmed == False:
 						pending = True
+						border_color = '#ff282a'
 						break
 			
 						
@@ -306,8 +316,9 @@ def calendar(request):
 			'end'  :  session_finish.strftime('%Y-%m-%d %H:%M:%S'),
 			'title' : session.description,
 			'allDay' : False,
-			'textColor' : 'black',
-			'backgroundColor' :  '#5e7eff',
+			'textColor' : 'white',
+			'backgroundColor' :  '#1c04e0',
+			'borderColor' : border_color,
 			'selectable' : True,
 			'draggable' : True,
 			'editable' : True,
@@ -317,12 +328,14 @@ def calendar(request):
         # end of tutor sessions---------------------------------------------------------------  
         # for student sessions---------------------------------------------------------------
         for session in student_sessions:
+			border_color = '#e9863f'
 			bookings = Booking.objects.filter(session_id=session)
 			pending = False
 			if len(bookings) > 0:
 				for b in bookings:
 					if b.is_rejected == False and b.is_confirmed == False:
 						pending = True
+						border_color = '#ff282a'
 						break
 			session_start = session.start_time.astimezone(timezone.get_default_timezone())
 			session_finish = session.finish_time.astimezone(timezone.get_default_timezone())
@@ -333,7 +346,8 @@ def calendar(request):
 			'title' : session.description,
 			'allDay' : False,
 			'textColor' : 'black',
-			'backgroundColor' :  '#fffd79',
+			'backgroundColor' :  '#e9863f',
+			'borderColor' : border_color,
 			'selectable' : True,
 			'draggable' : True,
 			'editable' : True,
@@ -384,9 +398,12 @@ def user_calendar(request, cal_id):
 				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
 				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
 				draggable = False
+				border_color =  '#949eff'
 				if(booking.creator_id == request.user):
 					draggable = True
-				
+				else:
+					border_color =  '#ff282a'
+
 				calendar_list.append({
 				'id'  :  booking.id,
 				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -430,9 +447,12 @@ def user_calendar(request, cal_id):
 				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
 				booking_finish = booking.finish_time.astimezone(timezone.get_default_timezone())
 				draggable = False
+				border_color = '#fffd79'
 				if(booking.creator_id == request.user):
 					draggable = True
-				
+				else:
+					border_color =  '#ff282a'
+
 				calendar_list.append({
 				'id'  :  booking.id,
 				'start'  :  booking_start.strftime('%Y-%m-%d %H:%M:%S'),
@@ -440,8 +460,8 @@ def user_calendar(request, cal_id):
 				'title' : booking.description,
 				'allDay' : False,
 				'textColor' : 'black',
-				'backgroundColor' :  '#949eff',
-				'borderColor' : '#ff282a',
+				'backgroundColor' :  '#fffd79',
+				'borderColor' : '#fffd79',
 				'editable' : True,
 				'draggable' : draggable,
 				'type' : 'student_booking',
@@ -483,10 +503,13 @@ def user_calendar(request, cal_id):
 		for session in tutor_sessions:
 			bookings = Booking.objects.filter(session_id=session)
 			pending = False
+			border_color = '#1c04e0'
+
 			if len(bookings) > 0:
 				for b in bookings:
 					if b.is_rejected == False and b.is_confirmed == False:
 						pending = True
+						border_color = '#ff282a'
 						break
 			if session.student_id.id == user_id or session.tutor_id.id == user_id:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
@@ -498,7 +521,8 @@ def user_calendar(request, cal_id):
 				'title' : session.description,
 				'allDay' : False,
 				'textColor' : 'white',
-				'backgroundColor' :  '#5e7eff',
+				'backgroundColor' :  '#1c04e0',
+				'borderColor' : border_color,
 				'draggable' : True,
 				'editable' : True,
 				'pending' : pending,
@@ -523,10 +547,13 @@ def user_calendar(request, cal_id):
 		for session in student_sessions:
 			bookings = Booking.objects.filter(session_id=session)
 			pending = False
+			border_color = '#e9863f'
+
 			if len(bookings) > 0:
 				for b in bookings:
 					if b.is_rejected == False and b.is_confirmed == False:
 						pending = True
+						border_color = '#5e7eff'
 						break
 			if session.student_id.id == user_id or session.tutor_id.id == user_id:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
@@ -538,7 +565,8 @@ def user_calendar(request, cal_id):
 				'title' : session.description,
 				'allDay' : False,
 				'textColor' : 'black',
-				'backgroundColor' :  '#fffd79',
+				'backgroundColor' :  '#e9863f',
+				'borderColor' : border_color,
 				'draggable' : True,
 				'editable' : True,
 				'pending' : pending,
@@ -572,8 +600,8 @@ def user_calendar(request, cal_id):
 				'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
 				'title' : 'Unavailable',
 				'allDay' : False,
-				'backgroundColor' :  '#ffc58a',
-				'borderColor' : '#ffc58a',
+				'backgroundColor' :  '#ff282a',
+				'borderColor' : '#ff282a',
 				'editable' : False,
 				'type' : 'class'
 				})
@@ -587,6 +615,7 @@ def user_calendar(request, cal_id):
 #-------------------EVENT DROP----------------------------------
 @csrf_exempt
 def drop_event(request, cal_id):
+	print request.user.id
 	if request.method == 'POST':
 		dayDelta = request.POST.get('dayDelta')
 		minuteDelta = request.POST.get('minuteDelta')
@@ -602,6 +631,7 @@ def drop_event(request, cal_id):
 					tutor_id = session.tutor_id,
 					student_id = session.student_id,
 					unit_id = session.unit_id)
+			print "creator id" + str(request.user.id)
 			now= datetime.datetime.now()
 			admin= User.objects.all()[0]
 			if request.POST.get('type') == 'student_session':
