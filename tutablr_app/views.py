@@ -39,12 +39,16 @@ def unlock(event_id, event_type):
 @csrf_exempt
 def get_lock(request):
     #lock status
+    print "here"
     if request.method == "POST":
         event_id = request.POST.get('event_id')
         event_type = request.POST.get('event_type')
+	print event_id
+	print event_type
         if event_type == "booking":
             if booking_locks[str(event_id)] == False:
                 lock(event_id, event_type)
+		print "here1"
                 return HttpResponse("1")
             else:
                 return HttpResponse("0")
@@ -133,7 +137,7 @@ def tutor_search(request):
 											eligible_tutors.remove(t)
 			#distance 
 			if int(distance_in_kms) != 1000:
-					user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id, is_tutoring_location=True)]
+					user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id)]
 					print len(user_location)
 					if len(user_location) != 0:
 							for t in eligible_tutors:
@@ -581,6 +585,7 @@ def user_calendar(request, cal_id):
 			
 
 #-------------------EVENT DROP----------------------------------
+@csrf_exempt
 def drop_event(request, cal_id):
 	if request.method == 'POST':
 		dayDelta = request.POST.get('dayDelta')
@@ -619,6 +624,8 @@ def drop_event(request, cal_id):
                         moderation_date=now)
 			message.save()
 			booking.save()
+			#add to locks
+			booking_locks[str(booking.id)] = False
 			#unlock the event
 			unlock(event_id, eventType)
 		elif eventType == 'student_booking' or eventType == 'tutor_booking':

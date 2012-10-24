@@ -58,36 +58,26 @@
 						if (!event.draggable) {
 							revertFunc();
 						} else {
-							var type = "booking";
-							if (event.type == "tutor_session" || event.type == "student_session") {
-								type = "session";
-							}
 							$.ajax({
-								url : "/../../get_lock/",
+								url : '/../../drop_event/' + user_id + '/',
 								type : 'POST',
 								data : {
-									event_type : type,
-									event_id : event.id
+									dayDelta : dayDelta,
+									minuteDelta : minuteDelta,
+									drop_event_id: event.id,
+									eventType: event.type
 								},
 								success : function(data) {
 									if (data == "1") {
-										console.log("event unlocked");
-										var id = event.id;
-										$("#dayDelta").val(dayDelta);
-										$("#minuteDelta").val(minuteDelta);
-										$("#drop_event_id").val(id);
-										$("#eventType").val(event.type);
-										url = '/../../drop_event/' + user_id + '/';
-										document.editDropForm.action = url;
-										$("[id*=SubmitDrop]").click();
-									} else {
-										console.log("event locked");
-										alert("This event is currently being edited");
+										//console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+										console.log("unlocked");
 									}
-									return false;
+									return true;
 								}
 							});
+							$('#calendar').fullCalendar('refetchEvents');
 						}
+						
 					},
 					select : function(start, end, allDay) {
 						var start_time = $.fullCalendar.formatDate(start, "HH:mm");
@@ -206,7 +196,7 @@
 											$("#select_dialog").dialog("open");
 										} else {
 											console.log("got 0");
-											alert("Booking already has a pending edit");
+											alert("Booking is being edited by another user");
 										}
 										return false;
 									}
