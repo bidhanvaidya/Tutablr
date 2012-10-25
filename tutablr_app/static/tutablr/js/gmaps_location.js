@@ -47,8 +47,8 @@
                             console.log(results[0].address_components[1].long_name);
             }
             $("#id_preferred_suburb").val(suburb);
-            $("#id_longitude").val(results[0].geometry.location.Ya);
-            $("#id_latitude").val(results[0].geometry.location.Xa);
+            $("#id_longitude").val(results[0].geometry.location.Za);
+            $("#id_latitude").val(results[0].geometry.location.Ya);
       } 
       else {
         alert("An error occured. Please try again.");

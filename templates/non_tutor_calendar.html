@@ -9,14 +9,14 @@
 		<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
 		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-	<script>
+		<script>
 			$(document).keypress(function(event) {
 				if (event.which == '13') {
 					event.preventDefault();
 				}
 			});
 		</script>
-	<script type="text/javascript">
+		<script type="text/javascript">
 			window.onbeforeunload = function() {
 				$.ajax({
 					url : "/../../unlock_request/",
@@ -39,27 +39,29 @@
 		<script type='text/javascript'>
 			//<![CDATA[
 			/*function isOverlapping(event) {
-				var array = calendar.fullCalendar('clientEvents');
-				for (i in array) {
-					if (array[i].id != event.id) {
-						if (!(array[i].start >= event.end || array[i].end <= event.start)) {
-							return true;
-						}
-					}
-				}
-				return false;
-			}*/
+			 var array = calendar.fullCalendar('clientEvents');
+			 for (i in array) {
+			 if (array[i].id != event.id) {
+			 if (!(array[i].start >= event.end || array[i].end <= event.start)) {
+			 return true;
+			 }
+			 }
+			 }
+			 return false;
+			 }*/
 
 			var dialog_open = false;
-			setInterval("refresh_check();",3000);
-			
-			function refresh_check(){
+			setInterval("refresh_check();", 1000);
+
+			function refresh_check() {
 				console.log("check");
-				if(dialog_open == false){
+				if (dialog_open == false) {
 					$('#calendar').fullCalendar('refetchEvents');
 					console.log(dialog_open);
 				}
 			}
+
+
 			$(document).ready(function() {
 				var last_url = location.pathname.match(/\/user\/(.*)/)[1]
 				var user_id = '';
@@ -80,6 +82,12 @@
 					editable : true,
 					disableResizing : true,
 					aspectRatio : 1.75,
+					eventDragStart : function() {
+						dialog_open = true;
+					},
+					eventDragStop : function() {
+						dialog_open = false
+					},
 					eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
 						alert(event.draggable);
 						if (!event.draggable || ((event.type == "student_session" || event.type == "tutor_session") && event.pending)) {
@@ -91,8 +99,8 @@
 								data : {
 									dayDelta : dayDelta,
 									minuteDelta : minuteDelta,
-									drop_event_id: event.id,
-									eventType: event.type
+									drop_event_id : event.id,
+									eventType : event.type
 								},
 								success : function(data) {
 									if (data == "1") {
@@ -199,7 +207,7 @@
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
-											}else if(event.creator_id == undefined){
+											} else if (event.creator_id == undefined) {
 												$("#btnDelete").button("enable");
 											} else {
 												console.log("here");
@@ -226,10 +234,9 @@
 				$('#select_dialog').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 100,
 					modal : true,
+					closeOnEscape : false,
 					resizable : true,
-					closeOnEscape: false,
 					buttons : [{
 						text : "Edit",
 						"id" : "btnEdit",
@@ -237,18 +244,30 @@
 							$('#edit_booking').dialog('open');
 							$(this).dialog('close');
 							dialog_open = true;
+
 						}
 					}, {
 						text : "Confirm",
 						"id" : "btnConfirm",
 						click : function() {
+							var url = '/../../confirm_booking/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_start_date : $("#datePicker_start_edit").val(),
+									edit_start : $("#edit_start").val(),
+									edit_end : $("#edit_end").val(),
+									edit_title : $("#edit_title").val(),
+									edit_event_id : $("#edit_event_id").val()
+								},
+								success : function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../confirm_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}, {
 						text : "Cancel",
@@ -276,48 +295,79 @@
 						text : "Reject",
 						"id" : "btnReject",
 						click : function() {
+							var url = '/../../reject_booking/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_start_date : $("#datePicker_start_edit").val(),
+									edit_start : $("#edit_start").val(),
+									edit_end : $("#edit_end").val(),
+									edit_title : $("#edit_title").val(),
+									edit_event_id : $("#edit_event_id").val()
+								},
+								success : function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../reject_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}, {
 						text : "Delete",
 						"id" : "btnDelete",
 						click : function() {
+							var url = '/../../delete_booking/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_start_date : $("#datePicker_start_edit").val(),
+									edit_start : $("#edit_start").val(),
+									edit_end : $("#edit_end").val(),
+									edit_title : $("#edit_title").val(),
+									edit_event_id : $("#edit_event_id").val()
+								},
+								success : function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						}
 					}],
 				});
-
 				$('#edit_booking').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
 					modal : true,
+					closeOnEscape : false,
 					resizable : true,
-					closeOnEscape: false,
 					closeOnButton : false,
 					buttons : [{
 						text : "Submit",
 						"id" : "btnSubmit",
 						click : function() {
+							var url = '/../../update_booking/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_event_id : $("#edit_event_id").val(),
+									edit_start_date : $("#datePicker_start_edit").val(),
+									edit_end : $("#edit_end").val(),
+									edit_start : $("#edit_start").val(),
+									edit_title : $("#edit_title").val()
+								},
+								success : function(data) {
+									console.log("1");
+								}
+							});
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_booking/' + user_id + '/';
-							document.editBookingForm.action = url;
-							$("[id*=SubmitEdit]").click();
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -346,21 +396,33 @@
 				$('#edit_session').dialog({
 					autoOpen : false,
 					width : 400,
-					height : 300,
 					modal : true,
-					closeOnEscape: false,
+					closeOnEscape : false,
 					resizable : true,
 					buttons : [{
 						text : "Submit",
 						"id" : "btnSessionSubmit",
 						click : function() {
+							var url = '/../../update_session/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_session_start_date : $("#datePicker_session_start_edit").val(),
+									edit_session_start : $("#edit_session_start").val(),
+									edit_session_end : $("#edit_session_end").val(),
+									edit_session_title : $("#edit_session_title").val(),
+									edit_session_event_id : $("#edit_session_event_id").val()
+								},
+								success : function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
+
 							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../update_session/' + user_id + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
 						},
 					}, {
 						text : "Cancel",
@@ -388,18 +450,28 @@
 						text : "Delete",
 						"id" : "btnSessionDelete",
 						click : function() {
-							$(this).dialog("close");
-							$(location).attr('href', $(this).dialog('option', 'anchor'));
-							url = '/../../delete_session/' + user_id + '/';
-							document.editSessionForm.action = url;
-							$("[id*=SubmitEditSession]").click();
+							var url = '/../../delete_session/' + user_id + '/';
+							$.ajax({
+								url : url,
+								type : 'POST',
+								data : {
+									edit_session_start_date : $("#datePicker_session_start_edit").val(),
+									edit_session_start : $("#edit_session_start").val(),
+									edit_session_end : $("#edit_session_end").val(),
+									edit_session_title : $("#edit_session_title").val(),
+									edit_session_event_id : $("#edit_session_event_id").val()
+								},
+								success : function(data) {
+									console.log("1");
+									//console.log(data);
+								}
+							});
+							$('#calendar').fullCalendar('refetchEvents');
 							dialog_open = false;
-							return true;
+							$(this).dialog("close");
 						}
 					}]
 				});
-
-
 
 				$("#datePicker_start_edit").datepicker({
 					dateFormat : 'dd/mm/yy'

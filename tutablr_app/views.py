@@ -384,10 +384,10 @@ def calendar(request):
                 'end'  :  classtime_finish.strftime('%Y-%m-%d %H:%M:%S'),
                 'title' : classtime.description, #Enrolled.objects.get(id = enrolled.id).unit_id ,
                 'allDay' : False,
-				'textColor' : 'black',
-                'backgroundColor' :  '#ffc58a',
+		'textColor' : 'white',
+                'backgroundColor' :  'black',
                 'editable' : False,
-				'draggable' : False,
+		'draggable' : False,
                 'type' : 'class'
                 })
             # #end of class times---------------------------------------------------------------------

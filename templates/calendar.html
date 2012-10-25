@@ -199,7 +199,7 @@
 		<script type='text/javascript'>
 		
 			var dialog_open = false;
-			setInterval("refresh_check();",3000);
+			setInterval("refresh_check();",1000);
 			
 			function refresh_check(){
 				console.log("check");
@@ -232,7 +232,12 @@
 					editable : true,
 					disableResizing : true,
 					aspectRatio : 1.75,
-
+					eventDragStart : function() {
+						dialog_open = true;
+					},
+					eventDragStop : function() {
+						dialog_open = false
+					},
 					eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
 						if (!event.draggable || ((event.type == "student_session" || event.type == "tutor_session") && event.pending)) {
 							revertFunc();
