@@ -1,12 +1,12 @@
 #messages{
     position: relative;
     left: -20px;
-    top: 30px;
+    top: 35px;
     min-height: 150px;
 }
 #timetable-content {
-    position: relative;
-    top: -40px;
+
+padding-bottom: 20px;
 }
 #upcoming{
     position: relative;
@@ -20,22 +20,20 @@
 
 #timetable{
     position: relative;
-    left: 20px;
-    top: 35px;
+
 }
 
 #main-container {
-    max-height:  800px;
+
 }
 
 #upcoming-div {
     height:0px;
 }
 
-#timetable-title {
+#dashboard-title {
     position: relative;
-    left: 310px;
-    width: 300px;
+
 }
 
 #events-title {

@@ -12,7 +12,7 @@ $(document).ready(function() {
             center : 'title',
             right : 'month,agendaWeek,agendaDay'
           },
-          defaultView : 'agendaDay',
+          defaultView : 'month',
           selectable : true,
           selectHelper : true,
           editable : true,

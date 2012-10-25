@@ -2,16 +2,7 @@
 {% load i18n %}
 
 {% block extra_head %}
-    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
-    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
-    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
-    <link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
-    <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
-    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
-    <script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
-            <script type='text/javscript' src='{{STATIC_URL}}tutablr/js/calendar.js'></script>
-    <style type='text/css'>
+<style type='text/css'>
       /*<![CDATA[*/
 
       body {
@@ -31,8 +22,7 @@
 {% endblock %}
 
 
-{% block content %}
-    <div id="edit_session" title="Edit Booking">
+{% block content %}<div id="edit_session" title="Edit Booking">
       <form name="editSessionForm" action="/../../update_booking/"  method="post">
         {% csrf_token %}
         <fieldset>
@@ -80,7 +70,7 @@
         </tr>
 
       </table>
-    </div></div>
+    </div>
     <div id="edit_booking" title="Edit Booking">
       <form name="editBookingForm" action="/../../update_booking/"  method="post">
         <div id="edit_div" style="display:block">
@@ -104,29 +94,16 @@
         <input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
       </form>
     </div>
-    <div style="display:block" id="edit_unavailable_div" title="Edit Booking">
-          <form name="edit_unavailable" action="/../../update_unavailable/"  method="post">{% csrf_token %}
-          <fieldset>
-            <label for = "edit_unavailable_date"> Date </label>
-            <input type="text" class = "datePicker" name = "edit_unavailable_date" id="edit_unavailable_date" required="required" />
-            <br>
-            <label for="edit_unavailable_start">Start Time</label>
-            <input type="text" name="edit_unavailable_start" id="edit_unavailable_start" class="text ui-widget-content ui-corner-all" required="required" />
-            <br>
-            <label for="edit_unavailable_end">End Time</label>
-            <input type="text" name="edit_unavailable_end" id="edit_unavailable_end" class="text ui-widget-content ui-corner-all" required="required" />
-            <br>
-            <label for="edit_unavailable_title">Event Description</label>
-            <input type="text" name="edit_unavailable_title" id="edit_unavailable_title" class="text ui-widget-content ui-corner-all" />
-
-            <input type="hidden" name="edit_unavailable_event_id" id="edit_unavailable_event_id" class="text ui-widget-content ui-corner-all" required="required" />
-          </fieldset>
-        <input type="submit" value="Yes" id ="SubmitEditUnavailable" style="display:none">
-        <input  type= "submit" formaction= "/../delete_unavailable" id ="SubmitDeleteUnavailable" style="display:none">
+    <div id ="cancel" style="display:none">
+      <form name="cancel" action="/../../unlock/" method="post">
+        {% csrf_token %}
+        <input type="text" name = "cancel_event_id" id="cancel_event_id" required="required" />
+        <input type="text" name = "cancel_event_type" id="cancel_event_type" required="required" />
+        <input type="submit" value="Yes" id ="SubmitCancel" style="display:none">
       </form>
     </div>
-    <div id="edit_drop-PENIS" title="Edit Drop" style="display:none">
-      <form id="edit_drop" name="editDropForm" action="#"  method="post">
+    <div id="edit_drop" title="Edit Drop" style="display:none">
+      <form name="editDropForm" action="/../../update_drop/"  method="post">
         {% csrf_token %}
         <fieldset>
           <input type="text" name = "dayDelta" id="dayDelta" required="required" />
@@ -137,73 +114,23 @@
         <input type="submit" value="Yes" id ="SubmitDrop" style="display:none">
       </form>
     </div>
-    <div id ="cancel" style="display:none">
-      <form name="cancel" action="/../../unlock/" method="post">
+    <div id="add_booking" title="Add Booking">
+      <form name="addForm" action="/../../add_booking/{{user.id}}/" method="post">
         {% csrf_token %}
-        <input type="text" name = "cancel_event_id" id="cancel_event_id" required="required" />
-        <input type="text" name = "cancel_event_type" id="cancel_event_type" required="required" />
-        <input type="submit" value="Yes" id ="SubmitCancel" style="display:none">
-      </form>
-    </div>
-    <div id="add_unavailable_div" title="Add Unavailable">
-      <form id="add_unavailable" name="addForm" action="/../../add_unavailable/" method="post">
-        {% csrf_token %}
-        <fieldset>
-          <label for = "add_unavailable_date"> Date </label>
-          <input type="text" name = "add_unavailable_date" id="add_unavailable_date" required="required" />
-          <br>
-          <label for="add_unavailable_start_time">Start Time</label>
-          <input type="text" name="add_unavailable_start_time" id="add_unavailable_start_time" class="text ui-widget-content ui-corner-all" required="required" />
-          <br>
-          <label for="add_unavailable_finish_time">End Time</label>
-          <input type="text" name="add_unavailable_finish_time" id="add_unavailable_finish_time" class="text ui-widget-content ui-corner-all" required="required" />
-          <br>
-          <label for="add_unavailable_title">Event Description</label>
-          <input type="text" name="add_unavailable_title" id="add_title" class="text ui-widget-content ui-corner-all" />
-        </fieldset>
-        <input type="submit" value="Yes" id ="SubmitAdd" style="display:none">
+        {{form.as_p}}
+        <input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
+        <input type="submit" value="Yes" id="SubmitAdd" style="display:none">
       </form>
     </div>
     <div id='calendar'></div>
 {% endblock %}
 
-{% block navigation-bar %} {# Navigation Bar #}
-    <ul class="nav">
-        <li class="active"><a href="/dashboard">My Dashboard</a></li>
-        <li><a href="/calendar">My Timetable</a></li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="/messages/inbox">Inbox</a></li>
-              <li><a href="/messages/sent">Sent</a></li>
-              <li><a href="/messages/archives/">Archive</a></li>
-              <li><a href="/messages/trash">Trash</a></li>
-              <li><a href="/messages/write">Write Message</a></li>
-            </ul>
-         </li>
-        <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="#">Edit Locations</a></li>
-              <li><a href="#">Edit Tutorable Subjects</a></li>
-              <li><a href="#">Add Review</a></li>
-              <li class="divider"></li>
-              <li class="nav-header">My Profile</li>
-              <li><a href="#">View Profile</a></li>
-              <li><a href="#">Edit Profile</a></li>
-            </ul>
-         </li>
-        <li><a href="/">Find a Tutor</a></li>
-    </ul>
-{% endblock %}
-
 {%block usual_scripts%}
-        <script src="{{STATIC_URL}}bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+    <script type='text/javscript' src='{{STATIC_URL}}tutablr/js/general_functions.js'></script>
     <script>
-      $(window).load(function(){
-        $("body").fadeIn("slow");
-      });
-
       $(document).keypress(function(event) {
         if (event.which == '13') {
           event.preventDefault();
@@ -215,7 +142,7 @@
         $.ajax({
           url : "/../../unlock_request/",
           type : 'POST',
-          async : false,
+          async: false,
           data : {
             event_type : $('#cancel_event_type').val(),
             event_id : $('#cancel_event_id').val()
@@ -231,7 +158,6 @@
       }
     </script>
     <script type='text/javascript'>
-    
       var dialog_open = false;
       setInterval("refresh_check();",3000);
       
@@ -244,9 +170,8 @@
           console.log(dialog_open);
         }
       }
-
       $(document).ready(function() {
-
+        
         var last_url = location.pathname.match(/\/user\/(.*)/)[1]
         var user_id = '';
         if (last_url[last_url.length - 1] == '/') {
@@ -266,8 +191,8 @@
           editable : true,
           disableResizing : true,
           aspectRatio : 1.75,
-
           eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
+            //check for lock and revertFunc if locked
             if (!event.draggable) {
               revertFunc();
             } else {
@@ -277,11 +202,12 @@
                 data : {
                   dayDelta : dayDelta,
                   minuteDelta : minuteDelta,
-                  drop_event_id : event.id,
-                  eventType : event.type
+                  drop_event_id: event.id,
+                  eventType: event.type
                 },
                 success : function(data) {
                   if (data == "1") {
+                    //console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
                     console.log("unlocked");
                   }
                   return true;
@@ -289,20 +215,21 @@
               });
               $('#calendar').fullCalendar('refetchEvents');
             }
+            
           },
           select : function(start, end, allDay) {
             var start_time = $.fullCalendar.formatDate(start, "HH:mm");
             var end_time = $.fullCalendar.formatDate(end, "HH:mm");
             var start_date = $.fullCalendar.formatDate(start, "dd/MM/yyyy");
             var end_date = $.fullCalendar.formatDate(end, "dd/MM/yyyy");
-            $('#add_unavailable_div').dialog('option', 'title', 'Add Unavailable Time');
-            $("#add_unavailable_start_time").val(start_time);
-            $("#add_unavailable_finish_time").val(end_time);
-            $('#add_unavailable_date').datepicker("enable");
-            $('#add_unavailable_date').val(start_date);
-            dialog_open = true;
-            $("#add_unavailable_div").dialog("open");
+            $('#add_booking').dialog('option', 'title', 'Add Booking');
+            $("#id_start_time").val(start_time);
+            $("#id_finish_time").val(end_time);
+            $('#id_date').val(start_date);
+            $("#add_booking").dialog("open");
+            $('#id_date').datepicker("enable");
             calendar.fullCalendar('unselect');
+            dialog_open = true;
             //add default descriptions based on tutor or student and session or booking, as well as the unit name
           },
           eventClick : function(event, jsEvent, view) {
@@ -334,7 +261,6 @@
                   success : function(data) {
                     if (data == "1") {
                       //unlocked but now locked
-                      console.log("session " + id + " unlocked");
                       $("#edit_session_start").val(start_time);
                       $("#edit_session_end").val(end_time);
                       $("#edit_session_title").val(title);
@@ -350,16 +276,16 @@
                         //delete, reject, confirm based on creator id
                         $('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
                       }
-                      dialog_open = true;
                       $("#edit_session").dialog("open");
+                      dialog_open = true;
 
                     } else {
                       alert("This session is already being edited")
-                      console.log("got 0");
                     }
                     return false;
                   }
                 });
+
               } else if (event.type == "tutor_booking" || event.type == "student_booking") {
                 $.ajax({
                   url : "/../../get_lock/",
@@ -370,7 +296,6 @@
                   },
                   success : function(data) {
                     if (data == "1") {
-                      console.log("booking " + id + " unlocked");
                       //check for lock
                       $("#edit_start").val(start_time);
                       $("#edit_end").val(end_time);
@@ -394,47 +319,38 @@
                       }
                       //console.log(event.creator_id);
                       //console.log(user_id);
-                      if (event.creator_id == user_id) {
+                      console.log(event.creator_id);
+                      console.log(user_id);
+                      if (event.creator_id != user_id) {
                         $("#btnDelete").button("enable");
                         $("#btnConfirm").hide();
                         $("#btnReject").hide();
                       } else {
-                        //console.log("here");
                         $("#btnDelete").hide();
                         $("#btnConfirm").button("enable");
                         $("#btnReject").button("enable");
                       }
                       $('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
-                      dialog_open = true;
                       $("#select_dialog").dialog("open");
+                      dialog_open = true;
                     } else {
                       console.log("got 0");
-                      alert("Booking is currently being edited");
+                      alert("Booking is being edited by another user");
                     }
                     return false;
                   }
                 });
-              } else if (event.type == "unavailable") {
-                $("#edit_unavailable_start").val(start_time);
-                $("#edit_unavailable_end").val(end_time);
-                $("#edit_unavailable_title").val(title);
-                $("#edit_unavailable_event_id").val(id);
-                $('#edit_unavailable_date').datepicker("enable");
-                $('#edit_unavailable_date').val(start_date);
-                $('#edit_unavailable_div').dialog('option', 'title', 'Unavailable: ' + event.title);
-                dialog_open = true;
-                $("#edit_unavailable_div").dialog("open");
+
               }
             }
           },
-          events : '/calendar/events.json/'
+          events : '/calendar/user_events.json/' + user_id
         });
-
         $('#select_dialog').dialog({
           autoOpen : false,
           width : 400,
-          closeOnEscape: false,
           modal : true,
+          closeOnEscape: false,
           resizable : true,
           buttons : [{
             text : "Edit",
@@ -449,7 +365,7 @@
             text : "Confirm",
             "id" : "btnConfirm",
             click : function() {
-               var url = "/../../confirm_booking/0/";
+              var url = '/../../confirm_booking/' + user_id + '/';
               $.ajax({
                 url: url,
                 type:'POST',
@@ -474,7 +390,6 @@
             click : function() {
               $(this).dialog("close");
               dialog_open = false;
-
               $.ajax({
                 url : "/../../unlock_request/",
                 type : 'POST',
@@ -495,30 +410,30 @@
             text : "Reject",
             "id" : "btnReject",
             click : function() {
-               var url = "/../../reject_booking/0/";
+              var url = '/../../reject_booking/' + user_id + '/';
               $.ajax({
-                url: url,
-                type:'POST',
-                data: {
-                  edit_start_date: $("#datePicker_start_edit").val(),
-                  edit_start:$("#edit_start").val(),
-                  edit_end: $("#edit_end").val(),
-                  edit_title: $("#edit_title").val(),
-                  edit_event_id:$("#edit_event_id").val()
-                },
-                success: function(data) {
-                  console.log("1");
-                }
-              });
-              $(this).dialog("close");
-              $('#calendar').fullCalendar('refetchEvents');
-              dialog_open = false;
-            }
+                  url: url,
+                  type:'POST',
+                  data: {
+                    edit_start_date: $("#datePicker_start_edit").val(),
+                    edit_start:$("#edit_start").val(),
+                    edit_end: $("#edit_end").val(),
+                    edit_title: $("#edit_title").val(),
+                    edit_event_id:$("#edit_event_id").val()
+                  },
+                  success: function(data) {
+                    console.log("1");
+                  }
+                });
+                $(this).dialog("close");
+                $('#calendar').fullCalendar('refetchEvents');
+                dialog_open = false;
+              }
           }, {
             text : "Delete",
             "id" : "btnDelete",
             click : function() {
-               var url = "/../../delete_booking/0/";
+              var url = '/../../delete_booking/' + user_id + '/';
               $.ajax({
                 url: url,
                 type:'POST',
@@ -543,15 +458,15 @@
         $('#edit_booking').dialog({
           autoOpen : false,
           width : 400,
-          closeOnEscape: false,
           modal : true,
+          closeOnEscape: false,
           resizable : true,
           closeOnButton : false,
           buttons : [{
             text : "Submit",
             "id" : "btnSubmit",
             click : function() {
-               var url = "/../../update_booking/0/";
+              var url = '/../../update_booking/' + user_id + '/';
               $.ajax({
                 url: url,
                 type:'POST',
@@ -597,15 +512,14 @@
         $('#edit_session').dialog({
           autoOpen : false,
           width : 400,
-          closeOnEscape: false,
           modal : true,
+          closeOnEscape: false,
           resizable : true,
           buttons : [{
             text : "Submit",
             "id" : "btnSessionSubmit",
             click : function() {
-
-               var url = "/../../update_session/0/";
+              var url = '/../../update_session/' + user_id + '/';
               $.ajax({
                 url: url,
                 type:'POST',
@@ -652,8 +566,7 @@
             text : "Delete",
             "id" : "btnSessionDelete",
             click : function() {
-
-               var url = "/../../delete_session/0/";
+              var url = '/../../delete_session/' + user_id + '/';
               $.ajax({
                 url: url,
                 type:'POST',
@@ -672,98 +585,40 @@
               $('#calendar').fullCalendar('refetchEvents');
               dialog_open = false;
               $(this).dialog("close");
-
             }
           }]
         });
-        
-        
-        $('#edit_unavailable_div').dialog({
+
+        $('#add_booking').dialog({
           autoOpen : false,
           width : 400,
-          closeOnEscape: false,
           modal : true,
-          resizable : true,
-          buttons : [{
-            text : "Submit",
-            "id" : "btnUnavailableSubmit",
-            click : function() {
-               var url = "/../../update_unavailable/";
-              $.ajax({
-                url: url,
-                type:'POST',
-                data: {
-                  edit_unavailable_event_id: $("#edit_unavailable_event_id").val(),
-                  edit_unavailable_date:$("#edit_unavailable_date").val(),
-                  edit_unavailable_end: $("#edit_unavailable_end").val(),
-                  edit_unavailable_start: $("#edit_unavailable_start").val(),
-                  edit_unavailable_title:$("#edit_unavailable_title").val()
-                },
-                success: function(data) {
-                  console.log(data);
-                }
-              });
-
-
-
-
-
-
-
-              $(this).dialog("close");
-              $('#calendar').fullCalendar('refetchEvents');
-              dialog_open = false;
-              //return true;
-            },
-          }, {
-            text : "Cancel",
-            "id" : "btnUnavailableCancel",
-            click : function() {
-              $(this).dialog("close");
-              dialog_open = false;
-              return false;
-            },
-          }, {
-            text : "Delete",
-            "id" : "btnUnavailableDelete",
-            click : function() {
-
-               var url = "/../../delete_unavailable/";
-              $.ajax({
-                url: url,
-                type:'POST',
-                data: {
-                  edit_unavailable_event_id: $("#edit_unavailable_event_id").val(),
-                  edit_unavailable_date:$("#edit_unavailable_date").val(),
-                  edit_unavailable_end: $("#edit_unavailable_end").val(),
-                  edit_unavailable_start: $("#edit_unavailable_start").val(),
-                  edit_unavailable_title:$("#edit_unavailable_title").val()
-                },
-                success: function(data) {
-                  console.log(data);
-                }
-              });
-              $(this).dialog("close");
-              $('#calendar').fullCalendar('refetchEvents');
-              dialog_open = false;
-            }
-          }]
-        });
-        $('#add_unavailable_div').dialog({
-          autoOpen : false,
-          width : 400,
           closeOnEscape: false,
-          modal : true,
           resizable : true,
           buttons : [{
             text : "Submit",
             "id" : "btnAddSubmit",
             click : function() {
-              $("#add_unavailable").submit();
-              $(this).dialog("close");
+              var url = '/../../add_booking/' + user_id + '/';
+              $.ajax({
+                url: url,
+                type:'POST',
+                data: {
+                  date: $("#id_date").val(),
+                  start_time:$("#id_start_time").val(),
+                  finish_time: $("#id_finish_time").val(),
+                  UoS: $("#id_UoS").val(),
+                  description:$("#id_description").val()
+                },
+                success: function(data) {
+                  console.log("1");
+                  //console.log(data);
+                }
+              });
               $('#calendar').fullCalendar('refetchEvents');
               dialog_open = false;
-            }
+              $(this).dialog("close");
+            },
           }, {
             text : "Cancel",
             "id" : "btnAddCancel",
@@ -783,83 +638,16 @@
         });
         $('#id_date').datepicker("disable");
         $('#datePicker_start_edit').datepicker("disable");
-        $('#datePicker_session_start_edit').datepicker("disable");
-        $('#edit_unavailable_date').datepicker("disable");
-        $('#add_unavailable_date').datepicker("disable");
+        $('#datePicker_session_start_edit').datepicker("close");
         $('#a').click(function() {
-          $('#add_unavailable').dialog('close');
-          $('#edit_unavailable').dialog('close');
-          $('#select_dialog').dialog('close');
+          $('#add_booking').dialog('close');
           $('#edit_booking').dialog('close');
           $('#edit_session').dialog('close');
         });
-        function myFunction() {
-          alert("Hello World!");
-        }
-
-        /*
-         $("#edit_drop").submit(function(){
-         console.log("submitted");
-         $('#edit_drop').action = '/../../drop_event/' + user_id + '/';
-         $.ajax({
-         url : '/../../drop_event/' + user_id + '/',
-         type : 'POST',
-         data : {
-         dayDelta : $("#dayDelta").val(),
-         minuteDelta : $("#minuteDelta").val(),
-         drop_event_id: $("#drop_event_id").val(),
-         eventType: $("#eventType").val()
-         },
-         success : function(data) {
-
-         if (data == "1") {
-         //console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
-         console.log("dropped");
-         }
-         return false;
-         }
-         });
-         });*/
 
       });
-
-      $("#add_unavailable").submit(function() {
-
-        var url = "/../../add_unavailable/";
-        // the script where you handle the form input.
-
-        $.ajax({
-          type : "POST",
-          url : url,
-          data : $("#add_unavailable").serialize(), // serializes the form's elements.
-          success : function(data) {
-            return true;
-            // show response from the php script.
-          }
-        });
-
-        return false;
-        // avoid to execute the actual submit of the form.
-      });
-
-      /*
-      $("#_unavailable").submit(function() {
-
-      var url = "/../../add_unavailable/"; // the script where you handle the form input.
-
-      $.ajax({
-      type: "POST",
-      url: url,
-      data: $("#add_unavailable").serialize(), // serializes the form's elements.
-      success: function(data)
-      {
-      return true;// show response from the php script.
-      }
-      });
-
-      return false; // avoid to execute the actual submit of the form.
-      });*/
       //]]>
     </script>
+
 {%endblock %}
 

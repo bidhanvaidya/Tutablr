@@ -21,7 +21,7 @@
     </style>
 {% endblock %}
 {% block content %}
-    <h3 id="timetable-title" >My Timetable</h3>
+    <h2 id="dashboard-title" >My Dashboard</h2>
     <div id="timetable-content" class="row-fluid">
                 <div id="timetable" class="span9">
                     <div id = "calendar"></div>
@@ -55,7 +55,7 @@
           
 
             </div>
-    </div>
+
 {% endblock %}
 
 {% block navigation-bar %} {# Navigation Bar #}
@@ -89,7 +89,6 @@
 {% endblock %}
 
 {%block extra_scripts%}
-
   <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
     <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
     <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
