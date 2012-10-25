@@ -74,8 +74,8 @@ def radians(x):
 #0 is latitude, 1 is longitude
 def haversine(p1, p2):
         R = 6371; #radians of earth in km
-        print p2
-        print p1
+        #print p2
+        #print p1
         dLat  = radians(p2[0] - p1[0])
         dLong = radians(p2[1] - p1[1])
 
@@ -96,6 +96,44 @@ class eligibleTutorResult:
 		self.timetable_url=timetable_url
 		self.profile_url=profile_url
 	
+
+@login_required
+def edit_tutoring_subjects2(request):
+	if request.method == 'POST': 
+		uos = request.POST.get('UoS')
+		price = request.POST.get('price')
+		is_tutoring = request.POST.get('is_tutoring')
+		if is_tutoring is not None:
+			is_tutoring = True
+		else:
+			is_tutoring = False
+		UoS = UOS.objects.filter(unit_id = uos)
+		u = UnitDetails.objects.filter(user_id = request.user, unit_id = UoS)[0]
+		u.price = price
+		u.is_tutoring = is_tutoring
+		u.save()
+		form = tutorSubjectsForm(user_id =request.user.id)
+	else:
+		form = tutorSubjectsForm(user_id =request.user.id)
+
+	return render(request, "edit_tutor_details.html", { 'form': form})
+
+
+@login_required
+def edit_tutoring_subjects(request):
+	if request.method == 'POST':
+		return HttpRespose("1");
+	else:
+
+		u = UnitDetails.objects.filter(user_id = request.user)
+		print u
+		return render_to_response("edit_tutor_details.html",
+		{"units":u,},
+		context_instance = RequestContext(request)
+		)		
+			
+
+
 @login_required
 def tutor_search(request):
 	eligible_tutors = []
@@ -110,13 +148,13 @@ def tutor_search(request):
 	#grade_from = request.POST.get('grade_from')
 			students_only = request.POST.get('students_only')
 			rating_from = request.POST.get('rating_from')
-			print user_id
-			print unit
-			print price_from
-			print price_to
-			print distance_in_kms
-			print students_only
-			print rating_from
+			#print user_id
+			#print unit
+			#print price_from
+			#print price_to
+			#print distance_in_kms
+			#print students_only
+			#print rating_from
 			
 			if students_only is not None:
 			#current student
@@ -125,10 +163,11 @@ def tutor_search(request):
 			#all possible tutors
 					eligible_tutors = User.objects.exclude(id = request.user.id)
 			#between prices & for UoS
-			eligible_tutors = list(set(eligible_tutors).intersection(set([e.user_id for e in UnitDetails.objects.filter(unit_id__unit_id = unit, price__gte=price_from, price__lte=price_to, is_tutorable=True)])))  
+			eligible_tutors = list(set(eligible_tutors).intersection(set([e.user_id for e in UnitDetails.objects.filter(unit_id__unit_id = unit, price__gte=price_from, price__lte=price_to, is_tutorable=True, is_tutoring=True)])))  
 			#rating
+			eligible_tutors_copy = list(eligible_tutors)
 			if int(rating_from) > 0:
-					for t in eligible_tutors:
+					for t in eligible_tutors_copy:
 							ratings = [r.rating for r in Review.objects.filter(tutor_id__id = t.id)]
 							if len(ratings) > 0:
 									avg_rating = float(sum(ratings))/float(len(ratings))
@@ -136,23 +175,34 @@ def tutor_search(request):
 											eligible_tutors.remove(t)
 							else:
 											eligible_tutors.remove(t)
+			del eligible_tutors_copy
 			#distance 
+			eligible_tutors_copy = list(eligible_tutors)
 			if int(distance_in_kms) != 1000:
+					print "in this statement"
 					user_location = [[l.latitude, l.longitude] for l in Location.objects.filter(user_id__id=request.user.id)]
-					print len(user_location)
+					#print len(user_location)
 					if len(user_location) != 0:
-							for t in eligible_tutors:
-									found = False
-									tutor_location = [[l.latitude, l.longitude] for l in TutoringLocation.objects.filter(user_id__id=t.id)]
-									if len(tutor_location) == 0:
-										eligible_tutors.remove(t)
-									else:
-										for l in tutor_location:
-											if haversine(user_location, tutor_location[0]) < distance_in_kms:
-												found = True
-												break
-										if not found:
-											eligible_tutors.remove(t)	
+						for t in eligible_tutors_copy:
+							print t
+						for t in eligible_tutors_copy:
+							print "iterating tutors"
+							print t
+							found = False
+							tutor_location = [[l.latitude, l.longitude] for l in TutoringLocation.objects.filter(user_id__id=t.id)]
+							if len(tutor_location) == 0:
+								print "length 0 " + str(t)
+								eligible_tutors.remove(t)
+							else:
+								for l in tutor_location:
+									a = int(haversine(user_location[0], l))
+									b =  int(distance_in_kms)
+									if a < b:
+										found = True
+										break
+								if not found:
+									eligible_tutors.remove(t)
+			del eligible_tutors_copy
 																							
 			for t in eligible_tutors:
 				id = t.id

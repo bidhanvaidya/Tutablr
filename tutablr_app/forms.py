@@ -82,11 +82,24 @@ class searchForm(forms.Form):
         def __init__(self, *args, **kwargs):
                 user_id=kwargs.pop('user_id',0)
                 super(searchForm, self).__init__(*args, **kwargs)
-                uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in Enrolled.objects.filter(user_id = int(user_id), is_complete=False)]
+                uos_choices = [(o.unit_id, str(o.unit_id)) for o in UOS.objects.all()]
+                print uos_choices
+                if len(uos_choices) > 0:
+                        self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), choices=uos_choices, required=True)
+
+class tutorSubjectsForm(forms.Form):
+        UoS = forms.ChoiceField(label="Unit of Study")
+        is_tutoring = forms.BooleanField(label="I want to tutor for this UoS")
+        price = forms.IntegerField(label="Price To ($)", required=False)
+        def __init__(self, *args, **kwargs):
+                user_id=kwargs.pop('user_id',0)
+                super(tutorSubjectsForm, self).__init__(*args, **kwargs)
+                uos_choices = [(o.unit_id.unit_id, str(o.unit_id.unit_id)) for o in UnitDetails.objects.filter(user_id__id = int(user_id))]
                 print uos_choices
                 if len(uos_choices) > 0:
                         self.fields['UoS'] = forms.ChoiceField(widget = forms.Select(), choices=uos_choices, required=True)
         
+ 
 class LocationForm (ModelForm):
         class Meta:
                 model = Location
