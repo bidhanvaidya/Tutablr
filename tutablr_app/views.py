@@ -1,7 +1,8 @@
 # Create your views here.
+from django.db.models import Avg
 from django import http
 from django.utils import simplejson as json
-from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails, Location
+from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails, Location, Review
 from tutablr_app.forms import *
 from django.shortcuts import render_to_response
 from django.utils import timezone
@@ -10,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
+from django import template
 import time, datetime
 from postman.models import Message, STATUS_ACCEPTED
 import tutablr
@@ -18,7 +19,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from math import cos, sin, tan, atan2, sqrt
-
+register = template.Library()
 booking_locks = {}
 session_locks = {}
 
@@ -1259,3 +1260,45 @@ def locationSelector(request):
 			context_instance = RequestContext(request)
 		)
 """
+@login_required
+def reviews(request):
+	if request.method == "POST":
+		print request.POST
+		id= request.POST.get("tutor_id")
+		print id
+		tutor= User.objects.get(pk=id)
+		review= Review(rating= request.POST.get("rating"),
+			comment=request.POST.get("comment"),
+			student_id= request.user,
+			tutor_id = tutor)
+		review.save()
+		return redirect("/reviews")
+	else:	
+		sessions= SessionTime.objects.filter(student_id= request.user)
+		user= request.user
+
+		
+		tutors=User.objects.exclude(id= user.id)
+		
+		u=User.objects.all()
+		final_list= list(set(tutors).intersection(set([e.tutor_id for e in sessions])))
+		print final_list
+		reviews= Review.objects.filter(student_id = request.user)
+		reviewed_tutors= list(set(tutors).intersection(set([e.tutor_id for e in reviews])))
+		
+		print reviewed_tutors
+		to_be_reviewed = list(set(final_list).difference(set(reviewed_tutors)))
+
+		for rrr in reviewed_tutors:
+			rrr.reviews = Review.objects.filter(tutor_id= rrr) 
+		print to_be_reviewed
+		return render_to_response('reviews.html', locals(),context_instance = RequestContext(request))
+@login_required
+def user_reviews(request, cal_id):
+		user_id = request.user.id
+		reviews = Review.objects.filter(tutor_id=cal_id)
+		for user in reviews:
+			user.reviews = User.objects.filter(id= user.student_id.id)
+		print user.reviews
+		average=Review.objects.filter(tutor_id=cal_id).aggregate(Avg('rating'))
+		return render_to_response('user_reviews.html', locals(),context_instance = RequestContext(request))

@@ -1,0 +1,133 @@
+{% extends "base_logged_out.html" %}
+{% load i18n %}
+
+{% block extra_head %}
+<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}tutablr/css/reviews.css' />
+{% endblock %}
+{% block content %}
+My reviews<br>
+
+
+<table class= "table table-striped">
+<tr>
+  <th>Details</th>
+  
+  <th>Review</th>
+  
+
+</tr>
+
+<tr>
+  {% for tutor in reviewed_tutors %}
+  <td><a href="/profiles/{{tutor.username}}">{{tutor.username}}</a></br>
+{{tutor.first_name}} {{tutor.last_name}}</td>     
+{% for review in tutor.reviews %}
+               
+  <td> {{ review.rating }}</br>
+  {{ review.comment }}</td>
+              
+ {% endfor %}
+    
+</tr>
+{%endfor%}
+{% for tutor in to_be_reviewed %}
+<tr>
+<td>{{tutor.username}}</td>
+<td><button type="button" id ="reviewButton">Rate Me!</button> </td>
+<div id = "dialog" title= "Ratings"><form action="/reviews" class = "form-horizontal"  method="post">
+
+        {% csrf_token %}
+        <legend>Rate</legend>
+        <fieldset>
+          <div class="control-group">
+          <label class="control-label" >Rating</label>
+          <div class="controls">
+            <input type="text" id="rating" name="rating" placeholder="Rating" min="1" max="5">
+          </div>
+        </div>
+          <div class="control-group">
+            <label class="control-label" for="Comments">Comments</label>
+          <div class="controls">
+            <textarea name="comment" placeholder="Comment"></textarea>
+          </div>
+        </div>
+    
+         
+          <input type="hidden" name="tutor_id" id="tutor_id" class="text ui-widget-content ui-corner-all" required="required" value= "{{tutor.id}}"/>
+        </fieldset>
+        <input type="submit" value="Yes" id ="btnReview"   method= "POST" class = "btn">
+        <button type="Cancel"  id ="cancel" name = "cancel"  class = "btn">cancel</button>
+      </form>
+
+</div>
+</tr>
+
+
+
+{%endfor%}
+</table>
+<div class="classification"><div class="cover"></div><div class="progress" style="width: 27%;"></div></div>
+
+
+{% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+    <ul class="nav">
+        <li class="active"><a href="/dashboard">My Dashboard</a></li>
+        <li><a href="/calendar">My Timetable</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/messages/inbox">Inbox</a></li>
+              <li><a href="/messages/sent">Sent</a></li>
+              <li><a href="/messages/archives/">Archive</a></li>
+              <li><a href="/messages/trash">Trash</a></li>
+              <li><a href="/messages/write">Write Message</a></li>
+            </ul>
+         </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Edit Locations</a></li>
+              <li><a href="#">Edit Tutorable Subjects</a></li>
+              <li><a href="#">Add Review</a></li>
+              <li class="divider"></li>
+              <li class="nav-header">My Profile</li>
+              <li><a href="#">View Profile</a></li>
+              <li><a href="#">Edit Profile</a></li>
+            </ul>
+         </li>
+        <li><a href="/">Find a Tutor</a></li>
+    </ul>
+    
+
+{% endblock %}
+
+{%block extra_scripts%}
+    <script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+    <script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+
+<script type="text/javascript"> 
+    
+    $(document).ready(function(){
+    $('#dialog').dialog({
+          autoOpen : false,
+          width : 400,
+          closeOnEscape: false,
+          modal : true,
+          resizable : true,
+          closeOnButton : false,
+          
+        });
+    $("#reviewButton").click(function(){
+        $("#dialog").dialog("open");
+        return false;
+    });
+     $("#cancel").click(function(){
+        $("#dialog").dialog("close");
+        return false;
+    });
+});
+        </script>
+{%endblock %}
+
