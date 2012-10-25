@@ -125,7 +125,7 @@
 				<input  type= "submit" formaction= "/../delete_unavailable" id ="SubmitDeleteUnavailable" style="display:none">
 			</form>
 		</div>
-		<div id="edit_drop-PENIS" title="Edit Drop" style="display:none">
+		<div id="edit_drop-div" title="Edit Drop" style="display:none">
 			<form id="edit_drop" name="editDropForm" action="#"  method="post">
 				{% csrf_token %}
 				<fieldset>
@@ -752,6 +752,12 @@
 					dateFormat : 'dd/mm/yy'
 				});
 				$("#datePicker_session_start_edit").datepicker({
+					dateFormat : 'dd/mm/yy'
+				});
+				$("#edit_unavailable_date").datepicker({
+					dateFormat : 'dd/mm/yy'
+				});
+				$("#add_unavailable_date").datepicker({
 					dateFormat : 'dd/mm/yy'
 				});
 				$("#id_date").datepicker({
