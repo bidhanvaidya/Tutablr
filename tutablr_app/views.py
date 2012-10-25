@@ -259,9 +259,13 @@ def calendar(request):
 			'editable' : True,
 			'type' : 'tutor_booking',
 			'session_id' : session_id,
+			'student_id': booking.student_id.username,
 			'creator_id' : booking.creator_id.id,
 			'creator' : booking.creator_id.username,
+			'tutor_id' : booking.tutor_id.id, 
+			
             })
+        print booking.student_id
         for booking in student_bookings:
 			draggable = False
 			border_color = '#fffd79'
@@ -293,7 +297,9 @@ def calendar(request):
             		'type' : 'student_booking',
 			'session_id' : session_id,
 			'creator_id' : booking.creator_id.id,
-			'creator' : booking.creator_id.username
+			'creator' : booking.creator_id.username,
+			'tutor_id' : booking.tutor_id.username, 
+			'student_id': booking.student_id.username
             })
         # unavailable times---------------------------------------------------------------
         for ut in unavailable_times:
@@ -341,7 +347,10 @@ def calendar(request):
 			'draggable' : True,
 			'editable' : True,
 			'pending' : pending,
-			'type' : 'tutor_session'
+			'type' : 'tutor_session',
+			'creator' : booking.creator_id.username,
+			'tutor_id' : session.tutor_id.username, 
+			'student_id': session.student_id.username
 			})
         # end of tutor sessions---------------------------------------------------------------  
         # for student sessions---------------------------------------------------------------
@@ -370,7 +379,10 @@ def calendar(request):
 			'draggable' : True,
 			'editable' : True,
 			'pending' : pending,
-			'type' : 'student_session'
+			'type' : 'student_session',
+			'creator' : booking.creator_id.username,
+			'tutor_id' : session.tutor_id.username, 
+			'student_id': session.student_id.username
 			})
         # # end of student sessions---------------------------------------------------------------  
         # # for class times-----------------------------------------------------------------------
@@ -440,7 +452,9 @@ def user_calendar(request, cal_id):
 				'draggable' : draggable,
 				'session_id' : session_id,
 				'creator_id' : booking.creator_id.id,
-				'creator' : booking.creator_id.username
+				'creator' : booking.creator_id.username,
+				'tutor_id' : booking.tutor_id.username, 
+			'student_id': booking.student_id.username
 				})
 			else:
 				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
@@ -490,7 +504,9 @@ def user_calendar(request, cal_id):
 				'draggable' : draggable,
 				'type' : 'student_booking',
 				'session_id' : session_id,
-				'creator_id' : booking.creator_id.id
+				'creator_id' : booking.creator_id.id,
+				'tutor_id' : booking.tutor_id.username, 
+				'student_id': booking.student_id.username
 				})
 			else:
 				booking_start = booking.start_time.astimezone(timezone.get_default_timezone())
@@ -506,7 +522,9 @@ def user_calendar(request, cal_id):
 				'editable' : False,
 				'type' : 'tutor_booking',
 				'session_id' : session_id,
-				'creator_id' : booking.creator_id.id
+				'creator_id' : booking.creator_id.id,
+				'tutor_id' : booking.tutor_id.username, 
+			'student_id': booking.student_id.username
 				})
 		# unavailable times---------------------------------------------------------------
 		for ut in unavailable_times:
@@ -550,7 +568,9 @@ def user_calendar(request, cal_id):
 				'draggable' : True,
 				'editable' : True,
 				'pending' : pending,
-				'type' : 'tutor_session'
+				'type' : 'tutor_session',
+				'tutor_id' : session.tutor_id.username, 
+				'student_id': session.student_id.username
 				})
 			else:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
@@ -564,7 +584,9 @@ def user_calendar(request, cal_id):
 				'backgroundColor' :  '#ff282a',
 				'borderColor' : '#ff282a',
 				'editable' : False,
-				'type' : 'student_session'
+				'type' : 'student_session',
+				'tutor_id' : session.tutor_id.username, 
+				'student_id': session.student_id.username
 				})
 		# end of tutor sessions---------------------------------------------------------------  
 		# for student sessions---------------------------------------------------------------
@@ -594,7 +616,9 @@ def user_calendar(request, cal_id):
 				'draggable' : True,
 				'editable' : True,
 				'pending' : pending,
-				'type' : 'student_session'
+				'type' : 'student_session',
+				'tutor_id' : session.tutor_id.username, 
+				'student_id': session.student_id.username
 				})
 			else:
 				session_start = session.start_time.astimezone(timezone.get_default_timezone())
@@ -609,7 +633,9 @@ def user_calendar(request, cal_id):
 				'backgroundColor' :  '#ff282a',
 				'borderColor' : '#ff282a',
 				'editable' : False,
-				'type' : 'student_session'
+				'type' : 'student_session',
+				'tutor_id' : session.tutor_id.username, 
+				'student_id': session.student_id.username
 				})
 		# # end of student sessions---------------------------------------------------------------  
 		# # for class times-----------------------------------------------------------------------
@@ -1080,54 +1106,52 @@ def update_session(request, cal_id):
 			student = session.student_id
 			tutor = session.tutor_id
 			print "BBB"
+			print request.user.id
+			print session
 			if student.id== request.user.id or tutor.id== request.user.id:
+				print "AAA"
 				start= request.POST.get('edit_session_start_date') + " " + request.POST.get('edit_session_start')
 				start= time.strptime(start, "%d/%m/%Y %H:%M")
 				start_datetime= datetime.datetime(*start[:6])
 				end=  request.POST.get('edit_session_start_date') + " "+ request.POST.get('edit_session_end')
+				print "check1"
 				end= time.strptime(end, "%d/%m/%Y %H:%M")
 				end_datetime= datetime.datetime(*end[:6])
-				session_start_time=timezone.make_aware(session.start_time, timezone.get_default_timezone()) + datetime.timedelta(0,39600)
-				calendar_start= timezone.make_aware(start_datetime, timezone.get_default_timezone())
-				session_end_time= timezone.make_aware(session.finish_time, timezone.get_default_timezone()) + datetime.timedelta(0,39600)
-				calendar_end= timezone.make_aware(end_datetime, timezone.get_default_timezone())
-				print "AAA"
-				if session_start_time == calendar_start and session_end_time == calendar_end:
-					session.description = request.POST.get('edit_session_title')
-					session.save()
-					
+				print "check"
+				
+				print "check"
+			
+				description = request.POST.get('edit_session_title')
+				now= datetime.datetime.now()
+				if request.POST.get('type') == 'student_session':
+					message= Message(subject=" Deletion of existing session", 
+						body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+						sender=session.student_id, 
+						recipient=session.tutor_id, 
+						moderation_status=STATUS_ACCEPTED, 
+						moderation_date=now)
 				else:
-					description = request.POST.get('edit_session_title')
-					now= datetime.datetime.now()
-					if request.POST.get('type') == 'student_session':
-						message= Message(subject=" Deletion of existing session", 
-							body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-							sender=session.student_id, 
-							recipient=session.tutor_id, 
-							moderation_status=STATUS_ACCEPTED, 
-							moderation_date=now)
-					else:
-						message= Message(subject=" Deletion of existing session", 
-                                body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-                                sender=session.tutor_id, 
-                                recipient=student, 
-                                moderation_status=STATUS_ACCEPTED, 
-                                moderation_date=now)
-					print "HELO WORLD"
-					print session
-					booking = Booking(start_time = start_datetime, 
-						finish_time = end_datetime,
-						creator_id = request.user,
-						session_id = session,
-						description = description,
-						tutor_id = tutor,
-						student_id = student,
-						unit_id = session.unit_id)
-					message.save()
-					booking.save()
-					booking_locks[str(booking.id)] = False
-					#add booking to locks
-				#unlock session
+					message= Message(subject=" Deletion of existing session", 
+                            body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
+                            sender=session.tutor_id, 
+                            recipient=student, 
+                            moderation_status=STATUS_ACCEPTED, 
+                            moderation_date=now)
+				print "HELO WORLD"
+				print session
+				booking = Booking(start_time = start_datetime, 
+					finish_time = end_datetime,
+					creator_id = request.user,
+					session_id = session,
+					description = description,
+					tutor_id = tutor,
+					student_id = student,
+					unit_id = session.unit_id)
+				message.save()
+				booking.save()
+				booking_locks[str(booking.id)] = False
+				#add booking to locks
+			#unlock session
 				unlock(session.id, "session")
 				if cal_id == str(0):
 					return redirect('/calendar/user/' + str(request.user.id) + '/')
@@ -1144,6 +1168,7 @@ def delete_session(request, cal_id):
 		id = request.POST.get('edit_session_event_id')
 		user_id = request.user.id
 		session = SessionTime.objects.get(pk=id)
+		print "jdjdj"
 		now= datetime.datetime.now()
 		if session.student_id.id == request.user.id or session.tutor_id.id == request.user.id:
 			if user_id == session.student_id.id:

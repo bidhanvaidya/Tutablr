@@ -46,17 +46,57 @@
 					<input type="text" name="edit_session_end" id="edit_session_end" class="text ui-widget-content ui-corner-all" required="required" />
 					<br>
 					<label for="title">Event Description</label>
-					<input type="text" name="edit_session_title" id="edit_session_title" class="text ui-widget-content ui-corner-all" />
+					<input type="text" name="edit_session_title" id="edit_session_title" readonly= 'readonly' class="text ui-widget-content ui-corner-all" />
 					<input type="hidden" name="edit_session_event_id" id="edit_session_event_id" class="text ui-widget-content ui-corner-all" required="required" />
 				</fieldset>
 				<input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
 			</form>
 		</div>
+		<div id = "table_edit_session">
+			<table>
+				<tr>
+					<td><label for = "session_creator"> Created By </label></td>
+					<td><div id = "session_creator"></div></td>
+				</tr>
+						<td><label for = "session_student"> Student </label></td>
+					<td><div id = "session_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "session_tutor"> Tutor  </label></td>
+					<td><div id = "session_tutor"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "edit_session_date_start"> Start Date </label></td>
+					<td><div id = "edit_session_date_start"></div></td>
+				</tr>
+
+				<tr>
+					<td><label for="edit_session_start">Start</label></td>
+					<td><div id = "session_start"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="session_end">End Time</label></td>
+					<td><div id = "session_end"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="title">Event Description</label></td>
+					<td><div id = "session_title"></div></td>
+
+				</tr>
+
+			</table>
+		</div>
 		<div id ="select_dialog">
 			<table>
 				<tr>
-					<td><label for = "booking_creator"> Created By </label></td>
-					<td><div id = "booking_creator"></div></td>
+					<td><label for = "booking_student"> Student </label></td>
+					<td><div id = "booking_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "booking_tutor"> Tutor </label></td>
+					<td><div id = "booking_tutor"></div></td>
 				</tr>
 				<tr>
 					<td><label for = "booking_start_date"> Start Date </label></td>
@@ -77,6 +117,10 @@
 					<td><label for="title">Event Description</label></td>
 					<td><div id = "booking_title"></div></td>
 
+				</tr>
+				<tr>
+					<td><label for = "booking_creator"> Created By </label></td>
+					<td><div id = "booking_creator"></div></td>
 				</tr>
 
 			</table>
@@ -284,6 +328,7 @@
 							var end_date = $.fullCalendar.formatDate(event.end, "dd/MM/yyyy");
 							var id = event.id;
 							var title = event.title;
+
 							//tutor session (booking) is session (booking) with a tutor
 							if (event.type == "tutor_session" || event.type == "student_session") {
 								//check for lock
@@ -291,6 +336,7 @@
 								//event_type = "session"
 								//event_id = event.id
 								//receive either "1" = was unlocked but now locked and "0" = already locked.
+
 								if (event.pending) {
 									alert('Session already has a pending edit');
 									return false;
@@ -305,10 +351,18 @@
 									success : function(data) {
 										if (data == "1") {
 											//unlocked but now locked
+											
 											console.log("session " + id + " unlocked");
 											$("#edit_session_start").val(start_time);
 											$("#edit_session_end").val(end_time);
 											$("#edit_session_title").val(title);
+											$("#session_tutor").html(event.tutor_id);
+											$("#session_student").html(event.student_id);
+											$("#session_creator").html(event.creator);
+											$("#session_start").html(start_time);
+											$("#session_end").html(end_time);
+											$("#session_title").html(title);
+											$("#edit_session_date_start").html(start_date)
 											$("#edit_session_event_id").val(id);
 											$('#datePicker_session_start_edit').datepicker("enable");
 											$('#datePicker_session_start_edit').val(start_date);
@@ -316,13 +370,18 @@
 											$('#cancel_event_type').val("session");
 											if (event.type == "tutor_session") {
 												$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+												$('#table_edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
 												//delete, reject, confirm based on creator id
 											} else {
 												//delete, reject, confirm based on creator id
 												$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+												$('#table_edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
 											}
 											dialog_open = true;
-											$("#edit_session").dialog("open");
+											
+											//$("#edit_session").dialog("open");
+											$("#table_edit_session").dialog("open");
+											
 
 										} else {
 											alert("This session is already being edited")
@@ -352,10 +411,15 @@
 											$("#booking_end").html(end_time);
 											$("#booking_title").html(title);
 											$("#booking_creator").html(event.creator);
+											$("#booking_student").html(event.student_id);
+											$("#booking_tutor").html(event.tutor_id);
+											
+											
 											$('#datePicker_start_edit').datepicker("enable");
 											$('#datePicker_start_edit').val(start_date);
 											$('#cancel_event_id').val(id);
 											$('#cancel_event_type').val("booking");
+											dialog_open = true;
 											if (event.type == "tutor_booking") {
 												//delete, reject, confirm based on creator id
 												$('#edit_booking').dialog('option', 'title', 'Edit Tutor Booking: ' + event.title);
@@ -363,22 +427,24 @@
 												//delete, reject, confirm based on creator id
 												$('#edit_booking').dialog('option', 'title', 'Edit Student Booking: ' + event.title);
 											}
+												
 											//console.log(event.creator_id);
 											//console.log(user_id);
 											if (event.creator_id == user_id) {
-												$("#btnDelete").button("enable");
+												$("#btnDelete").show();
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
-											}else if(event.creator_id == undefined){
-												$("#btnDelete").button("enable");
+
 											} else {
-												//console.log("here");
+												
 												$("#btnDelete").hide();
-												$("#btnConfirm").button("enable");
-												$("#btnReject").button("enable");
+												$("#btnConfirm").show();
+												$("#btnReject").show();
+												
 											}
+
 											$('#select_dialog').dialog('option', 'title', 'Booking: ' + event.title);
-											dialog_open = true;
+											
 											$("#select_dialog").dialog("open");
 										} else {
 											console.log("got 0");
@@ -567,6 +633,48 @@
 						},
 					}],
 				});
+				$('#table_edit_session').dialog({
+					autoOpen : false,
+					width : 400,
+					closeOnEscape: false,
+					modal : true,
+					resizable : true,
+					closeOnButton : false,buttons : [{
+						text : "Edit",
+						"id" : "btnEdit3",
+						click : function(e) {
+							$('#edit_session').dialog('open');
+							$(this).dialog('close');
+							dialog_open = true;
+
+						}
+					}, {
+						text : "Cancel",
+						"id" : "btnCancel3",
+						click : function() {
+							$(this).dialog("close");
+							dialog_open = false;
+
+							$.ajax({
+								url : "/../../unlock_request/",
+								type : 'POST',
+								data : {
+									event_type : $('#cancel_event_type').val(),
+									event_id : $('#cancel_event_id').val()
+								},
+								success : function(data) {
+									if (data == "1") {
+										console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+									}
+									return false;
+								}
+							});
+							return false;
+						}
+					 
+					}],
+					
+				});
 				$('#edit_session').dialog({
 					autoOpen : false,
 					width : 400,
@@ -575,7 +683,7 @@
 					resizable : true,
 					buttons : [{
 						text : "Submit",
-						"id" : "btnSessionSubmit",
+						"id" : "SubmitEditSession",
 						click : function() {
 
 							 var url = "/../../update_session/0/";
@@ -590,7 +698,7 @@
 									edit_session_event_id:$("#edit_session_event_id").val()
 								},
 								success: function(data) {
-									console.log("1");
+									console.log("hello");
 									//console.log(data);
 								}
 							});
