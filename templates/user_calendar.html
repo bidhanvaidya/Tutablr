@@ -150,6 +150,13 @@
 											$("#edit_session_start").val(start_time);
 											$("#edit_session_end").val(end_time);
 											$("#edit_session_title").val(title);
+											$("#session_tutor").html(event.tutor_id);
+											$("#session_student").html(event.student_id);
+											$("#session_creator").html(event.creator);
+											$("#session_start").html(start_time);
+											$("#session_end").html(end_time);
+											$("#session_title").html(title);
+											$("#edit_session_date_start").html(start_date)
 											$("#edit_session_event_id").val(id);
 											$('#datePicker_session_start_edit').datepicker("enable");
 											$('#datePicker_session_start_edit').val(start_date);
@@ -157,14 +164,17 @@
 											$('#cancel_event_type').val("session");
 											if (event.type == "tutor_session") {
 												$('#edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+												$('#table_edit_session').dialog('option', 'title', 'Edit Tutor Session: ' + event.title);
+
 												//delete, reject, confirm based on creator id
 											} else {
 												//delete, reject, confirm based on creator id
 												$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
+												$('#table_edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
 											}
 											$("#edit_session").dialog("open");
 											dialog_open = true;
-
+											$("#table_edit_session").dialog("open");
 										} else {
 											alert("This session is already being edited")
 										}
@@ -192,6 +202,8 @@
 											$("#booking_end").html(end_time);
 											$("#booking_title").html(title);
 											$("#booking_creator").html(event.creator);
+											$("#booking_student").html(event.student_id);
+											$("#booking_tutor").html(event.tutor_id);
 											$('#datePicker_start_edit').datepicker("enable");
 											$('#datePicker_start_edit').val(start_date);
 											$('#cancel_event_id').val(id);
@@ -341,7 +353,48 @@
 					}],
 				});
 
-				$('#edit_booking').dialog({
+		$('#table_edit_session').dialog({
+							autoOpen : false,
+							width : 400,
+							closeOnEscape: false,
+							modal : true,
+							resizable : true,
+							closeOnButton : false,buttons : [{
+								text : "Edit",
+								"id" : "btnEdit3",
+								click : function(e) {
+									$('#edit_session').dialog('open');
+									$(this).dialog('close');
+									dialog_open = true;
+
+								}
+							}, {
+								text : "Cancel",
+								"id" : "btnCancel3",
+								click : function() {
+									$(this).dialog("close");
+									dialog_open = false;
+
+									$.ajax({
+										url : "/../../unlock_request/",
+										type : 'POST',
+										data : {
+											event_type : $('#cancel_event_type').val(),
+											event_id : $('#cancel_event_id').val()
+										},
+										success : function(data) {
+											if (data == "1") {
+												console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+											}
+											return false;
+										}
+									});
+									return false;
+								}
+							}],
+							
+						});
+						$('#edit_booking').dialog({
 					autoOpen : false,
 					width : 400,
 					modal : true,
@@ -584,6 +637,13 @@
 					<td><label for = "booking_creator"> Created By </label></td>
 					<td><div id = "booking_creator"></div></td>
 				</tr>
+						<td><label for = "booking_student"> Student </label></td>
+					<td><div id = "booking_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "booking_tutor"> Tutor </label></td>
+					<td><div id = "booking_tutor"></div></td>
+				</tr>
 				<tr>
 					<td><label for = "booking_start_date"> Start Date </label></td>
 					<td><div id = "booking_start_date"></div></td>
@@ -602,6 +662,42 @@
 				<tr>
 					<td><label for="title">Event Description</label></td>
 					<td><div id = "booking_title"></div></td>
+
+				</tr>
+
+			</table>
+		</div>
+		<div id = "table_edit_session">
+			<table>
+				<tr>
+					<td><label for = "session_creator"> Created By </label></td>
+					<td><div id = "session_creator"></div></td>
+				</tr>
+						<td><label for = "session_student"> Student </label></td>
+					<td><div id = "session_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "session_tutor"> Tutor  </label></td>
+					<td><div id = "session_tutor"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "edit_session_date_start"> Start Date </label></td>
+					<td><div id = "edit_session_date_start"></div></td>
+				</tr>
+
+				<tr>
+					<td><label for="edit_session_start">Start</label></td>
+					<td><div id = "session_start"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="session_end">End Time</label></td>
+					<td><div id = "session_end"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="title">Event Description</label></td>
+					<td><div id = "session_title"></div></td>
 
 				</tr>
 
@@ -659,5 +755,6 @@
 			</form>
 		</div>
 		<div id='calendar'></div>
+				<p><a href="/dashboard" title="Back to Dashboard">Back to Dashboard</a></p>
 	</body>
 </html>

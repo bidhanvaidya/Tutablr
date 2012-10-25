@@ -64,7 +64,7 @@
 					var t = new Object();
 					var rating = "N/A"
 					if (parseFloat("{{tutor.rating}}") != 0) {
-						rating = str(parseFloat("{{tutor.rating}}")) + '/5';
+						rating = parseFloat("{{tutor.rating}}");
 					}
 
 					var contentString = '<div id={{tutor.username}}>' + '<h4 id="firstHeading" class="firstHeading">User: {{tutor.username}}</h4>' + '<p>Price: ${{tutor.price}}/hour</p>' + '<p>Average Rating: ' + rating + '</p>' + '<p>Distance: {{tutor.distance_in_kms}}kms</p>' + '<p><a href={{tutor.profile_url}}> Visit Profile</a></p>' + '<p><a href={{tutor.timetable_url}}>Make Booking</a></p>' + '</div>';

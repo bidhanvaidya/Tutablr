@@ -146,6 +146,13 @@
 											$("#edit_session_start").val(start_time);
 											$("#edit_session_end").val(end_time);
 											$("#edit_session_title").val(title);
+											$("#session_tutor").html(event.tutor_id);
+											$("#session_student").html(event.student_id);
+											$("#session_creator").html(event.creator);
+											$("#session_start").html(start_time);
+											$("#session_end").html(end_time);
+											$("#session_title").html(title);
+											$("#edit_session_date_start").html(start_date)
 											$("#edit_session_event_id").val(id);
 											$('#datePicker_session_start_edit').datepicker("enable");
 											$('#datePicker_session_start_edit').val(start_date);
@@ -158,7 +165,7 @@
 												//delete, reject, confirm based on creator id
 												$('#edit_session').dialog('option', 'title', 'Edit Student Session: ' + event.title);
 											}
-											$("#edit_session").dialog("open");
+											$("#table_edit_session").dialog("open");
 											dialog_open = true;
 
 										} else {
@@ -231,6 +238,49 @@
 					},
 					events : '/calendar/user_events.json/' + user_id
 				});
+	$('#table_edit_session').dialog({
+							autoOpen : false,
+							width : 400,
+							closeOnEscape: false,
+							modal : true,
+							resizable : true,
+							closeOnButton : false,buttons : [{
+								text : "Edit",
+								"id" : "btnEdit3",
+								click : function(e) {
+									$('#edit_session').dialog('open');
+									$(this).dialog('close');
+									dialog_open = true;
+
+								}
+							}, {
+								text : "Cancel",
+								"id" : "btnCancel3",
+								click : function() {
+									$(this).dialog("close");
+									dialog_open = false;
+
+									$.ajax({
+										url : "/../../unlock_request/",
+										type : 'POST',
+										data : {
+											event_type : $('#cancel_event_type').val(),
+											event_id : $('#cancel_event_id').val()
+										},
+										success : function(data) {
+											if (data == "1") {
+												console.log($('#cancel_event_type').val() + " " + $('#cancel_event_id').val() + " unlocked");
+											}
+											return false;
+										}
+									});
+									return false;
+								}
+							
+							}],
+							
+						});
+						
 				$('#select_dialog').dialog({
 					autoOpen : false,
 					width : 400,
@@ -533,7 +583,42 @@
 				<input type="submit" value="Yes" id ="SubmitEditSession" style="display:none">
 			</form>
 		</div>
-		<div id ="select_dialog"></div>
+		<div id = "table_edit_session">
+			<table>
+				<tr>
+					<td><label for = "session_creator"> Created By </label></td>
+					<td><div id = "session_creator"></div></td>
+				</tr>
+						<td><label for = "session_student"> Student </label></td>
+					<td><div id = "session_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "session_tutor"> Tutor  </label></td>
+					<td><div id = "session_tutor"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "edit_session_start_date"> Start Date </label></td>
+					<td><div id = "edit_session_start_date"></div></td>
+				</tr>
+
+				<tr>
+					<td><label for="edit_session_start">Start</label></td>
+					<td><div id = "session_start"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="session_end">End Time</label></td>
+					<td><div id = "session_end"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="title">Event Description</label></td>
+					<td><div id = "session_title"></div></td>
+
+				</tr>
+
+			</table>
+		</div>
 		<div id="edit_booking" title="Edit Booking">
 			<form name="editBookingForm" action="/../../update_booking/"  method="post">
 				<div id="edit_div" style="display:block">
@@ -557,6 +642,42 @@
 				<input type="submit" value="Yes" id ="SubmitEdit" style="display:none">
 			</form>
 		</div>
+		<div id ="select_dialog">
+			<table>
+				<tr>
+					<td><label for = "booking_creator"> Created By </label></td>
+					<td><div id = "booking_creator"></div></td>
+				</tr>
+						<td><label for = "booking_student"> Student </label></td>
+					<td><div id = "booking_student"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "booking_tutor"> Tutor </label></td>
+					<td><div id = "booking_tutor"></div></td>
+				</tr>
+				<tr>
+					<td><label for = "booking_start_date"> Start Date </label></td>
+					<td><div id = "booking_start_date"></div></td>
+				</tr>
+
+				<tr>
+					<td><label for="booking_start">Start</label></td>
+					<td><div id = "booking_start"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="booking_end">End Time</label></td>
+					<td><div id = "booking_end"></div></td>
+
+				</tr>
+				<tr>
+					<td><label for="title">Event Description</label></td>
+					<td><div id = "booking_title"></div></td>
+
+				</tr>
+
+			</table>
+			</div>
 		<div id ="cancel" style="display:none">
 			<form name="cancel" action="/../../unlock/" method="post">
 				{% csrf_token %}
@@ -578,5 +699,6 @@
 			</form>
 		</div>
 		<div id='calendar'></div>
+						<p><a href="/dashboard" title="Back to Dashboard">Back to Dashboard</a></p>
 	</body>
 </html>

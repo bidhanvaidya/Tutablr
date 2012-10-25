@@ -56,7 +56,7 @@ urlpatterns = patterns('',
 	url(r'^dashboard$','tutablr_app.views.dashboard'),
 	url(r'^reviews$','tutablr_app.views.reviews'),
 	url( r'^reviews/users/(?P<cal_id>\d+)/$', 'tutablr_app.views.user_reviews'),
-
+	url(r'^howitworks$',auth_views.login,{'template_name':'howitworks.html'},name='auth_login'),
 	################# LOCATION URLS  #################
 	url(r'^profile/locations$','tutablr_app.views.location'),
 	#url(r'^profile/locations/tutoring/edit$','tutablr_app.views.locationSelector'),

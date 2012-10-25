@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_logged_out.html" %}
 	
 	{% load i18n %}
 	
@@ -43,6 +43,8 @@
 	<br>
 	
 <a href="{% url postman_write profile.user %}"> write to {{ profile.user.first_name }} </a>
-	<p>{% trans "Edit you user profile " %}<a href="/profiles/create/">{% trans "here" %}</a></p>
-	<p>{% trans "Reset your password " %}<a href="/accounts/password/reset/">{% trans "here" %}</a></p>
+	{% if user.id == profile.user.id %}
+		<p><a href="/profiles/edit/">{% trans "Edit you user profile " %}</a></p>
+	{%endif%}
+	<p><a href="/calendar/user/{{profile.user.id}}">{{profile.user.username}}'s Calendar</a></p>
 	{% endblock %}

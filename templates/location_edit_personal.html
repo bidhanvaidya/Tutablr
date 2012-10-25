@@ -4,17 +4,28 @@
 {% block content %}
 
 {% if form%}
+  <div class="span4">
     <form action="/profile/locations/personal/edit" method="POST" accept-charset="utf-8">{% csrf_token %}
-        {{form.as_p}}
+  <legend>Edit Preferred Location</legend>
+  <span class="help-block">Example block-level help text here.</span>
+       <label>Suburb</label>
+        {{form.preferred_suburb}}
+        <label>Longitude</label>
+        {{form.longitude}}
+        <label>Latitude</label>
+        {{form.latitude}}
         <button type="submit"> Save </button>
+  </div>
+        <div id="maps" class="span8">
+              <div id="map_canvas"></div>
+              <input id="address" type="text" name="" value="" placeholder="Address">
+              <button onclick="codeAddress()" id="submit" type="button">Geolocate</button>
+        </div>
     </form>
 {% else %}
   <p>{{response}}</p>
 
 {%endif%}
-        <input id="address" type="text" name="" value="" placeholder="Address">
-        <button onclick="codeAddress()" id="submit" type="button">Geolocate</button>
-        <div id="map_canvas"></div>
 {% endblock %}
 
 {% block extra_scripts %} 

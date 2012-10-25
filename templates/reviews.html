@@ -32,7 +32,7 @@ My reviews<br>
 {%endfor%}
 {% for tutor in to_be_reviewed %}
 <tr>
-<td>{{tutor.username}}</td>
+<td><a href="/profiles/{{tutor.username}}">{{tutor.username}} </a></td>
 <td><button type="button" id ="reviewButton">Rate Me!</button> </td>
 <div id = "dialog" title= "Ratings"><form action="/reviews" class = "form-horizontal"  method="post">
 

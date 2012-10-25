@@ -1,0 +1,141 @@
+#main-container {
+}
+
+#profilepic {
+	position: relative;
+	padding-top: 25px;
+	
+}
+
+#profiletable {
+	position: relative;
+	padding-top: 25px;
+}
+
+#profilemain {
+	padding-top: 20px;
+	padding-bottom: 40px;
+}
+
+#profileuospic {
+	padding-right: 5px;
+}
+
+#tutablrsearch {
+	position: relative;
+	left: 200px;
+	top: -136px;
+	padding-bottom: 30px;
+}
+
+#tutablrsearchoptions {
+	position: relative;
+	padding-bottom: 0px;
+}
+
+
+#priceFrom {
+	padding-left: 75px;
+}
+
+#priceTo {
+	padding-left: 75px;
+}
+
+#searchdistance {
+	position: relative;
+	left: 450px;
+	top: -90px;
+}
+
+#searchresults {
+	position: relative;
+	top: -150px;
+}
+
+#namewidth {
+	text-align: center;
+	width: 150px;
+}
+
+#searchrating {
+	position: relative;
+	left: 650px;
+	top: -130px;
+}
+
+#searchuos {
+	position: relative;
+	left: 850px;
+	top: -170px;
+}
+
+#searchstudent {
+	position: relative;
+	left: 450px;
+	top: -170px;
+	
+}
+
+#searchmaps  {
+	position: relative;
+	padding-bottom: 100px;
+	left: 320px;
+}
+
+P.pricefrom {
+	position: relative;
+	left: 75px;
+}
+
+P.priceto {
+	position: relative;
+	left: 80px;
+}
+
+P.pricedistance {
+	position: relative;
+	left: 80px;
+}
+
+P.pricerating {
+	position: relative;
+	left: 90px;
+}
+
+P.priceuos {
+	position: relative;
+	left: 110px;
+}
+
+#profileuos {
+	position: relative;
+	padding-top: 15px;
+}
+
+#image{
+    height:170px;
+	width:269px;
+	border: 1px solid;
+	border-color:#DDD;
+}
+
+#TuTablr{
+    height:170px;
+    border: 1px solid;
+	border-color:#DDD;
+}
+
+#text{
+    padding-left:20px;
+	padding-right:20px;
+}
+
+#head{
+    padding-left:25px;
+	
+}	
+#footer{
+    background-color:white;
+	width:1210px;
+}	
