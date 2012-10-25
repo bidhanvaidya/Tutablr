@@ -234,7 +234,7 @@
 					aspectRatio : 1.75,
 
 					eventDrop : function(event, dayDelta, minuteDelta, allDay, revertFunc) {
-						if (!event.draggable) {
+						if (!event.draggable || ((event.type == "student_session" || event.type == "tutor_session") && event.pending)) {
 							revertFunc();
 						} else {
 							$.ajax({

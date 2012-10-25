@@ -1,76 +1,235 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
-        <!--<script src="{{STATIC_URL}}tutablr/js/gmaps_location.js"></script>-->
-	 <script type="text/javascript"
-        src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyA9sas6RsHsj-C82MfGafNtxn7tepWvsQo&sensor=true">
-     </script>
-     <script type="text/javascript">
-  function initialize() {
-      if (GBrowserIsCompatible()) {
-        var map = new GMap2(document.getElementById("map_canvas"));
-        map.setUIToDefault();
-        {% if eligible_tutor_results %}
-        var centered = false;
-        {% for tutor in eligible_tutor_results %}
-        	var point = new GLatLng(parseFloat("{{tutor.latitude}}"),  parseFloat("{{tutor.longitude}}")); 
-        	if(!centered){
-        		map.setCenter(point, 13);
-        		centered = true;
-        	}
-        	map.addOverlay(new GMarker(point));
-        {% endfor %}
-        {% else %}
-        	map.setCenter(new GLatLng(-33.8683, 151.2086), 13);
-        {% endif %}
-      }
-    }
-</script>
-        
-    <style type='text/css'>
-/*<![CDATA[*/
+	<head>
+		{% extends "base_logged_out.html" %}
+		{% load i18n %}
 
-    body {
-        margin-top: 40px;
-        text-align: center;
-        font-size: 14px;
-        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
-    }
+		{% block extra_head %}
+		<link rel="stylesheet" href="{{STATIC_URL}}tutablr/css/dashboard.css" />
+		<meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.css' />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.css' />
+		<link rel='stylesheet' type='text/css' href='{{STATIC_URL}}fullcalendar/fullcalendar.print.css' media='print' />
+		{% endblock %}
+		{% block content %}
+		<meta name="generator" content="HTML Tidy for Windows (vers 14 February 2006), see www.w3.org" />
+		<!--<script src="{{STATIC_URL}}tutablr/js/gmaps_location.js"></script>-->
+		<!--<script type="text/javascript"
+		src="http://maps.google.com/maps?file=api&amp;v=3&amp;key=AIzaSyA9sas6RsHsj-C82MfGafNtxn7tepWvsQo&sensor=true">
+		</script>-->
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA9sas6RsHsj-C82MfGafNtxn7tepWvsQo&sensor=false"></script>
+		<script type="text/javascript">
+			var infowindow;
+			(function() {
 
-    #calendar {
-    width: 900px;
-    margin: 0 auto;
-    }
+				google.maps.Map.prototype.markers = new Array();
 
-    /*]]>*/
-    </style>
-    <title></title>
-  </head>
-  <body onload="initialize()" onunload="GUnload()">
- <div id="tutor_search" title="Tutor Search">
-    <form name="searchForm" action="/../../search/" method="post">{% csrf_token %}
-        {{form.as_p}}
-                <input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
-                <input type="submit" value="Find Tutors" id="SubmitAdd"> 
-    </form>
-    </div>
-    <div id="eligible_tutors" title="Eligible Tutors">
-	{% if eligible_tutor_results %}
-		<ul>
-		{% for tutor in eligible_tutor_results %}
-		<HR>
-			Username: {{tutor.username}} | Price: ${{tutor.price}}/hour | Average Rating: {{tutor.rating}}/5 | Distance: {{tutor.distance_in_kms}}kms | Latitude: {{tutor.latitude}} | Longitude: {{tutor.longitude}} | <a href={{tutor.timetable_url}}>Make a Booking</a> | <a href={{tutor.profile_url}}>View Tutor's Profile</a>
-		{% endfor %}
-		<HR>
+				google.maps.Map.prototype.addMarker = function(marker) {
+					this.markers[this.markers.length] = marker;
+				};
+
+				google.maps.Map.prototype.getMarkers = function() {
+					return this.markers
+				};
+
+				google.maps.Map.prototype.clearMarkers = function() {
+					if (infowindow) {
+						infowindow.close();
+					}
+
+					for (var i = 0; i < this.markers.length; i++) {
+						this.markers[i].set_map(null);
+					}
+				};
+			})();
+
+			function initialize() {
+				var latlng = new google.maps.LatLng(-33.8683, 151.2086);
+				var myOptions = {
+					zoom : 13,
+					center : latlng,
+					mapTypeId : google.maps.MapTypeId.ROADMAP
+					//mapTypeId: google.maps.MapTypeId.SATELLITE
+				};
+				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+				var a = new Array();
+				var centered = false;
+				{% if eligible_tutor_results %}
+
+				{% for tutor in eligible_tutor_results %}
+				if (parseFloat("{{tutor.latitude}}") != 0) {
+					if (!centered) {
+						map.setCenter(new google.maps.LatLng(parseFloat("{{tutor.latitude}}"), parseFloat("{{tutor.longitude}}")));
+						centered = true;
+					}
+
+					var t = new Object();
+					var rating = "N/A"
+					if (parseFloat("{{tutor.rating}}") != 0) {
+						rating = str(parseFloat("{{tutor.rating}}")) + '/5';
+					}
+
+					var contentString = '<div id={{tutor.username}}>' + '<h1 id="firstHeading" class="firstHeading">User: {{tutor.username}}</h1>' + '<p>Price: ${{tutor.price}}/hour</p>' + '<p>Average Rating: ' + rating + '</p>' + '<p>Distance: {{tutor.distance_in_kms}}kms</p>' + '<p><a href={{tutor.profile_url}}> Visit Profile</a></p>' + '<p><a href={{tutor.timetable_url}}>Make Booking</a></p>' + '</div>';
+					t.name = contentString
+					t.lat = parseFloat("{{tutor.latitude}}")
+					t.lng = parseFloat("{{tutor.longitude}}")
+					a.push(t);
+				}
+				{% endfor %}
+				for (var i = 0; i < a.length; i++) {
+					var latlng = new google.maps.LatLng(a[i].lat, a[i].lng);
+					map.addMarker(createMarker(a[i].name, latlng));
+				}
+				console.log(map.getMarkers());
+
+				console.log(map.getMarkers());
+				{% endif %}
+			}
+
+			function createMarker(name, latlng) {
+				var marker = new google.maps.Marker({
+					position : latlng,
+					map : map
+				});
+				google.maps.event.addListener(marker, "click", function() {
+					if (infowindow)
+						infowindow.close();
+					infowindow = new google.maps.InfoWindow({
+						content : name
+					});
+					infowindow.open(map, marker);
+				});
+				return marker;
+			}
+
+			function ratingString(rating) {
+				if (parseFloat(rating) == 0) {
+					return "N/A";
+				} else {
+					return rating + "/5";
+				}
+			}
+		</script>
+
+		<style type='text/css'>
+			/*<![CDATA[*/
+
+			body {
+				margin-top: 40px;
+				text-align: center;
+				font-size: 14px;
+				font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+			}
+
+			#calendar {
+				width: 900px;
+				margin: 0 auto;
+			}
+
+			/*]]>*/
+		</style>
+		<title></title>
+	</head>
+	<body onload="initialize()" onunload="GUnload()">
+		<div id="tutor_search" title="Tutor Search">
+			<form name="searchForm" action="/../../search/" method="post">
+				{% csrf_token %}
+				Unit of Study: {{ form.UoS }}
+				Price From: {{ form.price_from }}
+				Price To: {{ form.price_to }}
+				<br>
+				Distance: {{ form.distance}}
+				Students Only: {{ form.students_only}}
+				Rating From: {{ form.rating_from}}
+				<br>
+				<input class="datePicker" readonly="true" type="text" id="id_date" style="display:none" />
+				<input type="submit" value="Find Tutors" id="SubmitAdd">
+			</form>
+		</div>
+		<div id="map_canvas" style="width: 500px; height: 500px"></div>
+		<div id="eligible_tutors" title="Eligible Tutors">
+			{% if eligible_tutor_results %}
+			<ul>
+				{% for tutor in eligible_tutor_results %}
+				<HR>
+				Username: {{tutor.username}} | Price: ${{tutor.price}}/hour | Average Rating: {{tutor.rating}} | Distance: {{tutor.distance_in_kms}}kms | <a href={{tutor.timetable_url}}>Make a Booking</a> | <a href={{tutor.profile_url}}>View Tutor's Profile</a>
+				{% endfor %}
+				<HR>
+			</ul>
+			{% else %}
+			<p>
+				No tutors available.
+			</p>
+			{% endif %}
+
+		</div>
+		{% endblock %}
+		{% block navigation-bar %} {# Navigation Bar #}
+		<ul class="nav">
+			<li class="active">
+				<a href="/dashboard">My Dashboard</a>
+			</li>
+			<li>
+				<a href="/calendar">My Timetable</a>
+			</li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="/messages/inbox">Inbox</a>
+					</li>
+					<li>
+						<a href="/messages/sent">Sent</a>
+					</li>
+					<li>
+						<a href="/messages/archives/">Archive</a>
+					</li>
+					<li>
+						<a href="/messages/trash">Trash</a>
+					</li>
+					<li>
+						<a href="/messages/write">Write Message</a>
+					</li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="#">Edit Locations</a>
+					</li>
+					<li>
+						<a href="#">Edit Tutorable Subjects</a>
+					</li>
+					<li>
+						<a href="#">Add Review</a>
+					</li>
+					<li class="divider"></li>
+					<li class="nav-header">
+						My Profile
+					</li>
+					<li>
+						<a href="#">View Profile</a>
+					</li>
+					<li>
+						<a href="#">Edit Profile</a>
+					</li>
+				</ul>
+			</li>
+			<li>
+				<a href="/">Find a Tutor</a>
+			</li>
 		</ul>
-	{% else %}
-		<p>No tutors available.</p>
-	{% endif %}
+		{% endblock %}
+		{%block extra_scripts%}
 
-    </div>
-    <div id="map_canvas" style="width: 500px; height: 300px"></div>
+		<script type="text/javascript" src="{{STATIC_URL}}fullcalendar/jquery-1.8.2.js"></script>
+		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/jquery-ui-1.9.0.custom.js'></script>
+		<script type='text/javascript' src='{{STATIC_URL}}fullcalendar/fullcalendar.min.js'></script>
+		<script type='text/javascript' src='{{STATIC_URL}}tutablr/js/dashboard_calendar.js'></script>
 
-  </body>
+		{%endblock %}
+	</body>
 </html>
