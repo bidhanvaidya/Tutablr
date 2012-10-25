@@ -1,7 +1,8 @@
 # Create your views here.
+from django.db.models import Avg
 from django import http
 from django.utils import simplejson as json
-from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails, Location
+from tutablr_app.models import SessionTime, Enrolled, ClassTime, UnavailableTime, Booking, UOS, UnitDetails, Location, Review
 from tutablr_app.forms import *
 from django.shortcuts import render_to_response
 from django.utils import timezone
@@ -10,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
+from django import template
 import time, datetime
 from postman.models import Message, STATUS_ACCEPTED
 import tutablr
@@ -18,7 +19,7 @@ from django.template import RequestContext
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User
 from math import cos, sin, tan, atan2, sqrt
-
+register = template.Library()
 booking_locks = {}
 session_locks = {}
 
@@ -654,20 +655,20 @@ def drop_event(request, cal_id):
 					tutor_id = session.tutor_id,
 					student_id = session.student_id,
 					unit_id = session.unit_id)
-			print "creator id" + str(request.user.id)
+			
 			now= datetime.datetime.now()
-			admin= User.objects.all()[0]
+			
 			if request.POST.get('type') == 'student_session':
 				message= Message(subject=" Change for existing session", 
 					body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-					sender=admin, 
+					sender=session.student_id, 
 					recipient=session.tutor_id, 
 					moderation_status=STATUS_ACCEPTED, 
 					moderation_date=now)
 			else:
 				message= Message(subject=" Change for existing session", 
                         body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-                        sender=admin, 
+                        sender=session.tutor_id, 
                         recipient=session.student_id,
                         moderation_status=STATUS_ACCEPTED, 
                         moderation_date=now)
@@ -683,18 +684,17 @@ def drop_event(request, cal_id):
 			booking.finish_time = booking.finish_time + datetime.timedelta(days=int(dayDelta), minutes=int(minuteDelta))
 			booking.save()
 			now= datetime.datetime.now()
-			admin= User.objects.all()[0]
 			if booking.student_id == request.user :
 				message= Message(subject="Booking Updated", 
 						body=" A booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.student_id.username, 
-						sender=admin, 
+						sender=booking.student_id, 
 						recipient=booking.tutor_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
 			else:
 				message= Message(subject="Booking Updated", 
 						body="Your booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.tutor_id.username + "You will need to confirm it create a session", 
-						sender=admin, 
+						sender=booking.student_id, 
 						recipient=booking.tutor_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
@@ -805,17 +805,16 @@ def add_booking(request, cal_id):
 			creator_id = request.user
 		)
 		now= datetime.datetime.now()
-		admin= User.objects.all()[0]
 		message= Message(subject="Booking Created", 
 			body=" A booking for " +  booking.unit_id.unit_name+" has been created by " + booking.creator_id.username, 
-			sender=admin, 
+			sender=booking.student_id, 
 			recipient=booking.tutor_id, 
 			moderation_status=STATUS_ACCEPTED, 
 			moderation_date=now)
 		message.save()
 		message= Message(subject="Booking Created", 
 			body=" You have created a booking for " +  booking.unit_id.unit_name+" with " + booking.tutor_id.username, 
-			sender=admin, 
+			sender=booking.tutor_id, 
 			recipient=booking.student_id, 
 			moderation_status=STATUS_ACCEPTED, 
 			moderation_date=now)
@@ -850,19 +849,18 @@ def update_booking(request, cal_id):
 				booking.start_time = start_datetime
 				booking.finish_time = end_datetime
 				now= datetime.datetime.now()
-				admin= User.objects.all()[0]
 				if booking.student_id == request.user :
 					message= Message(subject="Booking Updated", 
 							body=" A booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.student_id.username, 
-							sender=admin, 
+							sender=booking.student_id, 
 							recipient=booking.tutor_id, 
 							moderation_status=STATUS_ACCEPTED, 
 							moderation_date=now)
 				else:
 					message= Message(subject="Booking Updated", 
 							body="Your booking for " +  booking.unit_id.unit_name+"has been changed by " + booking.tutor_id.username + "You will need to confirm it create a session", 
-							sender=admin, 
-							recipient=booking.tutor_id, 
+							sender=booking.tutor_id, 
+							recipient=booking.student_id, 
 							moderation_status=STATUS_ACCEPTED, 
 							moderation_date=now)
 
@@ -924,18 +922,17 @@ def confirm_booking(request, cal_id):
                 	session_locks[str(session.id)] = False
 			#############
                 	now= datetime.datetime.now()
-                	admin= User.objects.all()[0]
         		if booking.creator_id == booking.student_id:
         			message= Message(subject="Session Created", 
         				body="Your Booking has been accepted. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.tutor_id.username, 
-        				sender=admin, 
+        				sender=booking.tutor_id, 
         				recipient=booking.student_id, 
         				moderation_status=STATUS_ACCEPTED, 
         				moderation_date=now)
         			message.save()
         			message= Message(subject="Session Created", 
         				body="You have accepted a booking. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.student_id.username, 
-        				sender=admin, 
+        				sender=booking.student_id, 
         				recipient=booking.tutor_id, 
         				moderation_status=STATUS_ACCEPTED, 
         				moderation_date=now)
@@ -943,14 +940,14 @@ def confirm_booking(request, cal_id):
        			else:
        				message= Message(subject="Session Created", 
         				body="Booking session has been approved by your tutor. Your tutoring session for " +  booking.unit_id.unit_name+"has been created with " + booking.tutor_id.username, 
-        				sender=admin, 
+        				sender=booking.tutor_id, 
         				recipient=booking.student_id, 
         				moderation_status=STATUS_ACCEPTED, 
         				moderation_date=now)
        				message.save()
        				message= Message(subject="Booking Rejected", 
         				body="Booking with the changes you made have been approved. Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
-        				sender=admin, 
+        				sender=booking.student_id, 
         				recipient=booking.tutor_id, 
         				moderation_status=STATUS_ACCEPTED, 
   	     				moderation_date=now)
@@ -990,18 +987,17 @@ def reject_booking(request, cal_id):
 				booking.finish_time = end_datetime
 				booking.is_rejected = True
 				now= datetime.datetime.now()
-				admin= User.objects.all()[0]
 				if booking.creator_id == booking.student_id:
 					message= Message(subject="Booking Rejected", 
 						body="You have rejected a booking by " +  booking.creator_id.username+ " for "+ booking.unit_id.unit_name, 
-						sender=admin, 
+						sender=booking.student_id, 
 						recipient=booking.tutor_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
 					message.save()
 					message= Message(subject="Booking Rejected", 
 						body="Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
-						sender=admin, 
+						sender=booking.tutor_id, 
 						recipient=booking.creator_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
@@ -1009,14 +1005,14 @@ def reject_booking(request, cal_id):
 				else:
 					message= Message(subject="Booking Rejected", 
 						body="You have rejected a booking by " +  booking.creator_id.username+ " for "+ booking.unit_id.unit_name, 
-						sender=admin, 
+						sender=booking.tutor_id, 
 						recipient=booking.student_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
 					message.save()
 					message= Message(subject="Booking Rejected", 
 						body="Your Booking for "+ booking.unit_id.unit_name+" has been rejected by " + booking.tutor_id.username, 
-						sender=admin, 
+						sender=booking.student_id, 
 						recipient=booking.creator_id, 
 						moderation_status=STATUS_ACCEPTED, 
 						moderation_date=now)
@@ -1042,18 +1038,17 @@ def delete_booking(request, cal_id):
 		booking = Booking.objects.get(pk=id)
 		if booking.creator_id == request.user:
 			now= datetime.datetime.now()
-			admin= User.objects.all()[0]
 			if booking.creator_id == booking.student_id:
 				message= Message(subject="Booking Deleted", 
 					body="A Booking of "+ booking.unit_id.unit_name + " has been deleted by " + booking.creator_id.username, 
-					sender=admin, 
+					sender=booking.student_id, 
 					recipient=booking.tutor_id, 
 					moderation_status=STATUS_ACCEPTED, 
 					moderation_date=now)
 			else:
 				message= Message(subject="Booking Deleted", 
 					body="A Booking of "+ booking.unit_id.unit_name +" has been deleted by " + booking.creator_id.username, 
-					sender=admin, 
+					sender=booking.tutor_id, 
 					recipient=booking.student_id, 
 					moderation_status=STATUS_ACCEPTED, 
 					moderation_date=now)	
@@ -1104,18 +1099,17 @@ def update_session(request, cal_id):
 				else:
 					description = request.POST.get('edit_session_title')
 					now= datetime.datetime.now()
-					admin= User.objects.all()[0]
 					if request.POST.get('type') == 'student_session':
-						message= Message(subject=" Change for existing session", 
+						message= Message(subject=" Deletion of existing session", 
 							body="Your student  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-							sender=admin, 
+							sender=session.student_id, 
 							recipient=session.tutor_id, 
 							moderation_status=STATUS_ACCEPTED, 
 							moderation_date=now)
 					else:
-						message= Message(subject=" Change for existing session", 
+						message= Message(subject=" Deletion of existing session", 
                                 body="Your tutor  "+ request.user.username +" has requested for a change for "+session.unit_id.unit_id +" You will need to confirmed it", 
-                                sender=admin, 
+                                sender=session.tutor_id, 
                                 recipient=student, 
                                 moderation_status=STATUS_ACCEPTED, 
                                 moderation_date=now)
@@ -1150,7 +1144,38 @@ def delete_session(request, cal_id):
 		id = request.POST.get('edit_session_event_id')
 		user_id = request.user.id
 		session = SessionTime.objects.get(pk=id)
+		now= datetime.datetime.now()
 		if session.student_id.id == request.user.id or session.tutor_id.id == request.user.id:
+			if user_id == session.student_id.id:
+				message= Message(subject=" Session Deleted", 
+								body="Your student  "+ request.user.username +" has deleted session for  "+session.unit_id.unit_id, 
+								sender=session.student_id, 
+								recipient=session.tutor_id, 
+								moderation_status=STATUS_ACCEPTED, 
+								moderation_date=now)
+				message.save()
+				message= Message(subject=" Change for existing session", 
+								body="You have deleted a session with  "+ session.tutor_id.username +" for "+session.unit_id.unit_id , 
+								sender=session.tutor_id, 
+								recipient=session.student_id, 
+								moderation_status=STATUS_ACCEPTED, 
+								moderation_date=now)
+				message.save()
+			else:
+				message= Message(subject=" Session Deleted", 
+								body="Your tutor "+ request.user.username +" has deleted session for  "+session.unit_id.unit_id, 
+								sender=session.tutor_id, 
+								recipient=session.student_id, 
+								moderation_status=STATUS_ACCEPTED, 
+								moderation_date=now)
+				message.save()
+				message= Message(subject=" Change for existing session", 
+								body="You have deleted a session with  "+ session.student_id.username +" for "+session.unit_id.unit_id , 
+								sender=session.student_id, 
+								recipient=session.tutor_id, 
+								moderation_status=STATUS_ACCEPTED, 
+								moderation_date=now)
+				message.save()
 			del session_locks[str(session.id)]
 			session.delete()
 			if cal_id == str(0):
@@ -1276,3 +1301,45 @@ def locationSelector(request):
 			context_instance = RequestContext(request)
 		)
 """
+@login_required
+def reviews(request):
+	if request.method == "POST":
+		print request.POST
+		id= request.POST.get("tutor_id")
+		print id
+		tutor= User.objects.get(pk=id)
+		review= Review(rating= request.POST.get("rating"),
+			comment=request.POST.get("comment"),
+			student_id= request.user,
+			tutor_id = tutor)
+		review.save()
+		return redirect("/reviews")
+	else:	
+		sessions= SessionTime.objects.filter(student_id= request.user)
+		user= request.user
+
+		
+		tutors=User.objects.exclude(id= user.id)
+		
+		u=User.objects.all()
+		final_list= list(set(tutors).intersection(set([e.tutor_id for e in sessions])))
+		print final_list
+		reviews= Review.objects.filter(student_id = request.user)
+		reviewed_tutors= list(set(tutors).intersection(set([e.tutor_id for e in reviews])))
+		
+		print reviewed_tutors
+		to_be_reviewed = list(set(final_list).difference(set(reviewed_tutors)))
+
+		for rrr in reviewed_tutors:
+			rrr.reviews = Review.objects.filter(tutor_id= rrr) 
+		print to_be_reviewed
+		return render_to_response('reviews.html', locals(),context_instance = RequestContext(request))
+@login_required
+def user_reviews(request, cal_id):
+		user_id = request.user.id
+		reviews = Review.objects.filter(tutor_id=cal_id)
+		for user in reviews:
+			user.reviews = User.objects.filter(id= user.student_id.id)
+		print user.reviews
+		average=Review.objects.filter(tutor_id=cal_id).aggregate(Avg('rating'))
+		return render_to_response('user_reviews.html', locals(),context_instance = RequestContext(request))

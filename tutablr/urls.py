@@ -53,6 +53,8 @@ urlpatterns = patterns('',
 	 url(r'^accounts/profile/', direct_to_template, {'template': 'index.html'}, 'index'),
 	 url(r'^accounts/', include('registration.backends.default.urls')),
 	url(r'^dashboard$','tutablr_app.views.dashboard'),
+	url(r'^reviews$','tutablr_app.views.reviews'),
+	url( r'^reviews/users/(?P<cal_id>\d+)/$', 'tutablr_app.views.user_reviews'),
 
 	################# LOCATION URLS  #################
 	url(r'^profile/locations$','tutablr_app.views.location'),

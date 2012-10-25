@@ -1,0 +1,88 @@
+{% extends "base_logged_out.html" %}
+{% load i18n %}
+
+{% block extra_head %}
+
+{% endblock %}
+{% block content %}
+Reviews<br>
+Average Rating: {{average.rating__avg}}
+
+
+<table class= "table table-striped">
+<tr>
+  <th>Review</th>
+  <th>Made By</th>
+</tr>
+
+<tr>
+  {% for review in reviews %}
+<td>{{review.comment}}</br>
+  {{review.rating}}</td> 
+
+<td>{% for user in user.reviews %}
+               
+                   <a href= " /profiles/{{ user.username }}">
+                    {{user.username}} <br>
+                    {{user.first_name}}
+                    {{user.lstname}}</a>
+                 
+              
+            {% endfor %}
+    </td>
+{%endfor%}
+</tr>
+
+{% for tutor in to_be_reviewed %}
+<tr>
+<td>{{tutor.username}}</td>
+<td>to be reviewed</td>
+
+</tr>
+
+
+
+{%endfor%}
+</table>
+
+
+{% endblock %}
+
+{% block navigation-bar %} {# Navigation Bar #}
+    <ul class="nav">
+        <li class="active"><a href="/dashboard">My Dashboard</a></li>
+        <li><a href="/calendar">My Timetable</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Messages<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/messages/inbox">Inbox</a></li>
+              <li><a href="/messages/sent">Sent</a></li>
+              <li><a href="/messages/archives/">Archive</a></li>
+              <li><a href="/messages/trash">Trash</a></li>
+              <li><a href="/messages/write">Write Message</a></li>
+            </ul>
+         </li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Settings<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Edit Locations</a></li>
+              <li><a href="#">Edit Tutorable Subjects</a></li>
+              <li><a href="#">Add Review</a></li>
+              <li class="divider"></li>
+              <li class="nav-header">My Profile</li>
+              <li><a href="#">View Profile</a></li>
+              <li><a href="#">Edit Profile</a></li>
+            </ul>
+         </li>
+        <li><a href="/">Find a Tutor</a></li>
+    </ul>
+    <div class="classification"><div class="cover"></div><div class="progress" style="width: 27%;"></div></div>
+
+
+{% endblock %}
+
+{%block extra_scripts%}
+
+
+{%endblock %}
+
