@@ -199,6 +199,8 @@
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
+											}else if(event.creator_id == undefined){
+												$("#btnDelete").button("enable");
 											} else {
 												console.log("here");
 												$("#btnDelete").hide();
@@ -402,7 +404,9 @@
 				$("#datePicker_start_edit").datepicker({
 					dateFormat : 'dd/mm/yy'
 				});
-
+				$("#datePicker_session_start_edit").datepicker({
+					dateFormat : 'dd/mm/yy'
+				});
 				$('#datePicker_start_edit').datepicker("disable");
 				$('#datePicker_session_start_edit').datepicker("disable");
 				$('#a').click(function() {

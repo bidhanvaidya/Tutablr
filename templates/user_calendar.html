@@ -205,7 +205,9 @@
 												$("#btnDelete").button("enable");
 												$("#btnConfirm").hide();
 												$("#btnReject").hide();
-											} else {
+											}else if(event.creator_id == undefined){
+												$("#btnDelete").button("enable");
+											}else {
 												$("#btnDelete").hide();
 												$("#btnConfirm").button("enable");
 												$("#btnReject").button("enable");
@@ -513,12 +515,15 @@
 				$("#datePicker_start_edit").datepicker({
 					dateFormat : 'dd/mm/yy'
 				});
+				$("#datePicker_session_start_edit").datepicker({
+					dateFormat : 'dd/mm/yy'
+				});
 				$("#id_date").datepicker({
 					dateFormat : 'dd/mm/yy'
 				});
 				$('#id_date').datepicker("disable");
 				$('#datePicker_start_edit').datepicker("disable");
-				$('#datePicker_session_start_edit').datepicker("close");
+				$('#datePicker_session_start_edit').datepicker("disable");
 				$('#a').click(function() {
 					$('#add_booking').dialog('close');
 					$('#edit_booking').dialog('close');
